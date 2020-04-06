@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\ORM\Metadata;
+namespace Refugis\DoctrineExtra\ORM\Metadata;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadataFactory as Base;

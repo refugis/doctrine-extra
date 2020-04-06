@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\ORM\Enable;
+namespace Refugis\DoctrineExtra\ORM\Enable;
 
 use Doctrine\ORM\Mapping as ORM;
-use Fazland\DoctrineExtra\Enable\EnableTrait as BaseTrait;
+use Refugis\DoctrineExtra\Enable\EnableTrait as BaseTrait;
 
 trait EnableTrait
 {

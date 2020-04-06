@@ -1,8 +1,9 @@
-Fazland - DoctrineExtra
+Refugis - DoctrineExtra
 =======================
-[![Build Status](https://travis-ci.com/fazland/doctrine-extra.svg?branch=master)](https://travis-ci.com/fazland/doctrine-extra) 
+[![Build Status](https://travis-ci.com/refugis/doctrine-extra.svg?branch=master)](https://travis-ci.com/refugis/doctrine-extra) 
 
 A set of Doctrine extensions.
+Originally written by [Fazland team](https://www.github.com/fazland/doctrine-extra).
 
 Requirements
 ------------
@@ -13,7 +14,7 @@ Installation
 The suggested installation method is via [composer](https://getcomposer.org/):
 
 ```sh
-$ composer require fazland/doctrine-extra
+$ composer require refugis/doctrine-extra
 ```
 
 Using DoctrineExtra
@@ -33,4 +34,4 @@ Contributions are welcome. Feel free to open a PR or file an issue here on GitHu
 
 License
 -------
-DoctrineExtra is licensed under the MIT License - see the [LICENSE](https://github.com/fazland/doctrine-extra/blob/master/LICENSE) file for details.
+DoctrineExtra is licensed under the MIT License - see the [LICENSE](https://github.com/refugis/doctrine-extra/blob/master/LICENSE) file for details.

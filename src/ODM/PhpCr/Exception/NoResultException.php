@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\ODM\PhpCr\Exception;
+namespace Refugis\DoctrineExtra\ODM\PhpCr\Exception;
 
 use Doctrine\ODM\PHPCR\Exception\RuntimeException;
-use Fazland\DoctrineExtra\Exception\NoResultExceptionInterface;
+use Refugis\DoctrineExtra\Exception\NoResultExceptionInterface;
 
 class NoResultException extends RuntimeException implements NoResultExceptionInterface
 {

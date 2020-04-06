@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra;
+namespace Refugis\DoctrineExtra;
 
 use Doctrine\Common\Persistence\ObjectRepository as BaseRepository;
-use Fazland\DoctrineExtra\Exception\NonUniqueResultExceptionInterface;
-use Fazland\DoctrineExtra\Exception\NoResultExceptionInterface;
+use Refugis\DoctrineExtra\Exception\NonUniqueResultExceptionInterface;
+use Refugis\DoctrineExtra\Exception\NoResultExceptionInterface;
 
 interface ObjectRepositoryInterface extends BaseRepository
 {

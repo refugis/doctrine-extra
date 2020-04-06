@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\ODM\PhpCr\Exception;
+namespace Refugis\DoctrineExtra\ODM\PhpCr\Exception;
 
 use Doctrine\ODM\PHPCR\Exception\RuntimeException;
-use Fazland\DoctrineExtra\Exception\NonUniqueResultExceptionInterface;
+use Refugis\DoctrineExtra\Exception\NonUniqueResultExceptionInterface;
 
 class NonUniqueResultException extends RuntimeException implements NonUniqueResultExceptionInterface
 {

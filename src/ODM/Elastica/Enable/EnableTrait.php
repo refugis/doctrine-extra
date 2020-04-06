@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\ODM\Elastica\Enable;
+namespace Refugis\DoctrineExtra\ODM\Elastica\Enable;
 
-use Fazland\DoctrineExtra\Enable\EnableTrait as BaseTrait;
-use Fazland\ODM\Elastica\Annotation as ODM;
+use Refugis\DoctrineExtra\Enable\EnableTrait as BaseTrait;
+use Refugis\ODM\Elastica\Annotation as ODM;
 
 trait EnableTrait
 {

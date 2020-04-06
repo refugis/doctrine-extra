@@ -1,15 +1,15 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\Tests\ODM\MongoDB;
+namespace Refugis\DoctrineExtra\Tests\ODM\MongoDB;
 
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Doctrine\ORM\NonUniqueResultException;
-use Fazland\DoctrineExtra\Exception\NonUniqueResultExceptionInterface;
-use Fazland\DoctrineExtra\ODM\MongoDB\DocumentIterator;
-use Fazland\DoctrineExtra\ODM\MongoDB\DocumentRepository;
-use Fazland\DoctrineExtra\Tests\Fixtures\Document\MongoDB\FooBar;
-use Fazland\DoctrineExtra\Tests\Mock\ODM\MongoDB\DocumentManagerTrait;
-use Fazland\DoctrineExtra\Tests\Mock\ODM\MongoDB\Repository;
+use Refugis\DoctrineExtra\Exception\NonUniqueResultExceptionInterface;
+use Refugis\DoctrineExtra\ODM\MongoDB\DocumentIterator;
+use Refugis\DoctrineExtra\ODM\MongoDB\DocumentRepository;
+use Refugis\DoctrineExtra\Tests\Fixtures\Document\MongoDB\FooBar;
+use Refugis\DoctrineExtra\Tests\Mock\ODM\MongoDB\DocumentManagerTrait;
+use Refugis\DoctrineExtra\Tests\Mock\ODM\MongoDB\Repository;
 use MongoDB\Model\BSONDocument;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;

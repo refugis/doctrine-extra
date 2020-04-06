@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\ODM\PhpCr;
+namespace Refugis\DoctrineExtra\ODM\PhpCr;
 
 use Doctrine\ODM\PHPCR\DocumentRepository as BaseRepository;
 use Doctrine\ODM\PHPCR\Exception\RuntimeException;
 use Doctrine\ODM\PHPCR\Query\Builder\QueryBuilder;
 use Doctrine\ODM\PHPCR\Query\Query;
-use Fazland\DoctrineExtra\ObjectIteratorInterface;
-use Fazland\DoctrineExtra\ObjectRepositoryInterface;
+use Refugis\DoctrineExtra\ObjectIteratorInterface;
+use Refugis\DoctrineExtra\ObjectRepositoryInterface;
 use PHPCR\Query\QueryResultInterface;
 
 class DocumentRepository extends BaseRepository implements ObjectRepositoryInterface

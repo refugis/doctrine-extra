@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\Tests\Doctrine\Type;
+namespace Refugis\DoctrineExtra\Tests\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
-use Fazland\DoctrineExtra\ORM\Type\PhpEnumType;
-use Fazland\DoctrineExtra\Tests\Fixtures\Enum\ActionEnum;
-use Fazland\DoctrineExtra\Tests\Fixtures\Enum\FoobarEnum;
+use Refugis\DoctrineExtra\ORM\Type\PhpEnumType;
+use Refugis\DoctrineExtra\Tests\Fixtures\Enum\ActionEnum;
+use Refugis\DoctrineExtra\Tests\Fixtures\Enum\FoobarEnum;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 

@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\ODM\PhpCr;
+namespace Refugis\DoctrineExtra\ODM\PhpCr;
 
 use Doctrine\ODM\PHPCR\Query\Builder\QueryBuilder;
 use Doctrine\ODM\PHPCR\Query\Query;
-use Fazland\DoctrineExtra\IteratorTrait as BaseIteratorTrait;
+use Refugis\DoctrineExtra\IteratorTrait as BaseIteratorTrait;
 use PHPCR\Query\QueryResultInterface;
 
 trait IteratorTrait

@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\Tests\Mock\ODM\MongoDB;
+namespace Refugis\DoctrineExtra\Tests\Mock\ODM\MongoDB;
 
 use Doctrine\MongoDB\Connection;
 use Doctrine\ODM\MongoDB\Configuration;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\SchemaManager;
-use Fazland\DoctrineExtra\ODM\MongoDB\DocumentRepository;
-use Fazland\DoctrineExtra\Tests\Mock\FakeMetadataFactory;
+use Refugis\DoctrineExtra\ODM\MongoDB\DocumentRepository;
+use Refugis\DoctrineExtra\Tests\Mock\FakeMetadataFactory;
 use MongoDB\Client;
 use MongoDB\Collection;
 use MongoDB\Database;

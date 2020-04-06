@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\Tests\Mock\ORM;
+namespace Refugis\DoctrineExtra\Tests\Mock\ORM;
 
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
@@ -12,9 +12,9 @@ use Doctrine\DBAL\Driver\PDOMySql\Driver;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Fazland\DoctrineExtra\ORM\EntityRepository;
-use Fazland\DoctrineExtra\Tests\Mock\FakeMetadataFactory;
-use Fazland\DoctrineExtra\Tests\Mock\Platform;
+use Refugis\DoctrineExtra\ORM\EntityRepository;
+use Refugis\DoctrineExtra\Tests\Mock\FakeMetadataFactory;
+use Refugis\DoctrineExtra\Tests\Mock\Platform;
 use Prophecy\Prophecy\ObjectProphecy;
 
 trait EntityManagerTrait

@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\Tests\ORM\Type;
+namespace Refugis\DoctrineExtra\Tests\ORM\Type;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
-use Fazland\DoctrineExtra\ORM\Type\MoneyCurrencyType;
+use Refugis\DoctrineExtra\ORM\Type\MoneyCurrencyType;
 use Money\Currency;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;

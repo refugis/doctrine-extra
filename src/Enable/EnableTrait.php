@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\Enable;
+namespace Refugis\DoctrineExtra\Enable;
 
 /**
  * Represents a common implementation of EnableInterface.

@@ -1,14 +1,14 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\ORM;
+namespace Refugis\DoctrineExtra\ORM;
 
 use Doctrine\ORM\EntityRepository as BaseRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
-use Fazland\DoctrineExtra\ObjectIteratorInterface;
-use Fazland\DoctrineExtra\ObjectRepositoryInterface;
+use Refugis\DoctrineExtra\ObjectIteratorInterface;
+use Refugis\DoctrineExtra\ObjectRepositoryInterface;
 
 class EntityRepository extends BaseRepository implements ObjectRepositoryInterface
 {

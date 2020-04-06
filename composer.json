@@ -24,7 +24,7 @@
         "doctrine/mongodb-odm": "^1.3",
         "doctrine/phpcr-odm": "^1.5",
         "doctrine/orm": "^2.7",
-        "fazland/elastica-odm": "^1.0@dev",
+        "refugis/elastica-odm": "^1.0@dev",
         "friendsofphp/php-cs-fixer": "^2.13",
         "giggsey/libphonenumber-for-php": "^8.10",
         "jackalope/jackalope-doctrine-dbal": "*",
@@ -35,12 +35,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Fazland\\DoctrineExtra\\": "src/"
+            "Refugis\\DoctrineExtra\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Fazland\\DoctrineExtra\\Tests\\": "tests/"
+            "Refugis\\DoctrineExtra\\Tests\\": "tests/"
         }
     },
     "conflict": {

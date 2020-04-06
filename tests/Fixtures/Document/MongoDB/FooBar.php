@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\Tests\Fixtures\Document\MongoDB;
+namespace Refugis\DoctrineExtra\Tests\Fixtures\Document\MongoDB;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 

@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\ORM\Type;
+namespace Refugis\DoctrineExtra\ORM\Type;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;

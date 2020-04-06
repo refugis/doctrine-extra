@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\ORM\Metadata;
+namespace Refugis\DoctrineExtra\ORM\Metadata;
 
 use Doctrine\Instantiator\Instantiator;
 use Doctrine\ORM\Mapping\ClassMetadata as BaseClassMetadata;

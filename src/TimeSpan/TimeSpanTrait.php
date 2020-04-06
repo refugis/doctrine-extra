@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\TimeSpan;
+namespace Refugis\DoctrineExtra\TimeSpan;
 
 use Cake\Chronos\Chronos;
 

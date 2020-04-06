@@ -1,4 +1,4 @@
-Fazland - DoctrineExtra - Using Doctrine Extra
+Refugis - DoctrineExtra - Using Doctrine Extra
 ==============================================
 
 This library introduce some [Doctrine](https://github.com/doctrine/orm) features and helpers.
@@ -13,7 +13,7 @@ ORM
 ```php
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Fazland\DoctrineExtra\ORM\EntityIterator;
+use Refugis\DoctrineExtra\ORM\EntityIterator;
 
 /** @var EntityManagerInterface $em */
 $em = // The EntityManagerInterface instance.
@@ -33,7 +33,7 @@ MongoDB:
 ```php
 use App\Document\User;
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Fazland\DoctrineExtra\ODM\MongoDB\DocumentIterator;
+use Refugis\DoctrineExtra\ODM\MongoDB\DocumentIterator;
 
 /** @var DocumentManager $dm */
 $dm = // The EntityManagerInterface instance.
@@ -94,14 +94,14 @@ ORM
 ```yaml
 doctrine:
     orm:
-        default_repository_class: Fazland\DoctrineExtra\ORM\EntityRepository
+        default_repository_class: Refugis\DoctrineExtra\ORM\EntityRepository
 ```
 
 MongoDB:
 ```yaml
 doctrine_mongodb:
     document_managers:
-        default_repository_class: Fazland\DoctrineExtra\ODM\MongoDB\DocumentRepository
+        default_repository_class: Refugis\DoctrineExtra\ODM\MongoDB\DocumentRepository
 ```
 
 Other features

@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\EventListener\Timestampable;
+namespace Refugis\DoctrineExtra\EventListener\Timestampable;
 
 use Doctrine\Persistence\Event\LifecycleEventArgs;
-use Fazland\DoctrineExtra\Timestampable\TimestampableInterface;
+use Refugis\DoctrineExtra\Timestampable\TimestampableInterface;
 
 class TimestampUpdater
 {

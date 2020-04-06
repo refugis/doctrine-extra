@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\DBAL;
+namespace Refugis\DoctrineExtra\DBAL;
 
 use Doctrine\DBAL\Driver\Statement;
 use Doctrine\DBAL\FetchMode;

@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\DBAL;
+namespace Refugis\DoctrineExtra\DBAL;
 
 use Doctrine\DBAL\Query\QueryBuilder;
-use Fazland\DoctrineExtra\IteratorTrait as BaseIteratorTrait;
+use Refugis\DoctrineExtra\IteratorTrait as BaseIteratorTrait;
 
 trait IteratorTrait
 {

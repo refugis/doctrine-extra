@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\Exception;
+namespace Refugis\DoctrineExtra\Exception;
 
 /**
  * Exception thrown when a query unexpectedly returns more than one result.

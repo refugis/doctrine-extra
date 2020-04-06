@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\ODM\MongoDB\Enable;
+namespace Refugis\DoctrineExtra\ODM\MongoDB\Enable;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDBODM;
-use Fazland\DoctrineExtra\Enable\EnableTrait as BaseTrait;
+use Refugis\DoctrineExtra\Enable\EnableTrait as BaseTrait;
 
 trait EnableTrait
 {

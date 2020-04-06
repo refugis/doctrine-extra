@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\ORM;
+namespace Refugis\DoctrineExtra\ORM;
 
 use Doctrine\ORM\Internal\Hydration\IterableResult;
 use Doctrine\ORM\QueryBuilder;
-use Fazland\DoctrineExtra\ObjectIteratorInterface;
+use Refugis\DoctrineExtra\ObjectIteratorInterface;
 
 /**
  * This class allows iterating a query iterator for a single entity query.

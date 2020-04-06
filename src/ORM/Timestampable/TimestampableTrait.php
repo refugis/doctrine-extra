@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\ORM\Timestampable;
+namespace Refugis\DoctrineExtra\ORM\Timestampable;
 
 use Doctrine\ORM\Mapping as ORM;
-use Fazland\DoctrineExtra\Timestampable\TimestampableTrait as BaseTrait;
+use Refugis\DoctrineExtra\Timestampable\TimestampableTrait as BaseTrait;
 
 trait TimestampableTrait
 {

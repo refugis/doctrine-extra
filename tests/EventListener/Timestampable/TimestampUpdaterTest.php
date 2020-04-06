@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\Tests\EventListener\Timestampable;
+namespace Refugis\DoctrineExtra\Tests\EventListener\Timestampable;
 
 use Cake\Chronos\Chronos;
 use Doctrine\Common\Annotations\AnnotationReader;
@@ -10,11 +10,11 @@ use Doctrine\DBAL\DriverManager;
 use Doctrine\MongoDB as MongoDBODM;
 use Doctrine\ORM;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
-use Fazland\DoctrineExtra\EventListener\Timestampable\TimestampUpdater;
-use Fazland\DoctrineExtra\Tests\Fixtures\Entity\FooNonTimestampable;
-use Fazland\DoctrineExtra\Tests\Fixtures\Entity\FooTimestampable;
-use Fazland\DoctrineExtra\Timestampable\TimestampableInterface;
-use Fazland\ODM\Elastica as ElasticaODM;
+use Refugis\DoctrineExtra\EventListener\Timestampable\TimestampUpdater;
+use Refugis\DoctrineExtra\Tests\Fixtures\Entity\FooNonTimestampable;
+use Refugis\DoctrineExtra\Tests\Fixtures\Entity\FooTimestampable;
+use Refugis\DoctrineExtra\Timestampable\TimestampableInterface;
+use Refugis\ODM\Elastica as ElasticaODM;
 use PHPUnit\Framework\TestCase;
 
 class TimestampUpdaterTest extends TestCase

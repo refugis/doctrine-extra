@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\Tests\Mock\ODM\PhpCr;
+namespace Refugis\DoctrineExtra\Tests\Mock\ODM\PhpCr;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\PDOConnection;
@@ -9,9 +9,9 @@ use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\ODM\PHPCR\Configuration;
 use Doctrine\ODM\PHPCR\DocumentManager;
 use Doctrine\ODM\PHPCR\DocumentManagerInterface;
-use Fazland\DoctrineExtra\DBAL\DummyStatement;
-use Fazland\DoctrineExtra\ODM\PhpCr\DocumentRepository;
-use Fazland\DoctrineExtra\Tests\Mock\FakeMetadataFactory;
+use Refugis\DoctrineExtra\DBAL\DummyStatement;
+use Refugis\DoctrineExtra\ODM\PhpCr\DocumentRepository;
+use Refugis\DoctrineExtra\Tests\Mock\FakeMetadataFactory;
 use Jackalope\Factory;
 use Jackalope\Transport\DoctrineDBAL\Client;
 use PHPCR\SimpleCredentials;

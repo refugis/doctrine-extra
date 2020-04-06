@@ -1,16 +1,16 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\Tests\ORM;
+namespace Refugis\DoctrineExtra\Tests\ORM;
 
 use Doctrine\DBAL\Cache\ArrayStatement;
 use Doctrine\DBAL\Driver\Statement;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\QueryBuilder;
-use Fazland\DoctrineExtra\ORM\EntityIterator;
-use Fazland\DoctrineExtra\Tests\Fixtures\Entity\FooBar;
-use Fazland\DoctrineExtra\Tests\Fixtures\Entity\ForeignIdentifierEntity;
-use Fazland\DoctrineExtra\Tests\Fixtures\Entity\TestEntity;
-use Fazland\DoctrineExtra\Tests\Mock\ORM\EntityManagerTrait;
+use Refugis\DoctrineExtra\ORM\EntityIterator;
+use Refugis\DoctrineExtra\Tests\Fixtures\Entity\FooBar;
+use Refugis\DoctrineExtra\Tests\Fixtures\Entity\ForeignIdentifierEntity;
+use Refugis\DoctrineExtra\Tests\Fixtures\Entity\TestEntity;
+use Refugis\DoctrineExtra\Tests\Mock\ORM\EntityManagerTrait;
 use PHPUnit\Framework\TestCase;
 
 class EntityIteratorTest extends TestCase

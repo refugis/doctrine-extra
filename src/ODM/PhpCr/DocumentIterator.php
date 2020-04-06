@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\ODM\PhpCr;
+namespace Refugis\DoctrineExtra\ODM\PhpCr;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\PHPCR\Query\Builder\QueryBuilder;
 use Doctrine\ODM\PHPCR\Query\QueryException;
-use Fazland\DoctrineExtra\ObjectIteratorInterface;
+use Refugis\DoctrineExtra\ObjectIteratorInterface;
 
 /**
  * This class allows iterating a query iterator for a single entity query.

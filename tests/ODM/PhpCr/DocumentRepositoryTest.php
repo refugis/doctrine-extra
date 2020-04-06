@@ -1,17 +1,17 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\Tests\ODM\PhpCr;
+namespace Refugis\DoctrineExtra\Tests\ODM\PhpCr;
 
 use Doctrine\ODM\PHPCR\Mapping\ClassMetadata;
 use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\Mapping\RuntimeReflectionService;
-use Fazland\DoctrineExtra\DBAL\DummyStatement;
-use Fazland\DoctrineExtra\Exception\NoResultExceptionInterface;
-use Fazland\DoctrineExtra\ODM\PhpCr\DocumentIterator;
-use Fazland\DoctrineExtra\ODM\PhpCr\DocumentRepository;
-use Fazland\DoctrineExtra\Tests\Fixtures\Document\PhpCr\FooBar;
-use Fazland\DoctrineExtra\Tests\Mock\ODM\PhpCr\DocumentManagerTrait;
-use Fazland\DoctrineExtra\Tests\Mock\ODM\PhpCr\Repository;
+use Refugis\DoctrineExtra\DBAL\DummyStatement;
+use Refugis\DoctrineExtra\Exception\NoResultExceptionInterface;
+use Refugis\DoctrineExtra\ODM\PhpCr\DocumentIterator;
+use Refugis\DoctrineExtra\ODM\PhpCr\DocumentRepository;
+use Refugis\DoctrineExtra\Tests\Fixtures\Document\PhpCr\FooBar;
+use Refugis\DoctrineExtra\Tests\Mock\ODM\PhpCr\DocumentManagerTrait;
+use Refugis\DoctrineExtra\Tests\Mock\ODM\PhpCr\Repository;
 use PHPCR\Util\UUIDHelper;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -26,7 +26,7 @@ class DocumentRepositoryTest extends TestCase
         <sv:value length="15">nt:unstructured</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multi-valued="1"><sv:value length="13">phpcr:managed</sv:value></sv:property>
-    <sv:property sv:name="phpcr:class" sv:type="String" sv:multi-valued="0"><sv:value length="58">Fazland\DoctrineExtra\Tests\Fixtures\Document\PhpCr\FooBar</sv:value></sv:property>
+    <sv:property sv:name="phpcr:class" sv:type="String" sv:multi-valued="0"><sv:value length="58">Refugis\DoctrineExtra\Tests\Fixtures\Document\PhpCr\FooBar</sv:value></sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String" sv:multi-valued="0"><sv:value length="36">%s</sv:value></sv:property>
 </sv:node>
 XML;
@@ -80,7 +80,7 @@ XML;
             ];
         }
 
-        $this->connection->prepare('SELECT n0.path AS n0_path, n0.identifier AS n0_identifier, n0.props AS n0_props FROM phpcr_nodes n0 WHERE n0.workspace_name = ? AND n0.type IN (\'nt:unstructured\', \'rep:root\') AND (EXTRACTVALUE(n0.props, \'count(//sv:property[@sv:name="phpcr:class"]/sv:value[text()="Fazland\\\\DoctrineExtra\\\\Tests\\\\Fixtures\\\\Document\\\\PhpCr\\\\FooBar"]) > 0\') OR EXTRACTVALUE(n0.props, \'count(//sv:property[@sv:name="phpcr:classparents"]/sv:value[text()="Fazland\\\\DoctrineExtra\\\\Tests\\\\Fixtures\\\\Document\\\\PhpCr\\\\FooBar"]) > 0\'))')
+        $this->connection->prepare('SELECT n0.path AS n0_path, n0.identifier AS n0_identifier, n0.props AS n0_props FROM phpcr_nodes n0 WHERE n0.workspace_name = ? AND n0.type IN (\'nt:unstructured\', \'rep:root\') AND (EXTRACTVALUE(n0.props, \'count(//sv:property[@sv:name="phpcr:class"]/sv:value[text()="Refugis\\\\DoctrineExtra\\\\Tests\\\\Fixtures\\\\Document\\\\PhpCr\\\\FooBar"]) > 0\') OR EXTRACTVALUE(n0.props, \'count(//sv:property[@sv:name="phpcr:classparents"]/sv:value[text()="Refugis\\\\DoctrineExtra\\\\Tests\\\\Fixtures\\\\Document\\\\PhpCr\\\\FooBar"]) > 0\'))')
                          ->willReturn(new DummyStatement($nodes1));
         $this->connection->prepare(Argument::containingString("SELECT path AS arraykey, id, path, parent, local_name, namespace, workspace_name, identifier, type, props, depth, sort_order\n                FROM phpcr_nodes WHERE workspace_name = ? AND"))
                          ->willReturn(new DummyStatement($nodes2));
@@ -150,7 +150,7 @@ XML;
 
     public function testGetOneByShouldReturnADocument(): void
     {
-        $this->connection->prepare('SELECT n0.path AS n0_path, n0.identifier AS n0_identifier, n0.props AS n0_props FROM phpcr_nodes n0 WHERE n0.workspace_name = ? AND n0.type IN (\'nt:unstructured\', \'rep:root\') AND (EXTRACTVALUE(n0.props, \'count(//sv:property[@sv:name="id"]/sv:value[text()="/5a3d346ab7f26e18ba119308"]) > 0\') AND (EXTRACTVALUE(n0.props, \'count(//sv:property[@sv:name="phpcr:class"]/sv:value[text()="Fazland\\\\DoctrineExtra\\\\Tests\\\\Fixtures\\\\Document\\\\PhpCr\\\\FooBar"]) > 0\') OR EXTRACTVALUE(n0.props, \'count(//sv:property[@sv:name="phpcr:classparents"]/sv:value[text()="Fazland\\\\DoctrineExtra\\\\Tests\\\\Fixtures\\\\Document\\\\PhpCr\\\\FooBar"]) > 0\'))) LIMIT 1')
+        $this->connection->prepare('SELECT n0.path AS n0_path, n0.identifier AS n0_identifier, n0.props AS n0_props FROM phpcr_nodes n0 WHERE n0.workspace_name = ? AND n0.type IN (\'nt:unstructured\', \'rep:root\') AND (EXTRACTVALUE(n0.props, \'count(//sv:property[@sv:name="id"]/sv:value[text()="/5a3d346ab7f26e18ba119308"]) > 0\') AND (EXTRACTVALUE(n0.props, \'count(//sv:property[@sv:name="phpcr:class"]/sv:value[text()="Refugis\\\\DoctrineExtra\\\\Tests\\\\Fixtures\\\\Document\\\\PhpCr\\\\FooBar"]) > 0\') OR EXTRACTVALUE(n0.props, \'count(//sv:property[@sv:name="phpcr:classparents"]/sv:value[text()="Refugis\\\\DoctrineExtra\\\\Tests\\\\Fixtures\\\\Document\\\\PhpCr\\\\FooBar"]) > 0\'))) LIMIT 1')
             ->willReturn(new DummyStatement([
                 ['n0_path' => '/5a3d346ab7f26e18ba119308', 'n0_identifier' => 'bbe7d929-32a1-4f1e-8f4d-dda42132e6cc', 'n0_props' => \sprintf(self::FOOBAR_PROPS, 'bbe7d929-32a1-4f1e-8f4d-dda42132e6cc')],
             ]));
@@ -184,7 +184,7 @@ XML;
     {
         $this->expectException(NoResultExceptionInterface::class);
 
-        $this->connection->prepare('SELECT n0.path AS n0_path, n0.identifier AS n0_identifier, n0.props AS n0_props FROM phpcr_nodes n0 WHERE n0.workspace_name = ? AND n0.type IN (\'nt:unstructured\', \'rep:root\') AND (EXTRACTVALUE(n0.props, \'count(//sv:property[@sv:name="id"]/sv:value[text()="/5a3d346ab7f26e18ba119308"]) > 0\') AND (EXTRACTVALUE(n0.props, \'count(//sv:property[@sv:name="phpcr:class"]/sv:value[text()="Fazland\\\\DoctrineExtra\\\\Tests\\\\Fixtures\\\\Document\\\\PhpCr\\\\FooBar"]) > 0\') OR EXTRACTVALUE(n0.props, \'count(//sv:property[@sv:name="phpcr:classparents"]/sv:value[text()="Fazland\\\\DoctrineExtra\\\\Tests\\\\Fixtures\\\\Document\\\\PhpCr\\\\FooBar"]) > 0\'))) LIMIT 1')
+        $this->connection->prepare('SELECT n0.path AS n0_path, n0.identifier AS n0_identifier, n0.props AS n0_props FROM phpcr_nodes n0 WHERE n0.workspace_name = ? AND n0.type IN (\'nt:unstructured\', \'rep:root\') AND (EXTRACTVALUE(n0.props, \'count(//sv:property[@sv:name="id"]/sv:value[text()="/5a3d346ab7f26e18ba119308"]) > 0\') AND (EXTRACTVALUE(n0.props, \'count(//sv:property[@sv:name="phpcr:class"]/sv:value[text()="Refugis\\\\DoctrineExtra\\\\Tests\\\\Fixtures\\\\Document\\\\PhpCr\\\\FooBar"]) > 0\') OR EXTRACTVALUE(n0.props, \'count(//sv:property[@sv:name="phpcr:classparents"]/sv:value[text()="Refugis\\\\DoctrineExtra\\\\Tests\\\\Fixtures\\\\Document\\\\PhpCr\\\\FooBar"]) > 0\'))) LIMIT 1')
             ->willReturn(new DummyStatement([]));
 
         $this->repository->getOneBy(['id' => '/5a3d346ab7f26e18ba119308']);

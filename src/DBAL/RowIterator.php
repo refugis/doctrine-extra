@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\DBAL;
+namespace Refugis\DoctrineExtra\DBAL;
 
 use Doctrine\DBAL\FetchMode;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Fazland\DoctrineExtra\ObjectIteratorInterface;
+use Refugis\DoctrineExtra\ObjectIteratorInterface;
 
 class RowIterator implements ObjectIteratorInterface
 {

@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\ORM;
+namespace Refugis\DoctrineExtra\ORM;
 
 use Doctrine\ORM\QueryBuilder;
-use Fazland\DoctrineExtra\IteratorTrait as BaseIteratorTrait;
+use Refugis\DoctrineExtra\IteratorTrait as BaseIteratorTrait;
 
 trait IteratorTrait
 {

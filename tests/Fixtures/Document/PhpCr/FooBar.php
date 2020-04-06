@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\Tests\Fixtures\Document\PhpCr;
+namespace Refugis\DoctrineExtra\Tests\Fixtures\Document\PhpCr;
 
 use Doctrine\ODM\PHPCR\Mapping\Annotations as ODM;
 

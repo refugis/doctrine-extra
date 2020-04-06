@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\Tests\ORM;
+namespace Refugis\DoctrineExtra\Tests\ORM;
 
 use Doctrine\DBAL\Cache\ArrayStatement;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Fazland\DoctrineExtra\DBAL\RowIterator;
-use Fazland\DoctrineExtra\Tests\Mock\ORM\EntityManagerTrait;
+use Refugis\DoctrineExtra\DBAL\RowIterator;
+use Refugis\DoctrineExtra\Tests\Mock\ORM\EntityManagerTrait;
 use PHPUnit\Framework\TestCase;
 
 class RowIteratorTest extends TestCase

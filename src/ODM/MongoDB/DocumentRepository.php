@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Fazland\DoctrineExtra\ODM\MongoDB;
+namespace Refugis\DoctrineExtra\ODM\MongoDB;
 
 use Doctrine\ODM\MongoDB\Query\Builder;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository as BaseRepository;
-use Fazland\DoctrineExtra\ObjectIteratorInterface;
-use Fazland\DoctrineExtra\ObjectRepositoryInterface;
+use Refugis\DoctrineExtra\ObjectIteratorInterface;
+use Refugis\DoctrineExtra\ObjectRepositoryInterface;
 
 class DocumentRepository extends BaseRepository implements ObjectRepositoryInterface
 {
