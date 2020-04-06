@@ -7,15 +7,15 @@ use Doctrine\DBAL\Driver\Statement;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
+use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
+use Prophecy\Prophecy\ObjectProphecy;
 use Refugis\DoctrineExtra\ORM\EntityIterator;
 use Refugis\DoctrineExtra\ORM\EntityRepository;
 use Refugis\DoctrineExtra\Tests\Fixtures\Entity\FooBar;
 use Refugis\DoctrineExtra\Tests\Fixtures\Entity\TestEntity;
 use Refugis\DoctrineExtra\Tests\Mock\ORM\EntityManagerTrait;
 use Refugis\DoctrineExtra\Tests\Mock\ORM\Repository;
-use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\Prophecy\ObjectProphecy;
 
 class EntityRepositoryTest extends TestCase
 {

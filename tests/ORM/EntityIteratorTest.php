@@ -6,12 +6,12 @@ use Doctrine\DBAL\Cache\ArrayStatement;
 use Doctrine\DBAL\Driver\Statement;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\QueryBuilder;
+use PHPUnit\Framework\TestCase;
 use Refugis\DoctrineExtra\ORM\EntityIterator;
 use Refugis\DoctrineExtra\Tests\Fixtures\Entity\FooBar;
 use Refugis\DoctrineExtra\Tests\Fixtures\Entity\ForeignIdentifierEntity;
 use Refugis\DoctrineExtra\Tests\Fixtures\Entity\TestEntity;
 use Refugis\DoctrineExtra\Tests\Mock\ORM\EntityManagerTrait;
-use PHPUnit\Framework\TestCase;
 
 class EntityIteratorTest extends TestCase
 {

@@ -10,12 +10,12 @@ use Doctrine\DBAL\DriverManager;
 use Doctrine\MongoDB as MongoDBODM;
 use Doctrine\ORM;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
+use PHPUnit\Framework\TestCase;
 use Refugis\DoctrineExtra\EventListener\Timestampable\TimestampUpdater;
 use Refugis\DoctrineExtra\Tests\Fixtures\Entity\FooNonTimestampable;
 use Refugis\DoctrineExtra\Tests\Fixtures\Entity\FooTimestampable;
 use Refugis\DoctrineExtra\Timestampable\TimestampableInterface;
 use Refugis\ODM\Elastica as ElasticaODM;
-use PHPUnit\Framework\TestCase;
 
 class TimestampUpdaterTest extends TestCase
 {

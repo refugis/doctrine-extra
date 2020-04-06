@@ -5,6 +5,9 @@ namespace Refugis\DoctrineExtra\Tests\ODM\PhpCr;
 use Doctrine\ODM\PHPCR\Mapping\ClassMetadata;
 use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\Mapping\RuntimeReflectionService;
+use PHPCR\Util\UUIDHelper;
+use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Refugis\DoctrineExtra\DBAL\DummyStatement;
 use Refugis\DoctrineExtra\Exception\NoResultExceptionInterface;
 use Refugis\DoctrineExtra\ODM\PhpCr\DocumentIterator;
@@ -12,9 +15,6 @@ use Refugis\DoctrineExtra\ODM\PhpCr\DocumentRepository;
 use Refugis\DoctrineExtra\Tests\Fixtures\Document\PhpCr\FooBar;
 use Refugis\DoctrineExtra\Tests\Mock\ODM\PhpCr\DocumentManagerTrait;
 use Refugis\DoctrineExtra\Tests\Mock\ODM\PhpCr\Repository;
-use PHPCR\Util\UUIDHelper;
-use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
 
 class DocumentRepositoryTest extends TestCase
 {

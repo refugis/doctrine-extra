@@ -5,10 +5,10 @@ namespace Refugis\DoctrineExtra\Tests\ORM\Type;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
-use Refugis\DoctrineExtra\ORM\Type\PhoneNumberType;
 use libphonenumber\PhoneNumber;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Refugis\DoctrineExtra\ORM\Type\PhoneNumberType;
 
 class PhoneNumberTypeTest extends TestCase
 {

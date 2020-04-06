@@ -9,14 +9,14 @@ use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\ODM\PHPCR\Configuration;
 use Doctrine\ODM\PHPCR\DocumentManager;
 use Doctrine\ODM\PHPCR\DocumentManagerInterface;
-use Refugis\DoctrineExtra\DBAL\DummyStatement;
-use Refugis\DoctrineExtra\ODM\PhpCr\DocumentRepository;
-use Refugis\DoctrineExtra\Tests\Mock\FakeMetadataFactory;
 use Jackalope\Factory;
 use Jackalope\Transport\DoctrineDBAL\Client;
 use PHPCR\SimpleCredentials;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use Refugis\DoctrineExtra\DBAL\DummyStatement;
+use Refugis\DoctrineExtra\ODM\PhpCr\DocumentRepository;
+use Refugis\DoctrineExtra\Tests\Mock\FakeMetadataFactory;
 
 function nodeTypesQuery($connection)
 {

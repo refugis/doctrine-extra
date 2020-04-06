@@ -6,13 +6,13 @@ use Doctrine\MongoDB\Connection;
 use Doctrine\ODM\MongoDB\Configuration;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\SchemaManager;
-use Refugis\DoctrineExtra\ODM\MongoDB\DocumentRepository;
-use Refugis\DoctrineExtra\Tests\Mock\FakeMetadataFactory;
 use MongoDB\Client;
 use MongoDB\Collection;
 use MongoDB\Database;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use Refugis\DoctrineExtra\ODM\MongoDB\DocumentRepository;
+use Refugis\DoctrineExtra\Tests\Mock\FakeMetadataFactory;
 
 trait DocumentManagerTrait
 {

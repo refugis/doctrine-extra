@@ -12,10 +12,10 @@ use Doctrine\DBAL\Driver\PDOMySql\Driver;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Prophecy\Prophecy\ObjectProphecy;
 use Refugis\DoctrineExtra\ORM\EntityRepository;
 use Refugis\DoctrineExtra\Tests\Mock\FakeMetadataFactory;
 use Refugis\DoctrineExtra\Tests\Mock\Platform;
-use Prophecy\Prophecy\ObjectProphecy;
 
 trait EntityManagerTrait
 {

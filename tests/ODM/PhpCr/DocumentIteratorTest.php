@@ -5,13 +5,13 @@ namespace Refugis\DoctrineExtra\Tests\ODM\PhpCr;
 use Doctrine\ODM\PHPCR\Mapping\ClassMetadata;
 use Doctrine\ODM\PHPCR\Query\Builder\QueryBuilder;
 use Doctrine\Persistence\Mapping\RuntimeReflectionService;
+use PHPCR\Util\UUIDHelper;
+use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Refugis\DoctrineExtra\DBAL\DummyStatement;
 use Refugis\DoctrineExtra\ODM\PhpCr\DocumentIterator;
 use Refugis\DoctrineExtra\Tests\Fixtures\Document\PhpCr\FooBar;
 use Refugis\DoctrineExtra\Tests\Mock\ODM\PhpCr\DocumentManagerTrait;
-use PHPCR\Util\UUIDHelper;
-use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
 
 class DocumentIteratorTest extends TestCase
 {

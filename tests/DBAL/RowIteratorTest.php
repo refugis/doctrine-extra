@@ -4,9 +4,9 @@ namespace Refugis\DoctrineExtra\Tests\ORM;
 
 use Doctrine\DBAL\Cache\ArrayStatement;
 use Doctrine\DBAL\Query\QueryBuilder;
+use PHPUnit\Framework\TestCase;
 use Refugis\DoctrineExtra\DBAL\RowIterator;
 use Refugis\DoctrineExtra\Tests\Mock\ORM\EntityManagerTrait;
-use PHPUnit\Framework\TestCase;
 
 class RowIteratorTest extends TestCase
 {

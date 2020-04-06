@@ -4,12 +4,12 @@ namespace Refugis\DoctrineExtra\Tests\ODM\MongoDB;
 
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Doctrine\ODM\MongoDB\Query\Builder;
-use Refugis\DoctrineExtra\ODM\MongoDB\DocumentIterator;
-use Refugis\DoctrineExtra\Tests\Fixtures\Document\MongoDB\FooBar;
-use Refugis\DoctrineExtra\Tests\Mock\ODM\MongoDB\DocumentManagerTrait;
 use MongoDB\Model\BSONDocument;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Refugis\DoctrineExtra\ODM\MongoDB\DocumentIterator;
+use Refugis\DoctrineExtra\Tests\Fixtures\Document\MongoDB\FooBar;
+use Refugis\DoctrineExtra\Tests\Mock\ODM\MongoDB\DocumentManagerTrait;
 
 class DocumentIteratorTest extends TestCase
 {

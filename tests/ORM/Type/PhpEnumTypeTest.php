@@ -5,11 +5,11 @@ namespace Refugis\DoctrineExtra\Tests\Doctrine\Type;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
+use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Refugis\DoctrineExtra\ORM\Type\PhpEnumType;
 use Refugis\DoctrineExtra\Tests\Fixtures\Enum\ActionEnum;
 use Refugis\DoctrineExtra\Tests\Fixtures\Enum\FoobarEnum;
-use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
 
 class PhpEnumTypeTest extends TestCase
 {
