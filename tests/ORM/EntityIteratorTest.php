@@ -183,6 +183,22 @@ class EntityIteratorTest extends TestCase
         self::assertEquals(3, $calledCount);
     }
 
+    public function testShouldHandleGroupByCorrectly(): void
+    {
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
+        $queryBuilder->select('a')->from(FooBar::class, 'a');
+        $queryBuilder->groupBy('a.id');
+
+        $this->iterator = new EntityIterator($queryBuilder);
+        $this->innerConnection
+            ->query('SELECT COUNT(*) FROM (SELECT f0_.id AS id_0 FROM FooBar f0_ GROUP BY f0_.id) scrl_c_0')
+            ->willReturn(new ArrayStatement([
+                ['count' => '4'],
+            ]));
+
+        self::assertCount(4, $this->iterator);
+    }
+
     public function testShouldUseResultCache(): void
     {
         $metadata = new ClassMetadata(TestEntity::class);
