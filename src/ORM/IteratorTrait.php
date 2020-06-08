@@ -3,6 +3,8 @@
 namespace Refugis\DoctrineExtra\ORM;
 
 use Doctrine\DBAL\FetchMode;
+use Doctrine\ORM\Query\Parameter;
+use Doctrine\ORM\Query\Parser;
 use Doctrine\ORM\QueryBuilder;
 use Refugis\DoctrineExtra\IteratorTrait as BaseIteratorTrait;
 
@@ -32,9 +34,25 @@ trait IteratorTrait
             if (! empty($groupBy)) {
                 $dbalQb = $queryBuilder->getEntityManager()->getConnection()->createQueryBuilder();
 
-                return (int) $dbalQb->select('COUNT(*)')
-                    ->from('('.$queryBuilder->getQuery()->getSQL().') scrl_c_0')
-                    ->execute()->fetch(FetchMode::COLUMN);
+                $parser = new Parser($queryBuilder->getQuery());
+                $parserResult = $parser->parse();
+
+                $parameters = $queryBuilder->getParameters();
+                foreach ($parserResult->getParameterMappings() as $name => $mapping) {
+                    $parameter = $parameters->filter(static fn (Parameter $parameter) => $parameter->getName() === $name)->first();
+                    if (false === $parameter) {
+                        continue;
+                    }
+
+                    assert($parameter instanceof Parameter);
+                    foreach ($mapping as $position) {
+                        $dbalQb->setParameter($position, $parameter->getValue(), $parameter->getType());
+                    }
+                }
+
+                $dbalQb->select('COUNT(*)')->from('('.$parserResult->getSqlExecutor()->getSqlStatements().') scrl_c_0');
+
+                return (int) $dbalQb->execute()->fetch(FetchMode::COLUMN);
             }
 
             $distinct = $queryBuilder->getDQLPart('distinct') ? 'DISTINCT ' : '';
