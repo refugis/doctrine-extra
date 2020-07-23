@@ -7,7 +7,7 @@ use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use Money\Currency;
 
-final class MoneyCurrencyType extends Type
+class MoneyCurrencyType extends Type
 {
     public const NAME = 'money_currency';
 

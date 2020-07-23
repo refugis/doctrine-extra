@@ -10,7 +10,7 @@ use libphonenumber\PhoneNumber;
 use libphonenumber\PhoneNumberFormat;
 use libphonenumber\PhoneNumberUtil;
 
-final class PhoneNumberType extends Type
+class PhoneNumberType extends Type
 {
     public const NAME = 'phone_number';
 

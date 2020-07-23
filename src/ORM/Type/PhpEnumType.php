@@ -7,7 +7,7 @@ use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use MyCLabs\Enum\Enum;
 
-final class PhpEnumType extends Type
+class PhpEnumType extends Type
 {
     private string $name = 'enum';
 
