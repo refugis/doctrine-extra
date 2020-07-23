@@ -9,11 +9,11 @@ use MyCLabs\Enum\Enum;
 
 class PhpEnumType extends Type
 {
-    private string $name = 'enum';
+    protected string $name = 'enum';
 
-    private string $enumClass = Enum::class;
+    protected string $enumClass = Enum::class;
 
-    private bool $multiple = false;
+    protected bool $multiple = false;
 
     /**
      * {@inheritdoc}
