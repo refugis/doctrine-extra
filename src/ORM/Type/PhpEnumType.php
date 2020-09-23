@@ -117,4 +117,12 @@ class PhpEnumType extends Type
             static::registerEnumType($typeName, $enumClass);
         }
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function requiresSQLCommentHint(AbstractPlatform $platform)
+    {
+        return true;
+    }
 }
