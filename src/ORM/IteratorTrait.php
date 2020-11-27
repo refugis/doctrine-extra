@@ -44,7 +44,7 @@ trait IteratorTrait
                         continue;
                     }
 
-                    assert($parameter instanceof Parameter);
+                    \assert($parameter instanceof Parameter);
                     foreach ($mapping as $position) {
                         $dbalQb->setParameter($position, $parameter->getValue(), $parameter->getType());
                     }
