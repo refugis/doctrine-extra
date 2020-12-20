@@ -7,12 +7,15 @@ use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Refugis\DoctrineExtra\ORM\Type\PhpEnumType;
 use Refugis\DoctrineExtra\Tests\Fixtures\Enum\ActionEnum;
 use Refugis\DoctrineExtra\Tests\Fixtures\Enum\FoobarEnum;
 
 class PhpEnumTypeTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * {@inheritdoc}
      */

@@ -6,13 +6,12 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use MyCLabs\Enum\Enum;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class PhpEnumType extends Type
 {
     protected string $name = 'enum';
-
     protected string $enumClass = Enum::class;
-
     protected bool $multiple = false;
 
     /**

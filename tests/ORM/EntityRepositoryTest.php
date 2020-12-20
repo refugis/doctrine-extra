@@ -9,6 +9,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Refugis\DoctrineExtra\ORM\EntityIterator;
 use Refugis\DoctrineExtra\ORM\EntityRepository;
@@ -20,6 +21,7 @@ use Refugis\DoctrineExtra\Tests\Mock\ORM\Repository;
 class EntityRepositoryTest extends TestCase
 {
     use EntityManagerTrait;
+    use ProphecyTrait;
 
     private EntityRepository $repository;
 

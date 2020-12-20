@@ -2,6 +2,10 @@
 
 namespace Refugis\DoctrineExtra\DBAL;
 
+use Doctrine\DBAL\Driver\Exception;
+use Doctrine\DBAL\Driver\FetchUtils;
+use Doctrine\DBAL\Driver\Result;
+use Doctrine\DBAL\Driver\ResultStatement;
 use Doctrine\DBAL\Driver\Statement;
 use Doctrine\DBAL\FetchMode;
 use Doctrine\DBAL\ParameterType;
@@ -12,7 +16,7 @@ use Doctrine\DBAL\ParameterType;
  *
  * Use for testing purpose only.
  */
-class DummyStatement implements \IteratorAggregate, Statement
+class DummyStatement implements \IteratorAggregate, ResultStatement, Result
 {
     /**
      * @var mixed[]
@@ -81,12 +85,10 @@ class DummyStatement implements \IteratorAggregate, Statement
      */
     public function fetch($fetchMode = null, $cursorOrientation = \PDO::FETCH_ORI_NEXT, $cursorOffset = 0)
     {
-        if (! isset($this->data[$this->num])) {
+        $row = $this->doFetch();
+        if (! $row) {
             return false;
         }
-
-        $row = $this->data[$this->num++];
-        $fetchMode = $fetchMode ?: $this->defaultFetchMode;
 
         if (FetchMode::ASSOCIATIVE === $fetchMode) {
             return $row;
@@ -169,6 +171,71 @@ class DummyStatement implements \IteratorAggregate, Statement
         return $row[$columnIndex] ?? false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function fetchNumeric()
+    {
+        $row = $this->doFetch();
+
+        if ($row === false) {
+            return false;
+        }
+
+        return array_values($row);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fetchAssociative()
+    {
+        return $this->doFetch();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fetchOne()
+    {
+        $row = $this->doFetch();
+
+        if ($row === false) {
+            return false;
+        }
+
+        return reset($row);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fetchAllNumeric(): array
+    {
+        return FetchUtils::fetchAllNumeric($this);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fetchAllAssociative(): array
+    {
+        return FetchUtils::fetchAllAssociative($this);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fetchFirstColumn(): array
+    {
+        return FetchUtils::fetchFirstColumn($this);
+    }
+
+    public function free(): void
+    {
+        $this->data = [];
+    }
+
     public function bindValue($param, $value, $type = ParameterType::STRING)
     {
         // TODO
@@ -197,5 +264,17 @@ class DummyStatement implements \IteratorAggregate, Statement
     public function rowCount(): int
     {
         return \count($this->data);
+    }
+
+    /**
+     * @return mixed|false
+     */
+    private function doFetch()
+    {
+        if (! isset($this->data[$this->num])) {
+            return false;
+        }
+
+        return $this->data[$this->num++];
     }
 }

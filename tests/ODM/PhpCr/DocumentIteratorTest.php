@@ -8,6 +8,7 @@ use Doctrine\Persistence\Mapping\RuntimeReflectionService;
 use PHPCR\Util\UUIDHelper;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Refugis\DoctrineExtra\DBAL\DummyStatement;
 use Refugis\DoctrineExtra\ODM\PhpCr\DocumentIterator;
 use Refugis\DoctrineExtra\Tests\Fixtures\Document\PhpCr\FooBar;
@@ -29,6 +30,7 @@ class DocumentIteratorTest extends TestCase
 XML;
 
     use DocumentManagerTrait;
+    use ProphecyTrait;
 
     private DocumentIterator $iterator;
 

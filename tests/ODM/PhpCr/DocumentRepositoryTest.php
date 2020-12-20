@@ -8,6 +8,7 @@ use Doctrine\Persistence\Mapping\RuntimeReflectionService;
 use PHPCR\Util\UUIDHelper;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Refugis\DoctrineExtra\DBAL\DummyStatement;
 use Refugis\DoctrineExtra\Exception\NoResultExceptionInterface;
 use Refugis\DoctrineExtra\ODM\PhpCr\DocumentIterator;
@@ -32,6 +33,7 @@ class DocumentRepositoryTest extends TestCase
 XML;
 
     use DocumentManagerTrait;
+    use ProphecyTrait;
 
     private DocumentRepository $repository;
 

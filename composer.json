@@ -14,7 +14,7 @@
         }
     ],
     "require": {
-        "php": "^7.4",
+        "php": "^7.4|^8.0",
         "ext-json": "*",
         "ext-pdo": "*"
     },
@@ -30,7 +30,8 @@
         "jackalope/jackalope-doctrine-dbal": "*",
         "moneyphp/money": "^3.2",
         "myclabs/php-enum": "^1.6",
-        "phpunit/phpunit": "^8.0",
+        "phpspec/prophecy-phpunit": "^2.0",
+        "phpunit/phpunit": "^9.0",
         "symfony/cache": "^4.2|^5.0"
     },
     "autoload": {
@@ -45,8 +46,8 @@
         }
     },
     "conflict": {
-        "doctrine/orm": ">=2.8",
-        "doctrine/dbal": ">=2.11"
+        "doctrine/orm": ">=2.9",
+        "doctrine/dbal": "<2.10|>=4.0"
     },
     "config": {
         "sort-packages": true,

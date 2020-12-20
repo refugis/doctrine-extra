@@ -5,12 +5,15 @@ namespace Refugis\DoctrineExtra\Tests\ORM;
 use Doctrine\DBAL\Cache\ArrayStatement;
 use Doctrine\DBAL\Query\QueryBuilder;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Refugis\DoctrineExtra\DBAL\RowIterator;
 use Refugis\DoctrineExtra\Tests\Mock\ORM\EntityManagerTrait;
 
 class RowIteratorTest extends TestCase
 {
     use EntityManagerTrait;
+    use ProphecyTrait;
+
 
     private QueryBuilder $queryBuilder;
     private RowIterator $iterator;

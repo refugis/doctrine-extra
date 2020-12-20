@@ -7,10 +7,11 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\EventManager;
 use Doctrine\DBAL\DriverManager;
-use Doctrine\MongoDB as MongoDBODM;
+use Doctrine\ODM\MongoDB as MongoDBODM;
 use Doctrine\ORM;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Refugis\DoctrineExtra\EventListener\Timestampable\TimestampUpdater;
 use Refugis\DoctrineExtra\Tests\Fixtures\Entity\FooNonTimestampable;
 use Refugis\DoctrineExtra\Tests\Fixtures\Entity\FooTimestampable;
@@ -19,6 +20,8 @@ use Refugis\ODM\Elastica as ElasticaODM;
 
 class TimestampUpdaterTest extends TestCase
 {
+    use ProphecyTrait;
+
     private TimestampUpdater $listener;
 
     /**

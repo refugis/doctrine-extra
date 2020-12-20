@@ -7,6 +7,7 @@ use Doctrine\DBAL\Driver\Statement;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\QueryBuilder;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Refugis\DoctrineExtra\ORM\EntityIterator;
 use Refugis\DoctrineExtra\Tests\Fixtures\Entity\FooBar;
 use Refugis\DoctrineExtra\Tests\Fixtures\Entity\ForeignIdentifierEntity;
@@ -16,9 +17,10 @@ use Refugis\DoctrineExtra\Tests\Mock\ORM\EntityManagerTrait;
 class EntityIteratorTest extends TestCase
 {
     use EntityManagerTrait;
+    use ProphecyTrait;
+
 
     private QueryBuilder $queryBuilder;
-
     private EntityIterator $iterator;
 
     /**

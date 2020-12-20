@@ -8,10 +8,13 @@ use Doctrine\DBAL\Types\Type;
 use Money\Currency;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Refugis\DoctrineExtra\ORM\Type\MoneyCurrencyType;
 
 class MoneyCurrencyTypeTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * {@inheritdoc}
      */

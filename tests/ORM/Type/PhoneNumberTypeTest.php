@@ -8,10 +8,13 @@ use Doctrine\DBAL\Types\Type;
 use libphonenumber\PhoneNumber;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Refugis\DoctrineExtra\ORM\Type\PhoneNumberType;
 
 class PhoneNumberTypeTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * {@inheritdoc}
      */
