@@ -21,26 +21,19 @@ trait DocumentManagerTrait
     /**
      * @var Client|ObjectProphecy
      */
-    private object $client;
+    private ObjectProphecy $client;
 
     /**
      * @var Database|ObjectProphecy
      */
-    private object $database;
+    private ObjectProphecy $database;
 
     /**
      * @var Collection|ObjectProphecy
      */
-    private object $collection;
+    private ObjectProphecy $collection;
 
-    /**
-     * @var Connection
-     */
     private Connection $connection;
-
-    /**
-     * @var Configuration
-     */
     private Configuration $configuration;
 
     public function getDocumentManager(): DocumentManager
@@ -49,36 +42,26 @@ trait DocumentManagerTrait
             return $this->documentManager;
         }
 
-        $mongoDb = null;
-
         $server = $this->prophesize(\MongoClient::class);
         $server->getReadPreference()->willReturn(['type' => \MongoClient::RP_PRIMARY]);
         $server->getWriteConcern()->willReturn([
             'w' => 1,
             'wtimeout' => 5000,
         ]);
-        $server->selectDB('doctrine')->will(function ($args) use (&$mongoDb): \MongoDb {
-            [$dbName] = $args;
-            if (isset($mongoDb)) {
-                return $mongoDb;
-            }
 
-            $mongoDb = new \MongoDB($this->reveal(), $dbName);
-
-            return $mongoDb;
-        });
         $server->getClient()->willReturn($this->client = $this->prophesize(Client::class));
 
         $this->database = $this->prophesize(Database::class);
+        $this->database->withOptions(Argument::any())->willReturn($this->database);
         $this->client->selectDatabase('doctrine', Argument::any())->willReturn($this->database);
 
         $this->collection = $this->prophesize(Collection::class);
-        $this->client->selectCollection('doctrine', 'FooBar', Argument::any())->willReturn($this->collection);
         $this->database->selectCollection('FooBar', Argument::any())->willReturn($this->collection);
+        $this->collection->withOptions(Argument::any())->willReturn($this->collection);
 
-        $oldCollection = $this->prophesize(\MongoCollection::class);
-        $server->selectCollection(Argument::cetera())->willReturn($oldCollection);
-        $oldCollection->getCollection()->willReturn($this->collection);
+        $mongoDb = new \MongoDB($server->reveal(), 'doctrine');
+        $server->selectDB('doctrine')->willReturn($mongoDb);
+        $server->selectCollection('doctrine', 'FooBar')->willReturn(new \MongoCollection($mongoDb, 'FooBar'));
 
         $schemaManager = $this->prophesize(SchemaManager::class);
         $this->connection = new Connection($server->reveal());
@@ -88,7 +71,12 @@ trait DocumentManagerTrait
         $this->configuration->setHydratorNamespace('__TMP__\\HydratorNamespace');
         $this->configuration->setProxyDir(\sys_get_temp_dir());
         $this->configuration->setProxyNamespace('__TMP__\\ProxyNamespace');
-        $this->configuration->setDefaultRepositoryClassName(DocumentRepository::class);
+
+        if (\method_exists($this->configuration, 'setDefaultDocumentRepositoryClassName')) {
+            $this->configuration->setDefaultDocumentRepositoryClassName(DocumentRepository::class);
+        } else {
+            $this->configuration->setDefaultRepositoryClassName(DocumentRepository::class);
+        }
 
         $this->documentManager = DocumentManager::create($this->connection, $this->configuration);
 

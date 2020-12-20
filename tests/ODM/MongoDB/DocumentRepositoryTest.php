@@ -7,16 +7,20 @@ use Doctrine\ORM\NonUniqueResultException;
 use MongoDB\Model\BSONDocument;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Refugis\DoctrineExtra\Exception\NonUniqueResultExceptionInterface;
 use Refugis\DoctrineExtra\ODM\MongoDB\DocumentIterator;
 use Refugis\DoctrineExtra\ODM\MongoDB\DocumentRepository;
+use Refugis\DoctrineExtra\ODM\MongoDB\Exception\NoResultException;
 use Refugis\DoctrineExtra\Tests\Fixtures\Document\MongoDB\FooBar;
 use Refugis\DoctrineExtra\Tests\Mock\ODM\MongoDB\DocumentManagerTrait;
 use Refugis\DoctrineExtra\Tests\Mock\ODM\MongoDB\Repository;
+use MongoDB\BSON\Serializable;
 
 class DocumentRepositoryTest extends TestCase
 {
     use DocumentManagerTrait;
+    use ProphecyTrait;
 
     private DocumentRepository $repository;
 
@@ -25,7 +29,7 @@ class DocumentRepositoryTest extends TestCase
      */
     protected function setUp(): void
     {
-        if (! \class_exists('MongoDB\BSON\Serializable')) {
+        if (! \interface_exists(Serializable::class)) {
             self::markTestSkipped('Mongo extension not installed');
         }
 
@@ -109,7 +113,7 @@ class DocumentRepositoryTest extends TestCase
 
     public function testGetShouldThrowIfNoResultIsFound(): void
     {
-        $this->expectException(NonUniqueResultExceptionInterface::class);
+        $this->expectException(NoResultException::class);
 
         $this->collection
             ->find(new BSONDocument(['_id' => '5a3d346ab7f26e18ba119308']), Argument::any())
@@ -141,7 +145,7 @@ class DocumentRepositoryTest extends TestCase
 
     public function testGetOneByShouldThrowIfNoResultIsFound(): void
     {
-        $this->expectException(NonUniqueResultExceptionInterface::class);
+        $this->expectException(NoResultException::class);
 
         $this->collection
             ->find(new BSONDocument(['_id' => '5a3d346ab7f26e18ba119308']), Argument::any())

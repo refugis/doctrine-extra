@@ -23,7 +23,8 @@ jobs:
               uses: shivammathur/setup-php@v2
               with:
                   php-version: ${{ matrix.php_version }}
-                  extensions: :opcache,mongodb
+                  tools: pecl
+                  extensions: :opcache, mongodb
 
             - run: composer remove --no-update --dev roave/security-advisories solido/php-coding-standards
             - run: composer update --with-all-dependencies ${{ matrix.composer_flags }}

@@ -7,16 +7,18 @@ use Doctrine\ODM\MongoDB\Query\Builder;
 use MongoDB\Model\BSONDocument;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Refugis\DoctrineExtra\ODM\MongoDB\DocumentIterator;
 use Refugis\DoctrineExtra\Tests\Fixtures\Document\MongoDB\FooBar;
 use Refugis\DoctrineExtra\Tests\Mock\ODM\MongoDB\DocumentManagerTrait;
+use MongoDB\BSON\Serializable;
 
 class DocumentIteratorTest extends TestCase
 {
     use DocumentManagerTrait;
+    use ProphecyTrait;
 
     private Builder $builder;
-
     private DocumentIterator $iterator;
 
     /**
@@ -24,7 +26,7 @@ class DocumentIteratorTest extends TestCase
      */
     protected function setUp(): void
     {
-        if (! \class_exists('MongoDB\BSON\Serializable')) {
+        if (! \interface_exists(Serializable::class)) {
             self::markTestSkipped('Mongo extension not installed');
         }
 
@@ -52,21 +54,18 @@ class DocumentIteratorTest extends TestCase
 
     public function testCountShouldExecuteACountQuery(): void
     {
-        $this->database
-            ->command(new BSONDocument([
-                'count' => 'FooBar',
-                'query' => new BSONDocument(),
-                'limit' => 0,
-                'skip' => 0,
-            ]), Argument::any())
-            ->willReturn(new \ArrayIterator([
-                [
-                    'n' => 42,
-                    'query' => (object) [],
-                    'ok' => true,
-                ],
-            ]))
-        ;
+        $this->database->command(new BSONDocument([
+            'count' => 'FooBar',
+            'query' => new BSONDocument(),
+            'limit' => 0,
+            'skip' => 0,
+        ]), Argument::any())->willReturn(new \ArrayIterator([
+            [
+                'n' => 42,
+                'query' => (object) [],
+                'ok' => true,
+            ],
+        ]));
 
         self::assertCount(42, $this->iterator);
     }
@@ -76,26 +75,25 @@ class DocumentIteratorTest extends TestCase
         $this->collection->find([], Argument::any())
             ->willReturn(new \ArrayIterator([
                 [
-                    '_id' => 42,
-                    'id' => 42,
+                    '_id' => '42',
+                    'id' => '42',
                 ],
                 [
-                    '_id' => 45,
-                    'id' => 45,
+                    '_id' => '45',
+                    'id' => '45',
                 ],
                 [
-                    '_id' => 48,
-                    'id' => 48,
+                    '_id' => '48',
+                    'id' => '48',
                 ],
-            ]))
-        ;
+            ]));
 
         $obj1 = new FooBar();
-        $obj1->id = 42;
+        $obj1->id = '42';
         $obj2 = new FooBar();
-        $obj2->id = 45;
+        $obj2->id = '45';
         $obj3 = new FooBar();
-        $obj3->id = 48;
+        $obj3->id = '48';
 
         self::assertEquals([$obj1, $obj2, $obj3], \iterator_to_array($this->iterator));
     }
@@ -105,28 +103,28 @@ class DocumentIteratorTest extends TestCase
         $this->collection->find([], Argument::any())
             ->willReturn(new \ArrayIterator([
                 [
-                    '_id' => 42,
-                    'id' => 42,
+                    '_id' => '42',
+                    'id' => '42',
                 ],
                 [
-                    '_id' => 45,
-                    'id' => 45,
+                    '_id' => '45',
+                    'id' => '45',
                 ],
                 [
-                    '_id' => 48,
-                    'id' => 48,
+                    '_id' => '48',
+                    'id' => '48',
                 ],
             ]))
         ;
 
         $calledCount = 0;
-        $this->iterator->apply(function (FooBar $bar) use (&$calledCount): int {
+        $this->iterator->apply(function (FooBar $bar) use (&$calledCount): string {
             ++$calledCount;
 
             return $bar->id;
         });
 
-        self::assertEquals([42, 45, 48], \iterator_to_array($this->iterator));
+        self::assertEquals(['42', '45', '48'], \iterator_to_array($this->iterator));
         self::assertEquals(3, $calledCount);
     }
 }

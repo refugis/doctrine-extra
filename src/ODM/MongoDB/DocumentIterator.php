@@ -24,11 +24,9 @@ class DocumentIterator implements ObjectIteratorInterface
     public function __construct(Builder $queryBuilder)
     {
         $this->queryBuilder = clone $queryBuilder;
-        $this->internalIterator = $this->queryBuilder->getQuery()->getIterator();
         $this->totalCount = null;
 
         $this->apply();
-        $this->currentElement = $this->internalIterator->current()[0];
     }
 
     public function count(): int
@@ -46,7 +44,7 @@ class DocumentIterator implements ObjectIteratorInterface
 
     public function next(): void
     {
-        $this->internalIterator->next();
+        $this->getIterator()->next();
 
         $this->current = null;
         $this->currentElement = $this->internalIterator->current();
@@ -56,18 +54,33 @@ class DocumentIterator implements ObjectIteratorInterface
 
     public function key(): int
     {
-        return $this->internalIterator->key();
+        return $this->getIterator()->key();
     }
 
     public function valid(): bool
     {
-        return $this->internalIterator->valid();
+        return $this->getIterator()->valid();
     }
 
     public function rewind(): void
     {
         $this->current = null;
-        $this->internalIterator->rewind();
+        $this->getIterator()->rewind();
         $this->currentElement = $this->internalIterator->current();
+    }
+
+    private function getIterator(): \Iterator
+    {
+        if (isset($this->internalIterator)) {
+            return $this->internalIterator;
+        }
+
+        $this->internalIterator = $this->queryBuilder->getQuery()->getIterator();
+        assert($this->internalIterator instanceof Iterator);
+
+        $this->internalIterator->next();
+        $this->currentElement = $this->internalIterator->current();
+
+        return $this->internalIterator;
     }
 }
