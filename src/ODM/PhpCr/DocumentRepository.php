@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra\ODM\PhpCr;
 
@@ -10,11 +12,15 @@ use PHPCR\Query\QueryResultInterface;
 use Refugis\DoctrineExtra\ObjectIteratorInterface;
 use Refugis\DoctrineExtra\ObjectRepositoryInterface;
 
+use function assert;
+use function count;
+use function is_array;
+use function iterator_to_array;
+use function Safe\sprintf;
+use function strtolower;
+
 class DocumentRepository extends BaseRepository implements ObjectRepositoryInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function all(): ObjectIteratorInterface
     {
         return new DocumentIterator($this->createQueryBuilder('a'));
@@ -25,19 +31,28 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
      */
     public function count(array $criteria = []): int
     {
-        /** @var QueryResultInterface $result */
         $result = $this->buildQueryBuilderForCriteria($criteria)
              ->getQuery()
-             ->getResult(Query::HYDRATE_PHPCR)
-        ;
+             ->getResult(Query::HYDRATE_PHPCR);
 
-        return \count(\iterator_to_array($result->getRows(), false));
+        /* @phpstan-ignore-next-line */
+        assert($result instanceof QueryResultInterface);
+
+        return count(iterator_to_array($result->getRows(), false));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function findOneByCached(array $criteria, ?array $orderBy = null, int $ttl = 28800)
+    public function find($id): ?object
+    {
+        return parent::find($id);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function findOneByCached(array $criteria, ?array $orderBy = null, int $ttl = 28800): ?object
     {
         $query = $this->buildQueryBuilderForCriteria($criteria, $orderBy);
         $query->setMaxResults(1);
@@ -57,7 +72,7 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
         ?int $limit = null,
         ?int $offset = null,
         int $ttl = 28800
-    ) {
+    ): iterable {
         $query = $this->buildQueryBuilderForCriteria($criteria, $orderBy);
 
         // This is commented due to the missing cache part in doctrine/phpcr-odm
@@ -69,27 +84,27 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
     /**
      * {@inheritdoc}
      */
-    public function get($id, $lockMode = null, $lockVersion = null)
+    public function get($id, $lockMode = null, $lockVersion = null): object
     {
-        $entity = $this->find($id);
-        if (null === $entity) {
+        $document = $this->find($id);
+        if ($document === null) {
             throw new Exception\NoResultException();
         }
 
-        return $entity;
+        return $document;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getOneBy(array $criteria, ?array $orderBy = null)
+    public function getOneBy(array $criteria, ?array $orderBy = null): object
     {
         $query = $this->buildQueryBuilderForCriteria($criteria, $orderBy);
         $query->setMaxResults(1);
 
         $object = $query->getQuery()->getOneOrNullResult();
 
-        if (null === $object) {
+        if ($object === null) {
             throw new Exception\NoResultException();
         }
 
@@ -99,7 +114,7 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
     /**
      * {@inheritdoc}
      */
-    public function getOneByCached(array $criteria, ?array $orderBy = null, int $ttl = 28800)
+    public function getOneByCached(array $criteria, ?array $orderBy = null, int $ttl = 28800): object
     {
         $query = $this->buildQueryBuilderForCriteria($criteria, $orderBy);
         $query->setMaxResults(1);
@@ -107,7 +122,7 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
 
         $object = $query->getQuery()->getOneOrNullResult();
 
-        if (null === $object) {
+        if ($object === null) {
             throw new Exception\NoResultException();
         }
 
@@ -116,42 +131,47 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
 
     /**
      * Builds a query builder for find operations.
+     *
+     * @param array<string, mixed> $criteria
+     * @param array<string, string> $orderBy
      */
     private function buildQueryBuilderForCriteria(array $criteria, ?array $orderBy = null): QueryBuilder
     {
         $qb = $this->createQueryBuilder('a');
-        if (0 === \count($criteria)) {
+        if (count($criteria) === 0) {
             return $qb;
         }
 
         $whereOp = $qb->where();
         foreach ($criteria as $key => $value) {
-            if (\is_array($value)) {
+            if (is_array($value)) {
                 $orOp = $whereOp->orX();
                 foreach ($value as $v) {
-                    $orOp->eq()->field('a.'.$key)->literal($v);
+                    /* @phpstan-ignore-next-line */
+                    $orOp->eq()->field('a.' . $key)->literal($v);
                 }
             } else {
-                $whereOp->eq()->field('a.'.$key)->literal($value);
+                /* @phpstan-ignore-next-line */
+                $whereOp->eq()->field('a.' . $key)->literal($value);
             }
         }
 
-        if (null !== $orderBy) {
+        if ($orderBy !== null) {
             $orderOp = $qb->orderBy();
             foreach ($orderBy as $field => $direction) {
-                switch (\strtolower($direction)) {
+                switch (strtolower($direction)) {
                     case 'asc':
                     case '1':
-                        $orderOp->asc()->field('a.'.$field);
+                        $orderOp->asc()->field('a.' . $field);
                         break;
 
                     case 'desc':
                     case '-1':
-                        $orderOp->desc()->field('a.'.$field);
+                        $orderOp->desc()->field('a.' . $field);
                         break;
 
                     default:
-                        throw new RuntimeException(\sprintf('Unknown order direction "%s". Must be one of "asc", "desc", "1" or "-1".', $direction));
+                        throw new RuntimeException(sprintf('Unknown order direction "%s". Must be one of "asc", "desc", "1" or "-1".', $direction));
                 }
             }
         }

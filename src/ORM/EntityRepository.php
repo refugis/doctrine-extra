@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra\ORM;
 
@@ -10,11 +12,14 @@ use Doctrine\ORM\QueryBuilder;
 use Refugis\DoctrineExtra\ObjectIteratorInterface;
 use Refugis\DoctrineExtra\ObjectRepositoryInterface;
 
+use function func_get_args;
+use function is_array;
+use function method_exists;
+use function serialize;
+use function sha1;
+
 class EntityRepository extends BaseRepository implements ObjectRepositoryInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function all(): ObjectIteratorInterface
     {
         return new EntityIterator($this->createQueryBuilder('a'));
@@ -28,8 +33,7 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
         return (int) $this->buildQueryBuilderForCriteria($criteria)
             ->select('COUNT(a)')
             ->getQuery()
-            ->getSingleScalarResult()
-        ;
+            ->getSingleScalarResult();
     }
 
     /**
@@ -39,11 +43,17 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
     {
         $query = $this->buildQueryForFind($criteria, $orderBy);
         $query->setMaxResults(1);
-        $query->useResultCache(true, $ttl, '__'.static::class.'::'.__FUNCTION__.\sha1(\serialize(\func_get_args())));
+
+        $cacheKey = '__' . static::class . '::' . __FUNCTION__ . sha1(serialize(func_get_args()));
+        if (method_exists($query, 'enableResultCache')) {
+            $query->enableResultCache($ttl, $cacheKey);
+        } else {
+            $query->useResultCache(true, $ttl, $cacheKey);
+        }
 
         try {
             return $query->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
+        } catch (NonUniqueResultException $e) { /* @phpstan-ignore-line */
             throw new Exception\NonUniqueResultException($e->getMessage());
         }
     }
@@ -59,15 +69,20 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
         int $ttl = 28800
     ) {
         $query = $this->buildQueryForFind($criteria, $orderBy);
-        if (null !== $limit) {
+        if ($limit !== null) {
             $query->setMaxResults($limit);
         }
 
-        if (null !== $offset) {
+        if ($offset !== null) {
             $query->setFirstResult($offset);
         }
 
-        $query->useResultCache(true, $ttl, '__'.static::class.'::'.__FUNCTION__.\sha1(\serialize(\func_get_args())));
+        $cacheKey = '__' . static::class . '::' . __FUNCTION__ . sha1(serialize(func_get_args()));
+        if (method_exists($query, 'enableResultCache')) {
+            $query->enableResultCache($ttl, $cacheKey);
+        } else {
+            $query->useResultCache(true, $ttl, $cacheKey);
+        }
 
         return $query->getResult();
     }
@@ -78,8 +93,7 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
     public function get($id, $lockMode = null, $lockVersion = null)
     {
         $entity = $this->find($id, $lockMode, $lockVersion);
-
-        if (null === $entity) {
+        if ($entity === null) {
             throw new Exception\NoResultException();
         }
 
@@ -92,8 +106,7 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
     public function getOneBy(array $criteria, ?array $orderBy = null)
     {
         $entity = $this->findOneBy($criteria, $orderBy);
-
-        if (null === $entity) {
+        if ($entity === null) {
             throw new Exception\NoResultException();
         }
 
@@ -107,19 +120,28 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
     {
         $query = $this->buildQueryForFind($criteria, $orderBy);
         $query->setMaxResults(1);
-        $query->useResultCache(true, $ttl, '__'.static::class.'::'.__FUNCTION__.\sha1(\serialize(\func_get_args())));
+
+        $cacheKey = '__' . static::class . '::' . __FUNCTION__ . sha1(serialize(func_get_args()));
+        if (method_exists($query, 'enableResultCache')) {
+            $query->enableResultCache($ttl, $cacheKey);
+        } else {
+            $query->useResultCache(true, $ttl, $cacheKey);
+        }
 
         try {
             return $query->getSingleResult();
-        } catch (NonUniqueResultException $e) {
+        } catch (NonUniqueResultException $e) { /* @phpstan-ignore-line */
             throw new Exception\NonUniqueResultException($e->getMessage());
-        } catch (NoResultException $e) {
+        } catch (NoResultException $e) { /* @phpstan-ignore-line */
             throw new Exception\NoResultException();
         }
     }
 
     /**
      * Builds a query for find method.
+     *
+     * @param array<string, mixed> $criteria
+     * @param array<string, string>|null $orderBy
      */
     private function buildQueryForFind(array $criteria, ?array $orderBy = null): Query
     {
@@ -128,15 +150,18 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
 
     /**
      * Builds a query builder for find operations.
+     *
+     * @param array<string, mixed> $criteria
+     * @param array<string, string>|null $orderBy
      */
     private function buildQueryBuilderForCriteria(array $criteria, ?array $orderBy = null): QueryBuilder
     {
         $qb = $this->createQueryBuilder('a');
         $and = $qb->expr()->andX();
         foreach ($criteria as $key => $value) {
-            $condition = \is_array($value) ?
-                $qb->expr()->in("a.$key", ":$key") :
-                $qb->expr()->eq("a.$key", ":$key");
+            $condition = is_array($value) ?
+                $qb->expr()->in('a.' . $key, ':' . $key) :
+                $qb->expr()->eq('a.' . $key, ':' . $key);
             $and->add($condition);
 
             $qb->setParameter($key, $value);
@@ -146,9 +171,9 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
             $qb->where($and);
         }
 
-        if (null !== $orderBy) {
+        if ($orderBy !== null) {
             foreach ($orderBy as $fieldName => $orientation) {
-                $qb->addOrderBy("a.$fieldName", $orientation);
+                $qb->addOrderBy('a.' . $fieldName, $orientation);
             }
         }
 

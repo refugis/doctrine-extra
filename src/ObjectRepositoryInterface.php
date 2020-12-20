@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra;
 
@@ -15,22 +17,30 @@ interface ObjectRepositoryInterface extends BaseRepository
 
     /**
      * Counts entities by a set of criteria.
+     *
+     * @param array<string, mixed> $criteria
      */
     public function count(array $criteria = []): int;
 
     /**
      * Finds a single object by a set of criteria and cache the result for next calls.
      *
+     * @param array<string, mixed> $criteria
+     * @param array<string, string>|null $orderBy
+     *
      * @return object|null the entity instance or NULL if the entity can not be found
      *
      * @throws NonUniqueResultExceptionInterface
      */
-    public function findOneByCached(array $criteria, array $orderBy = null, int $ttl = 28800);
+    public function findOneByCached(array $criteria, ?array $orderBy = null, int $ttl = 28800);
 
     /**
      * Finds objects by a set of criteria and cache the result for next calls.
      *
-     * @return array The objects
+     * @param array<string, mixed> $criteria
+     * @param array<string, string>|null $orderBy
+     *
+     * @return array<object> The objects
      */
     public function findByCached(
         array $criteria,
@@ -57,6 +67,9 @@ interface ObjectRepositoryInterface extends BaseRepository
     /**
      * Finds a single object by a set of criteria and cache the result for next calls.
      *
+     * @param array<string, mixed> $criteria
+     * @param array<string, string>|null $orderBy
+     *
      * @return object
      *
      * @throws NoResultExceptionInterface
@@ -67,6 +80,9 @@ interface ObjectRepositoryInterface extends BaseRepository
     /**
      * Finds a single object by a set of criteria and cache the result for next calls.
      * Throws an exception if the object cannot be found.
+     *
+     * @param array<string, mixed> $criteria
+     * @param array<string, string>|null $orderBy
      *
      * @return object
      *

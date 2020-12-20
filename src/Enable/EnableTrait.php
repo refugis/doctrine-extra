@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra\Enable;
 
@@ -7,17 +9,11 @@ namespace Refugis\DoctrineExtra\Enable;
  */
 trait EnableTrait
 {
-    /**
-     * {@inheritdoc}
-     */
     public function isEnabled(): bool
     {
         return $this->enabled;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function enable(): EnableInterface
     {
         $this->enabled = true;
@@ -25,9 +21,6 @@ trait EnableTrait
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function disable(): EnableInterface
     {
         $this->enabled = false;

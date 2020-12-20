@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra\ORM\DQL;
 
@@ -9,9 +11,6 @@ use Doctrine\ORM\Query\SqlWalker;
 
 class Rand extends FunctionNode
 {
-    /**
-     * {@inheritdoc}
-     */
     public function parse(Parser $parser): void
     {
         $parser->match(Lexer::T_IDENTIFIER);
@@ -19,9 +18,6 @@ class Rand extends FunctionNode
         $parser->match(Lexer::T_CLOSE_PARENTHESIS);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSql(SqlWalker $sqlWalker): string
     {
         return 'RAND()';

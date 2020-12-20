@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\QueryBuilder;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Refugis\DoctrineExtra\DBAL\DummyStatement;
 use Refugis\DoctrineExtra\ORM\EntityIterator;
 use Refugis\DoctrineExtra\Tests\Fixtures\Entity\FooBar;
 use Refugis\DoctrineExtra\Tests\Fixtures\Entity\ForeignIdentifierEntity;
@@ -49,7 +50,7 @@ class EntityIteratorTest extends TestCase
 
         $this->innerConnection
             ->query('SELECT f0_.id AS id_0 FROM FooBar f0_')
-            ->willReturn(new ArrayStatement([
+            ->willReturn(new DummyStatement([
                 ['id_0' => '42'],
                 ['id_0' => '45'],
                 ['id_0' => '48'],
@@ -88,7 +89,7 @@ class EntityIteratorTest extends TestCase
     {
         $this->innerConnection
             ->query('SELECT COUNT(f0_.id) AS sclr_0 FROM FooBar f0_')
-            ->willReturn(new ArrayStatement([
+            ->willReturn(new DummyStatement([
                 ['sclr_0' => '42'],
             ]))
         ;
@@ -106,7 +107,7 @@ class EntityIteratorTest extends TestCase
 
         $this->innerConnection
             ->query('SELECT f0_.id AS id_0 FROM FooBar f0_ OFFSET 1')
-            ->willReturn(new ArrayStatement([
+            ->willReturn(new DummyStatement([
                 ['id_0' => '42'],
                 ['id_0' => '45'],
                 ['id_0' => '48'],
@@ -114,7 +115,7 @@ class EntityIteratorTest extends TestCase
 
         $this->innerConnection
             ->query('SELECT COUNT(f0_.id) AS sclr_0 FROM FooBar f0_')
-            ->willReturn(new ArrayStatement([
+            ->willReturn(new DummyStatement([
                 ['sclr_0' => '42'],
             ]))
         ;
@@ -143,7 +144,7 @@ class EntityIteratorTest extends TestCase
 
         $this->innerConnection
             ->query('SELECT f0_.id AS id_0 FROM ForeignIdentifierEntity f0_ OFFSET 1')
-            ->willReturn(new ArrayStatement([
+            ->willReturn(new DummyStatement([
                 ['id_0' => '42'],
                 ['id_0' => '45'],
                 ['id_0' => '48'],
@@ -151,7 +152,7 @@ class EntityIteratorTest extends TestCase
 
         $this->innerConnection
             ->query('SELECT COUNT(f0_.id) AS sclr_0 FROM ForeignIdentifierEntity f0_')
-            ->willReturn(new ArrayStatement([
+            ->willReturn(new DummyStatement([
                 ['sclr_0' => '42'],
             ]))
             ->shouldBeCalled()
@@ -194,7 +195,7 @@ class EntityIteratorTest extends TestCase
         $this->iterator = new EntityIterator($queryBuilder);
         $this->innerConnection
             ->query('SELECT COUNT(*) FROM (SELECT f0_.id AS id_0 FROM FooBar f0_ GROUP BY f0_.id) scrl_c_0')
-            ->willReturn(new ArrayStatement([
+            ->willReturn(new DummyStatement([
                 ['count' => '4'],
             ]));
 
@@ -220,7 +221,7 @@ class EntityIteratorTest extends TestCase
 
         $queryBuilder = $this->getEntityManager()->createQueryBuilder();
         $queryBuilder->select('a')
-                     ->from(TestEntity::class, 'a')
+            ->from(TestEntity::class, 'a')
         ;
 
         $this->innerConnection

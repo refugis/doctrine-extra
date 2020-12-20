@@ -1,7 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra\ODM\MongoDB\Document;
 
+use DateTimeImmutable;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Refugis\DoctrineExtra\TimeSpan\TimeSpanTrait;
 
@@ -12,13 +15,9 @@ class TimeSpan
 {
     use TimeSpanTrait;
 
-    /**
-     * @ODM\Field(type="date")
-     */
-    private ?\DateTimeImmutable $start;
+    /** @ODM\Field(type="date") */
+    private ?DateTimeImmutable $start; // phpcs:ignore SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedProperty
 
-    /**
-     * @ODM\Field(type="date")
-     */
-    private ?\DateTimeImmutable $end;
+    /** @ODM\Field(type="date") */
+    private ?DateTimeImmutable $end; // phpcs:ignore SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedProperty
 }

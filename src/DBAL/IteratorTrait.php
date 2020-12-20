@@ -1,9 +1,15 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra\DBAL;
 
+use Doctrine\DBAL\Driver\ResultStatement;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Refugis\DoctrineExtra\IteratorTrait as BaseIteratorTrait;
+
+use function assert;
+use function method_exists;
 
 trait IteratorTrait
 {
@@ -12,19 +18,21 @@ trait IteratorTrait
     private QueryBuilder $queryBuilder;
     private ?int $totalCount;
 
-    /**
-     * {@inheritdoc}
-     */
     public function count(): int
     {
-        if (null === $this->totalCount) {
+        if ($this->totalCount === null) {
             $queryBuilder = clone $this->queryBuilder;
-
-            $this->totalCount = (int) $queryBuilder->select('COUNT(*) AS sclr_0')
-                ->setFirstResult(null)
+            $stmt = $queryBuilder->select('COUNT(*) AS sclr_0')
+                ->setFirstResult(0)
                 ->setMaxResults(null)
-                ->execute()->fetchColumn()
-            ;
+                ->execute();
+
+            assert($stmt instanceof ResultStatement);
+            if (method_exists($stmt, 'fetchOne')) {
+                $this->totalCount = (int) $stmt->fetchOne();
+            } else {
+                $this->totalCount = (int) $stmt->fetchColumn();
+            }
         }
 
         return $this->totalCount;

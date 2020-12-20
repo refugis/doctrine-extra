@@ -1,10 +1,19 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra\ORM;
 
-use Doctrine\ORM\Internal\Hydration\IterableResult;
 use Doctrine\ORM\QueryBuilder;
+use Generator;
+use InvalidArgumentException;
+use Iterator;
 use Refugis\DoctrineExtra\ObjectIteratorInterface;
+
+use function assert;
+use function count;
+use function is_array;
+use function method_exists;
 
 /**
  * This class allows iterating a query iterator for a single entity query.
@@ -15,50 +24,47 @@ class EntityIterator implements ObjectIteratorInterface
         current as private iteratorCurrent;
     }
 
-    private ?IterableResult $internalIterator;
-
+    /** @var Iterator<(false|array<object>|object|null)> */
+    private Iterator $internalIterator;
     private ?string $resultCache;
-
     private int $cacheLifetime;
 
     public function __construct(QueryBuilder $queryBuilder)
     {
-        if (1 !== \count($queryBuilder->getRootAliases())) {
-            throw new \InvalidArgumentException('QueryBuilder must have exactly one root aliases for the iterator to work.');
+        if (count($queryBuilder->getRootAliases()) !== 1) {
+            throw new InvalidArgumentException('QueryBuilder must have exactly one root aliases for the iterator to work.');
         }
 
         $this->queryBuilder = clone $queryBuilder;
-        $this->internalIterator = null;
         $this->resultCache = null;
         $this->totalCount = null;
 
         $this->apply();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function next()
+    public function next(): void
     {
         $this->current = null;
 
-        $next = $this->getIterator()->next();
-        $this->currentElement = false !== $next ? $next[0] : null;
+        $this->getIterator()->next();
+        $next = $this->getIterator()->current();
 
-        return $this->current();
+        if ($next === false) {
+            $this->currentElement = null;
+        } elseif (is_array($next)) {
+            $this->currentElement = $next[0] ?? null;
+        } else {
+            $this->currentElement = $next;
+        }
+
+        $this->current();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function key()
+    public function key(): int
     {
         return $this->getIterator()->key();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function valid(): bool
     {
         return $this->getIterator()->valid();
@@ -66,6 +72,8 @@ class EntityIterator implements ObjectIteratorInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @return mixed
      */
     public function current()
     {
@@ -74,9 +82,6 @@ class EntityIterator implements ObjectIteratorInterface
         return $this->iteratorCurrent();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function rewind(): void
     {
         $this->current = null;
@@ -98,42 +103,63 @@ class EntityIterator implements ObjectIteratorInterface
         }
 
         $this->resultCache = $cacheId;
-        $this->cacheLifetime = $lifetime;
+        $this->cacheLifetime = $lifetime ?? 0;
 
         return $this;
     }
 
     /**
      * Gets the iterator.
+     *
+     * @return Iterator<false|array<object>|object>
      */
-    private function getIterator(): IterableResult
+    private function getIterator(): Iterator
     {
-        if (null !== $this->internalIterator) {
+        if (isset($this->internalIterator)) {
             return $this->internalIterator;
         }
 
         $query = $this->queryBuilder->getQuery();
-        if (null !== $this->resultCache) {
-            if (\method_exists($query, 'enableResultCache')) {
+        if ($this->resultCache !== null) {
+            if (method_exists($query, 'enableResultCache')) {
                 $query->enableResultCache($this->cacheLifetime, $this->resultCache);
             } else {
                 $query->useResultCache(true, $this->cacheLifetime, $this->resultCache);
             }
+
+            $iterator = $query->iterate();
+        } else {
+            $iterator = method_exists($query, 'toIterable') ? $query->toIterable() : $query->iterate();
         }
 
-        $this->internalIterator = $query->iterate();
+        if (! $iterator instanceof Iterator) {
+            $iterator = (static function (iterable $iterable): Generator {
+                yield from $iterable;
+            })($iterator);
+        }
+
+        $this->internalIterator = $iterator;
         $this->currentElement = $this->getCurrentElement();
 
         return $this->internalIterator;
     }
 
+    /**
+     * @return mixed|null
+     */
     private function getCurrentElement()
     {
+        assert($this->internalIterator !== null);
+
         $current = $this->internalIterator->current();
-        if (null === $current) {
+        if ($current === null) {
             return $current;
         }
 
-        return $current[0] ?? null;
+        if (is_array($current)) {
+            return $current[0] ?? null;
+        }
+
+        return $current;
     }
 }

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra\ORM\Metadata;
 
@@ -10,9 +12,6 @@ class ClassMetadataFactory extends Base
 {
     private EntityManagerInterface $entityManager;
 
-    /**
-     * {@inheritdoc}
-     */
     public function setEntityManager(EntityManagerInterface $entityManager): void
     {
         $this->entityManager = $entityManager;

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra\ORM\DQL;
 
@@ -17,12 +19,8 @@ use Doctrine\ORM\Query\SqlWalker;
 class RegExp extends FunctionNode
 {
     public Node $value;
-
     public Node $regExp;
 
-    /**
-     * {@inheritdoc}
-     */
     public function parse(Parser $parser): void
     {
         $parser->match(Lexer::T_IDENTIFIER);
@@ -32,16 +30,14 @@ class RegExp extends FunctionNode
 
         $parser->match(Lexer::T_COMMA);
 
+        /* @phpstan-ignore-next-line */
         $this->regExp = $parser->StringExpression();
 
         $parser->match(Lexer::T_CLOSE_PARENTHESIS);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSql(SqlWalker $sqlWalker): string
     {
-        return '('.$this->value->dispatch($sqlWalker).' REGEXP '.$this->regExp->dispatch($sqlWalker).')';
+        return '(' . $this->value->dispatch($sqlWalker) . ' REGEXP ' . $this->regExp->dispatch($sqlWalker) . ')';
     }
 }

@@ -14,7 +14,6 @@ class RowIteratorTest extends TestCase
     use EntityManagerTrait;
     use ProphecyTrait;
 
-
     private QueryBuilder $queryBuilder;
     private RowIterator $iterator;
 

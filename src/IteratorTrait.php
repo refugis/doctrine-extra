@@ -1,13 +1,17 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra;
+
+use function call_user_func;
 
 trait IteratorTrait
 {
     /**
      * A function to be applied to each element while iterating.
      *
-     * @var callable|null
+     * @var callable
      */
     private $callable;
 
@@ -26,12 +30,9 @@ trait IteratorTrait
      */
     private $current;
 
-    /**
-     * {@inheritdoc}
-     */
     public function apply(?callable $callable = null): ObjectIteratorInterface
     {
-        if (null === $callable) {
+        if ($callable === null) {
             $callable = static function ($val) {
                 return $val;
             };
@@ -45,6 +46,8 @@ trait IteratorTrait
 
     /**
      * {@inheritdoc}
+     *
+     * @return mixed
      */
     public function current()
     {
@@ -52,8 +55,8 @@ trait IteratorTrait
             return null;
         }
 
-        if (null === $this->current) {
-            $this->current = \call_user_func($this->callable, $this->currentElement);
+        if ($this->current === null) {
+            $this->current = call_user_func($this->callable, $this->currentElement);
         }
 
         return $this->current;

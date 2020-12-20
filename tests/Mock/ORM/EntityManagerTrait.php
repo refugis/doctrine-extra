@@ -20,14 +20,12 @@ use Refugis\DoctrineExtra\Tests\Mock\Platform;
 trait EntityManagerTrait
 {
     private ?EntityManagerInterface $entityManager = null;
-
     private Connection $connection;
 
     /**
      * @var DriverConnection|ObjectProphecy
      */
-    private object $innerConnection;
-
+    private ObjectProphecy $innerConnection;
     private Configuration $configuration;
 
     public function getEntityManager(): EntityManagerInterface

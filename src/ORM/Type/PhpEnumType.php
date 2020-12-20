@@ -1,12 +1,24 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra\ORM\Type;
 
+use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
+use InvalidArgumentException;
 use MyCLabs\Enum\Enum;
-use Prophecy\PhpUnit\ProphecyTrait;
+
+use function array_map;
+use function assert;
+use function is_string;
+use function is_subclass_of;
+use function json_decode;
+use function json_encode;
+
+use const JSON_THROW_ON_ERROR;
 
 class PhpEnumType extends Type
 {
@@ -14,9 +26,6 @@ class PhpEnumType extends Type
     protected string $enumClass = Enum::class;
     protected bool $multiple = false;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName(): string
     {
         return $this->name;
@@ -39,7 +48,7 @@ class PhpEnumType extends Type
      */
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
-        if (null === $value || '' === $value) {
+        if ($value === null || $value === '') {
             return null;
         }
 
@@ -55,7 +64,7 @@ class PhpEnumType extends Type
             return $valueToEnumConverter($value);
         }
 
-        return \array_map($valueToEnumConverter, \json_decode($value, true));
+        return array_map($valueToEnumConverter, json_decode($value, true, 512, JSON_THROW_ON_ERROR));
     }
 
     /**
@@ -63,7 +72,7 @@ class PhpEnumType extends Type
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
-        if (null === $value) {
+        if ($value === null) {
             return null;
         }
 
@@ -79,40 +88,53 @@ class PhpEnumType extends Type
             return $enumToValueConverter($value);
         }
 
-        return \json_encode(\array_map($enumToValueConverter, $value));
+        return json_encode(array_map($enumToValueConverter, $value), JSON_THROW_ON_ERROR);
     }
 
-    public static function registerEnumType($typeNameOrEnumClass, $enumClass = null): void
+    /**
+     * @throws Exception
+     *
+     * @phpstan-param string|class-string<Enum> $typeNameOrEnumClass
+     * @phpstan-param class-string<Enum>|null $enumClass
+     */
+    public static function registerEnumType(string $typeNameOrEnumClass, ?string $enumClass = null): void
     {
         $typeName = $typeNameOrEnumClass;
-        $enumClass = $enumClass ?? $typeNameOrEnumClass;
+        $enumClass ??= $typeNameOrEnumClass;
 
-        if (! \is_subclass_of($enumClass, Enum::class)) {
-            throw new \InvalidArgumentException('Provided enum class "'.$enumClass.'" is not valid. Enums must extend "'.Enum::class.'"');
+        if (! is_subclass_of($enumClass, Enum::class)) {
+            throw new InvalidArgumentException('Provided enum class "' . $enumClass . '" is not valid. Enums must extend "' . Enum::class . '"');
         }
 
         // Register and customize the type
         self::addType($typeName, static::class);
 
-        /** @var PhpEnumType $type */
         $type = self::getType($typeName);
+        assert($type instanceof PhpEnumType);
+
         $type->name = $typeName;
         $type->enumClass = $enumClass;
 
-        $multipleEnumType = "array<$typeName>";
+        $multipleEnumType = 'array<' . $typeName . '>';
         self::addType($multipleEnumType, static::class);
 
-        /** @var PhpEnumType $type */
         $type = self::getType($multipleEnumType);
+        assert($type instanceof PhpEnumType);
+
         $type->name = $multipleEnumType;
         $type->enumClass = $enumClass;
         $type->multiple = true;
     }
 
+    /**
+     * @param array<string|int, string> $types
+     *
+     * @phpstan-param array<string|int, class-string<Enum>> $types
+     */
     public static function registerEnumTypes(array $types): void
     {
         foreach ($types as $typeName => $enumClass) {
-            $typeName = \is_string($typeName) ? $typeName : $enumClass;
+            $typeName = is_string($typeName) ? $typeName : $enumClass;
             static::registerEnumType($typeName, $enumClass);
         }
     }

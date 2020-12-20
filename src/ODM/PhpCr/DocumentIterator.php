@@ -1,11 +1,18 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra\ODM\PhpCr;
 
+use ArrayIterator;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\PHPCR\Query\Builder\QueryBuilder;
 use Doctrine\ODM\PHPCR\Query\QueryException;
+use Iterator;
 use Refugis\DoctrineExtra\ObjectIteratorInterface;
+
+use function array_values;
+use function assert;
 
 /**
  * This class allows iterating a query iterator for a single entity query.
@@ -14,49 +21,37 @@ class DocumentIterator implements ObjectIteratorInterface
 {
     use IteratorTrait;
 
-    private ?\Iterator $internalIterator;
+    /** @var Iterator<object> */
+    private Iterator $internalIterator;
 
     public function __construct(QueryBuilder $queryBuilder)
     {
         $this->queryBuilder = clone $queryBuilder;
-        $this->internalIterator = null;
         $this->totalCount = null;
 
         $this->apply();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function next()
+    public function next(): void
     {
         $this->getIterator()->next();
 
         $this->current = null;
         $this->currentElement = $this->getIterator()->current();
 
-        return $this->current();
+        $this->current();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function key()
+    public function key(): int
     {
         return $this->getIterator()->key();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function valid(): bool
     {
         return $this->getIterator()->valid();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function rewind(): void
     {
         $this->current = null;
@@ -66,23 +61,29 @@ class DocumentIterator implements ObjectIteratorInterface
 
     /**
      * Gets the iterator.
+     *
+     * @return Iterator<object>
      */
-    private function getIterator(): \Iterator
+    private function getIterator(): Iterator
     {
-        if (null !== $this->internalIterator) {
+        if (isset($this->internalIterator)) {
             return $this->internalIterator;
         }
 
         $query = $this->queryBuilder->getQuery();
 
         try {
+            /* @phpstan-ignore-next-line */
             $this->internalIterator = $query->iterate();
         } catch (QueryException $e) {
-            /** @var ArrayCollection $result */
             $result = $query->getResult();
-            $this->internalIterator = new \ArrayIterator(\array_values($result->toArray()));
+
+            /* @phpstan-ignore-next-line */
+            assert($result instanceof ArrayCollection);
+            $this->internalIterator = new ArrayIterator(array_values($result->toArray()));
         }
 
+        assert($this->internalIterator instanceof Iterator);
         $this->currentElement = $this->internalIterator->current();
 
         return $this->internalIterator;

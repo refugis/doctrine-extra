@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra\ORM\Type;
 
@@ -24,7 +26,7 @@ class MoneyCurrencyType extends Type
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
-        if (null === $value) {
+        if ($value === null) {
             return null;
         }
 
@@ -40,24 +42,18 @@ class MoneyCurrencyType extends Type
      */
     public function convertToPHPValue($value, AbstractPlatform $platform): ?Currency
     {
-        if (null === $value) {
+        if ($value === null) {
             return null;
         }
 
         return new Currency($value);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName(): string
     {
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function requiresSQLCommentHint(AbstractPlatform $platform): bool
     {
         return true;

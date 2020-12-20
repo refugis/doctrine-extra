@@ -1,31 +1,32 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra\TimeSpan;
 
 use Cake\Chronos\Chronos;
+use DateTimeImmutable;
+use DateTimeInterface;
+use InvalidArgumentException;
 
 /**
- * @property \DateTimeImmutable|null start
- * @property \DateTimeImmutable|null end
+ * @property DateTimeImmutable|null $start
+ * @property DateTimeImmutable|null $end
  */
 trait TimeSpanTrait
 {
     /**
      * Gets the period start time, if set.
-     *
-     * @return \DateTimeImmutable
      */
-    public function getStart(): ?\DateTimeImmutable
+    public function getStart(): ?DateTimeImmutable
     {
         return $this->start;
     }
 
     /**
      * Gets the period end time, if set.
-     *
-     * @return \DateTimeImmutable
      */
-    public function getEnd(): ?\DateTimeImmutable
+    public function getEnd(): ?DateTimeImmutable
     {
         return $this->end;
     }
@@ -33,10 +34,10 @@ trait TimeSpanTrait
     /**
      * Updates the time span.
      */
-    public function update(?\DateTimeImmutable $start, ?\DateTimeImmutable $end): void
+    public function update(?DateTimeImmutable $start, ?DateTimeImmutable $end): void
     {
-        if (null !== $start && null !== $end && $start > $end) {
-            throw new \InvalidArgumentException('Start cannot be greater than end');
+        if ($start !== null && $end !== null && $start > $end) {
+            throw new InvalidArgumentException('Start cannot be greater than end');
         }
 
         $this->start = $start;
@@ -47,18 +48,14 @@ trait TimeSpanTrait
      * Checks whether the given date time is between the start and the end of
      * this time span. Null limits are treated as Infinite.
      */
-    public function contains(\DateTimeInterface $reference): bool
+    public function contains(DateTimeInterface $reference): bool
     {
         $reference = Chronos::instance($reference);
 
-        if (null !== $this->start && $reference->lt(Chronos::instance($this->start))) {
+        if ($this->start !== null && $reference->lt(Chronos::instance($this->start))) {
             return false;
         }
 
-        if (null !== $this->end && $reference->gte(Chronos::instance($this->end))) {
-            return false;
-        }
-
-        return true;
+        return $this->end === null || ! $reference->gte(Chronos::instance($this->end));
     }
 }

@@ -1,6 +1,5 @@
 composer.phar
 /vendor/
-composer.lock
 /var/
 
 /bin/*
@@ -10,5 +9,3 @@ composer.lock
 /app/phpunit.xml
 /phpunit.xml
 .phpunit.result.cache
-
-.php_cs.cache

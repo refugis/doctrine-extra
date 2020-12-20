@@ -1,34 +1,28 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra\Timestampable;
 
 use Cake\Chronos\Chronos;
+use DateTimeInterface;
 
 /**
- * @property \DateTimeInterface createdAt
- * @property \DateTimeInterface updatedAt
+ * @property DateTimeInterface $createdAt
+ * @property DateTimeInterface $updatedAt
  */
 trait TimestampableTrait
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getCreatedAt(): \DateTimeInterface
+    public function getCreatedAt(): DateTimeInterface
     {
         return $this->createdAt;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getUpdatedAt(): \DateTimeInterface
+    public function getUpdatedAt(): DateTimeInterface
     {
         return $this->updatedAt;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function updateTimestamp(): TimestampableInterface
     {
         $this->updatedAt = Chronos::now();

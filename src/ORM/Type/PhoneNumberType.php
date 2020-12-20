@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra\ORM\Type;
 
@@ -27,7 +29,7 @@ class PhoneNumberType extends Type
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
-        if (null === $value) {
+        if ($value === null) {
             return null;
         }
 
@@ -43,7 +45,7 @@ class PhoneNumberType extends Type
      */
     public function convertToPHPValue($value, AbstractPlatform $platform): ?PhoneNumber
     {
-        if (null === $value || $value instanceof PhoneNumber) {
+        if ($value === null || $value instanceof PhoneNumber) {
             return $value;
         }
 
@@ -52,21 +54,15 @@ class PhoneNumberType extends Type
         try {
             return $util->parse($value, PhoneNumberUtil::UNKNOWN_REGION);
         } catch (NumberParseException $e) {
-            throw ConversionException::conversionFailed($value, self::NAME);
+            throw ConversionException::conversionFailed($value, self::NAME, $e);
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName(): string
     {
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function requiresSQLCommentHint(AbstractPlatform $platform): bool
     {
         return true;

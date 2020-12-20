@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra\ORM\DQL;
 
@@ -14,9 +16,6 @@ class Cast extends FunctionNode
 
     private Node $type;
 
-    /**
-     * {@inheritdoc}
-     */
     public function parse(Parser $parser): void
     {
         $parser->match(Lexer::T_IDENTIFIER);
@@ -31,11 +30,8 @@ class Cast extends FunctionNode
         $parser->match(Lexer::T_CLOSE_PARENTHESIS);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSql(SqlWalker $sqlWalker): string
     {
-        return 'CAST('.$this->field->dispatch($sqlWalker).' AS '.$this->type->dispatch($sqlWalker).')';
+        return 'CAST(' . $this->field->dispatch($sqlWalker) . ' AS ' . $this->type->dispatch($sqlWalker) . ')';
     }
 }

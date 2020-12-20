@@ -1,9 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra\ODM\MongoDB;
 
-use Doctrine\MongoDB\Iterator;
 use Doctrine\ODM\MongoDB\Query\Builder;
+use Iterator;
 use Refugis\DoctrineExtra\IteratorTrait;
 use Refugis\DoctrineExtra\ObjectIteratorInterface;
 
@@ -14,10 +16,9 @@ class DocumentIterator implements ObjectIteratorInterface
 {
     use IteratorTrait;
 
+    /** @var Iterator<object> */
     private Iterator $internalIterator;
-
     private Builder $queryBuilder;
-
     private ?int $totalCount;
 
     public function __construct(Builder $queryBuilder)
@@ -30,53 +31,39 @@ class DocumentIterator implements ObjectIteratorInterface
         $this->currentElement = $this->internalIterator->current()[0];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function count(): int
     {
-        if (null === $this->totalCount) {
+        if ($this->totalCount === null) {
             $queryBuilder = clone $this->queryBuilder;
             $queryBuilder->count();
 
+            /* @phpstan-ignore-next-line */
             $this->totalCount = (int) $queryBuilder->getQuery()->execute();
         }
 
         return $this->totalCount;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function next()
+    public function next(): void
     {
         $this->internalIterator->next();
 
         $this->current = null;
         $this->currentElement = $this->internalIterator->current();
 
-        return $this->current();
+        $this->current();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function key()
+    public function key(): int
     {
         return $this->internalIterator->key();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function valid(): bool
     {
         return $this->internalIterator->valid();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function rewind(): void
     {
         $this->current = null;

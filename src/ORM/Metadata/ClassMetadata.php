@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra\ORM\Metadata;
 
@@ -7,6 +9,11 @@ use Doctrine\ORM\Mapping\ClassMetadata as BaseClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Doctrine\ORM\Mapping\MappingException;
 use Doctrine\ORM\Mapping\ReflectionEmbeddedProperty;
+use Doctrine\Persistence\Mapping\ReflectionService;
+use ReflectionProperty;
+
+use function assert;
+use function class_exists;
 
 class ClassMetadata extends BaseClassMetadata
 {
@@ -16,9 +23,12 @@ class ClassMetadata extends BaseClassMetadata
     public function wakeupReflection($reflectionService): void
     {
         // Restore ReflectionClass and properties
-        $this->reflClass = $reflectionService->getClass($this->name);
+        $reflectionClass = $reflectionService->getClass($this->name);
+        assert($reflectionClass !== null);
 
-        $instantiatorProperty = new \ReflectionProperty(ClassMetadataInfo::class, 'instantiator');
+        $this->reflClass = $reflectionClass;
+
+        $instantiatorProperty = new ReflectionProperty(ClassMetadataInfo::class, 'instantiator');
         $instantiatorProperty->setAccessible(true);
 
         $instantiator = $instantiatorProperty->getValue($this);
@@ -30,51 +40,28 @@ class ClassMetadata extends BaseClassMetadata
 
         foreach ($this->embeddedClasses as $property => $embeddedClass) {
             if (isset($embeddedClass['declaredField'])) {
-                $parentReflectionFields[$property] = new ReflectionEmbeddedProperty(
-                    $parentReflectionFields[$embeddedClass['declaredField']],
-                    $reflectionService->getAccessibleProperty(
-                        $this->embeddedClasses[$embeddedClass['declaredField']]['class'],
-                        $embeddedClass['originalField']
-                    ),
-                    $this->embeddedClasses[$embeddedClass['declaredField']]['class']
-                );
+                $class = $this->embeddedClasses[$embeddedClass['declaredField']]['class'] ?? null;
+                $parentProperty = $parentReflectionFields[$embeddedClass['declaredField']] ?? null;
+                $childProperty = $reflectionService->getAccessibleProperty($class, $embeddedClass['originalField']);
+
+                assert(isset($class, $parentProperty, $childProperty));
+                $parentReflectionFields[$property] = new ReflectionEmbeddedProperty($parentProperty, $childProperty, $class);
 
                 continue;
             }
 
-            $fieldReflection = $reflectionService->getAccessibleProperty(
-                $embeddedClass['declared'] ?? $this->name,
-                $property
-            );
+            $fieldReflection = $reflectionService->getAccessibleProperty($embeddedClass['declared'] ?? $this->name, $property);
 
             $parentReflectionFields[$property] = $fieldReflection;
             $this->reflFields[$property] = $fieldReflection;
         }
 
         foreach ($this->fieldMappings as $field => $mapping) {
-            if (isset($mapping['declaredField'], $parentReflectionFields[$mapping['declaredField']])) {
-                $this->reflFields[$field] = new ReflectionEmbeddedProperty(
-                    $parentReflectionFields[$mapping['declaredField']],
-                    $reflectionService->getAccessibleProperty($mapping['originalClass'], $mapping['originalField']),
-                    $mapping['originalClass']
-                );
-                continue;
-            }
-
-            $this->reflFields[$field] = $reflectionService->getAccessibleProperty($mapping['declared'] ?? $this->name, $field);
+            $this->mapReflectionField($mapping, $parentReflectionFields, $reflectionService, $field);
         }
 
         foreach ($this->associationMappings as $key => $mapping) {
-            if (isset($mapping['declaredField'], $parentReflectionFields[$mapping['declaredField']])) {
-                $this->reflFields[$key] = new ReflectionEmbeddedProperty(
-                    $parentReflectionFields[$mapping['declaredField']],
-                    $reflectionService->getAccessibleProperty($mapping['originalClass'], $mapping['originalField']),
-                    $mapping['originalClass']
-                );
-                continue;
-            }
-
-            $this->reflFields[$key] = $reflectionService->getAccessibleProperty($mapping['declared'] ?? $this->name, $key);
+            $this->mapReflectionField($mapping, $parentReflectionFields, $reflectionService, $key);
         }
     }
 
@@ -84,22 +71,21 @@ class ClassMetadata extends BaseClassMetadata
     public function inlineEmbeddable($property, ClassMetadataInfo $embeddable): void
     {
         foreach ($embeddable->fieldMappings as $fieldMapping) {
-            $fieldMapping['originalClass'] = $fieldMapping['originalClass'] ?? $embeddable->name;
-            $fieldMapping['declaredField'] = isset($fieldMapping['declaredField']) ? $property.'.'.$fieldMapping['declaredField'] : $property;
-            $fieldMapping['originalField'] = $fieldMapping['originalField'] ?? $fieldMapping['fieldName'];
-            $fieldMapping['fieldName'] = $property.'.'.$fieldMapping['fieldName'];
+            $fieldMapping['originalClass'] ??= $embeddable->name;
+            $fieldMapping['declaredField'] = isset($fieldMapping['declaredField']) ? $property . '.' . $fieldMapping['declaredField'] : $property;
+            $fieldMapping['originalField'] ??= $fieldMapping['fieldName'];
+            $fieldMapping['fieldName'] = $property . '.' . $fieldMapping['fieldName'];
 
             if (! empty($this->embeddedClasses[$property]['columnPrefix'])) {
-                $fieldMapping['columnName'] = $this->embeddedClasses[$property]['columnPrefix'].$fieldMapping['columnName'];
-            } elseif (false !== $this->embeddedClasses[$property]['columnPrefix']) {
+                $fieldMapping['columnName'] = $this->embeddedClasses[$property]['columnPrefix'] . $fieldMapping['columnName'];
+            } elseif ($this->embeddedClasses[$property]['columnPrefix'] !== false) {
                 $fieldMapping['columnName'] = $this->namingStrategy
                     ->embeddedFieldToColumnName(
                         $property,
                         $fieldMapping['columnName'],
                         $this->reflClass->name,
                         $embeddable->reflClass->name
-                    )
-                ;
+                    );
             }
 
             $this->mapField($fieldMapping);
@@ -110,10 +96,10 @@ class ClassMetadata extends BaseClassMetadata
                 continue;
             }
 
-            $assocMapping['originalClass'] = $assocMapping['originalClass'] ?? $embeddable->name;
-            $assocMapping['declaredField'] = isset($assocMapping['declaredField']) ? $property.'_'.$assocMapping['declaredField'] : $property;
-            $assocMapping['originalField'] = $assocMapping['originalField'] ?? $assocMapping['fieldName'];
-            $assocMapping['fieldName'] = $property.'_'.$assocMapping['fieldName'];
+            $assocMapping['originalClass'] ??= $embeddable->name;
+            $assocMapping['declaredField'] = isset($assocMapping['declaredField']) ? $property . '_' . $assocMapping['declaredField'] : $property;
+            $assocMapping['originalField'] ??= $assocMapping['fieldName'];
+            $assocMapping['fieldName'] = $property . '_' . $assocMapping['fieldName'];
 
             $assocMapping['sourceToTargetKeyColumns'] = [];
             $assocMapping['joinColumnFieldNames'] = [];
@@ -121,16 +107,15 @@ class ClassMetadata extends BaseClassMetadata
 
             foreach ($assocMapping['joinColumns'] as &$column) {
                 if (! empty($this->embeddedClasses[$property]['columnPrefix'])) {
-                    $column['name'] = $this->embeddedClasses[$property]['columnPrefix'].$column['name'];
-                } elseif (false !== $this->embeddedClasses[$property]['columnPrefix']) {
+                    $column['name'] = $this->embeddedClasses[$property]['columnPrefix'] . $column['name'];
+                } elseif ($this->embeddedClasses[$property]['columnPrefix'] !== false) {
                     $column['name'] = $this->namingStrategy
                         ->embeddedFieldToColumnName(
                             $property,
                             $column['name'],
                             $this->reflClass->name,
                             $embeddable->reflClass->name
-                        )
-                    ;
+                        );
                 }
             }
 
@@ -139,15 +124,32 @@ class ClassMetadata extends BaseClassMetadata
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function validateAssociations(): void
     {
         foreach ($this->associationMappings as $mapping) {
-            if (! \class_exists($mapping['targetEntity'])) {
+            if (! class_exists($mapping['targetEntity'])) {
                 throw MappingException::invalidTargetEntityClass($mapping['targetEntity'], $this->name, $mapping['fieldName']);
             }
         }
+    }
+
+    /**
+     * @param array<string, mixed> $mapping
+     * @param array<string, ReflectionProperty> $parentReflectionFields
+     */
+    private function mapReflectionField(array $mapping, array &$parentReflectionFields, ReflectionService $reflectionService, string $field): void
+    {
+        if (isset($mapping['declaredField'], $parentReflectionFields[$mapping['declaredField']])) {
+            $originalClass = $mapping['originalClass'];
+            $parentProperty = $parentReflectionFields[$mapping['declaredField']];
+            $childProperty = $reflectionService->getAccessibleProperty($originalClass, $mapping['originalField']);
+            assert(isset($childProperty));
+
+            $this->reflFields[$field] = new ReflectionEmbeddedProperty($parentProperty, $childProperty, $originalClass);
+
+            return;
+        }
+
+        $this->reflFields[$field] = $reflectionService->getAccessibleProperty($mapping['declared'] ?? $this->name, $field);
     }
 }
