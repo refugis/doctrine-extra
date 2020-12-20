@@ -88,12 +88,3 @@ class FakeMetadataFactory implements ClassMetadataFactory
         return false;
     }
 }
-
-namespace Doctrine\Persistence\Mapping;
-
-if (! interface_exists(ClassMetadataFactory::class)) {
-    interface ClassMetadata extends Doctrine\Common\Persistence\Mapping\ClassMetadata {}
-    interface ClassMetadataFactory extends Doctrine\Common\Persistence\Mapping\ClassMetadataFactory {}
-    class MappingException extends Doctrine\Common\Persistence\Mapping\MappingException {}
-    class RuntimeReflectionService extends Doctrine\Common\Persistence\Mapping\RuntimeReflectionService {}
-}

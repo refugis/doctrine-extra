@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra;
 
-use Doctrine\Common\Persistence\ObjectRepository as BaseRepository;
+use Doctrine\Persistence\ObjectRepository as BaseRepository;
 use Refugis\DoctrineExtra\Exception\NonUniqueResultExceptionInterface;
 use Refugis\DoctrineExtra\Exception\NoResultExceptionInterface;
 

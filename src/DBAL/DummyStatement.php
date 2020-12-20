@@ -99,7 +99,7 @@ class DummyStatement implements IteratorAggregate, Statement, Result
             return array_values($row);
         }
 
-        if ($fetchMode === FetchMode::MIXED) {
+        if ($fetchMode === null || $fetchMode === FetchMode::MIXED) {
             return array_merge($row, array_values($row));
         }
 
@@ -140,7 +140,7 @@ class DummyStatement implements IteratorAggregate, Statement, Result
 
         $unique_values = [];
         $rows = [];
-        while ($row = $this->fetch($fetchMode)) {
+        while ($row = $this->fetch($fetchMode ?: PDO::FETCH_BOTH)) {
             if ($unique !== null) {
                 $unique_value = is_int($unique) ? array_values($row)[$unique] : $row[$unique];
                 if (in_array($unique_value, $unique_values, true)) {
