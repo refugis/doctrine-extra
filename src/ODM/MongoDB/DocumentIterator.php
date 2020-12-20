@@ -9,6 +9,8 @@ use Iterator;
 use Refugis\DoctrineExtra\IteratorTrait;
 use Refugis\DoctrineExtra\ObjectIteratorInterface;
 
+use function assert;
+
 /**
  * This class allows iterating a query iterator for a single entity query.
  */
@@ -69,7 +71,10 @@ class DocumentIterator implements ObjectIteratorInterface
         $this->currentElement = $this->internalIterator->current();
     }
 
-    private function getIterator(): \Iterator
+    /**
+     * @return Iterator<object>
+     */
+    private function getIterator(): Iterator
     {
         if (isset($this->internalIterator)) {
             return $this->internalIterator;

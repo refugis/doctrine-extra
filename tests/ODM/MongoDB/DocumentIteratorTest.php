@@ -54,18 +54,22 @@ class DocumentIteratorTest extends TestCase
 
     public function testCountShouldExecuteACountQuery(): void
     {
-        $this->database->command(new BSONDocument([
-            'count' => 'FooBar',
-            'query' => new BSONDocument(),
-            'limit' => 0,
-            'skip' => 0,
-        ]), Argument::any())->willReturn(new \ArrayIterator([
-            [
-                'n' => 42,
-                'query' => (object) [],
-                'ok' => true,
-            ],
-        ]));
+        if (version_compare($this->odmVersion, '2.0.0', '>=')) {
+            $this->collection->count([], Argument::any())->willReturn(42);
+        } else {
+            $this->database->command(new BSONDocument([
+                'count' => 'FooBar',
+                'query' => new BSONDocument(),
+                'limit' => 0,
+                'skip' => 0,
+            ]), Argument::any())->willReturn(new \ArrayIterator([
+                [
+                    'n' => 42,
+                    'query' => (object)[],
+                    'ok' => true,
+                ],
+            ]));
+        }
 
         self::assertCount(42, $this->iterator);
     }

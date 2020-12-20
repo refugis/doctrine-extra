@@ -68,7 +68,7 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
     /**
      * {@inheritdoc}
      */
-    public function get($id, $lockMode = null, $lockVersion = null): object
+    public function get($id, $lockMode = 0, $lockVersion = null): object
     {
         $document = $this->find($id, $lockMode, $lockVersion);
         if ($document === null) {

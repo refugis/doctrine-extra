@@ -2,13 +2,14 @@
 
 namespace Refugis\DoctrineExtra\Tests\ODM\MongoDB;
 
+use Composer\InstalledVersions;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Doctrine\ORM\NonUniqueResultException;
+use MongoDB\BSON\ObjectId;
 use MongoDB\Model\BSONDocument;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
-use Refugis\DoctrineExtra\Exception\NonUniqueResultExceptionInterface;
 use Refugis\DoctrineExtra\ODM\MongoDB\DocumentIterator;
 use Refugis\DoctrineExtra\ODM\MongoDB\DocumentRepository;
 use Refugis\DoctrineExtra\ODM\MongoDB\Exception\NoResultException;
@@ -51,8 +52,10 @@ class DocumentRepositoryTest extends TestCase
 
     public function testCountWillReturnRowCount(): void
     {
-        $this->database
-            ->command(new BSONDocument([
+        if (version_compare($this->odmVersion, '2.0.0', '>=')) {
+            $this->collection->count([], Argument::any())->willReturn(42);
+        } else {
+            $this->database->command(new BSONDocument([
                 'count' => 'FooBar',
                 'query' => new BSONDocument(),
                 'limit' => 0,
@@ -61,11 +64,11 @@ class DocumentRepositoryTest extends TestCase
             ->willReturn(new \ArrayIterator([
                 [
                     'n' => 42,
-                    'query' => (object) [],
+                    'query' => (object)[],
                     'ok' => true,
                 ],
-            ]))
-        ;
+            ]));
+        }
 
         self::assertSame(42, $this->repository->count());
     }
@@ -94,17 +97,25 @@ class DocumentRepositoryTest extends TestCase
 
     public function testGetShouldReturnADocument(): void
     {
-        $this->collection
-            ->find(new BSONDocument(['_id' => '5a3d346ab7f26e18ba119308']), Argument::any())
-            ->shouldBeCalledTimes(1)
-            ->willReturn(new \ArrayIterator([
-                [
-                    '_id' => '5a3d346ab7f26e18ba119308',
+        if (version_compare($this->odmVersion, '2.0.0', '>=')) {
+            $call = $this->collection
+                ->findOne(['_id' => new ObjectId('5a3d346ab7f26e18ba119308')], Argument::any())
+                ->willReturn([
+                    '_id' => new ObjectId('5a3d346ab7f26e18ba119308'),
                     'id' => '5a3d346ab7f26e18ba119308',
-                ],
-            ]))
-        ;
+                ]);
+        } else {
+            $call = $this->collection
+                ->find(new BSONDocument(['_id' => '5a3d346ab7f26e18ba119308']), Argument::any())
+                ->willReturn(new \ArrayIterator([
+                    [
+                        '_id' => '5a3d346ab7f26e18ba119308',
+                        'id' => '5a3d346ab7f26e18ba119308',
+                    ],
+                ]));
+        }
 
+        $call->shouldBeCalledTimes(1);
         $obj1 = $this->repository->get('5a3d346ab7f26e18ba119308');
 
         self::assertInstanceOf(FooBar::class, $obj1);
@@ -115,28 +126,36 @@ class DocumentRepositoryTest extends TestCase
     {
         $this->expectException(NoResultException::class);
 
-        $this->collection
-            ->find(new BSONDocument(['_id' => '5a3d346ab7f26e18ba119308']), Argument::any())
-            ->shouldBeCalledTimes(1)
-            ->willReturn(new \ArrayIterator([]))
-        ;
+        if (version_compare($this->odmVersion, '2.0.0', '>=')) {
+            $call = $this->collection
+                ->findOne(['_id' => new ObjectId('5a3d346ab7f26e18ba119308')], Argument::any())
+                ->willReturn(null);
+        } else {
+            $call = $this->collection
+                ->find(new BSONDocument(['_id' => '5a3d346ab7f26e18ba119308']), Argument::any())
+                ->willReturn(new \ArrayIterator([]));
+        }
 
+        $call->shouldBeCalledTimes(1);
         $this->repository->get('5a3d346ab7f26e18ba119308');
     }
 
     public function testGetOneByShouldReturnADocument(): void
     {
-        $this->collection
-            ->find(new BSONDocument(['_id' => '5a3d346ab7f26e18ba119308']), Argument::any())
+        if (version_compare($this->odmVersion, '2.0.0', '>=')) {
+            $call = $this->collection->find(['_id' => new ObjectId('5a3d346ab7f26e18ba119308')], Argument::any());
+        } else {
+            $call = $this->collection->find(new BSONDocument(['_id' => '5a3d346ab7f26e18ba119308']), Argument::any());
+        }
+
+        $call
             ->shouldBeCalledTimes(1)
             ->willReturn(new \ArrayIterator([
                 [
                     '_id' => '5a3d346ab7f26e18ba119308',
                     'id' => '5a3d346ab7f26e18ba119308',
                 ],
-            ]))
-        ;
-
+            ]));
         $obj1 = $this->repository->getOneBy(['id' => '5a3d346ab7f26e18ba119308']);
 
         self::assertInstanceOf(FooBar::class, $obj1);
@@ -147,11 +166,15 @@ class DocumentRepositoryTest extends TestCase
     {
         $this->expectException(NoResultException::class);
 
-        $this->collection
-            ->find(new BSONDocument(['_id' => '5a3d346ab7f26e18ba119308']), Argument::any())
+        if (version_compare($this->odmVersion, '2.0.0', '>=')) {
+            $call = $this->collection->find(['_id' => new ObjectId('5a3d346ab7f26e18ba119308')], Argument::any());
+        } else {
+            $call = $this->collection->find(new BSONDocument(['_id' => '5a3d346ab7f26e18ba119308']), Argument::any());
+        }
+
+        $call
             ->shouldBeCalledTimes(1)
-            ->willReturn(new \ArrayIterator([]))
-        ;
+            ->willReturn(new \ArrayIterator([]));
 
         $this->repository->getOneBy(['id' => '5a3d346ab7f26e18ba119308']);
     }

@@ -2,6 +2,7 @@
 
 namespace Refugis\DoctrineExtra\Tests\Mock\ODM\MongoDB;
 
+use Composer\InstalledVersions;
 use Doctrine\MongoDB\Connection;
 use Doctrine\ODM\MongoDB\Configuration;
 use Doctrine\ODM\MongoDB\DocumentManager;
@@ -9,6 +10,8 @@ use Doctrine\ODM\MongoDB\SchemaManager;
 use MongoDB\Client;
 use MongoDB\Collection;
 use MongoDB\Database;
+use MongoDB\Model\BSONArray;
+use MongoDB\Model\BSONDocument;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Refugis\DoctrineExtra\ODM\MongoDB\DocumentRepository;
@@ -35,6 +38,7 @@ trait DocumentManagerTrait
 
     private Connection $connection;
     private Configuration $configuration;
+    private string $odmVersion;
 
     public function getDocumentManager(): DocumentManager
     {
@@ -42,6 +46,7 @@ trait DocumentManagerTrait
             return $this->documentManager;
         }
 
+        $this->odmVersion = InstalledVersions::getVersion('doctrine/mongodb-odm');
         $server = $this->prophesize(\MongoClient::class);
         $server->getReadPreference()->willReturn(['type' => \MongoClient::RP_PRIMARY]);
         $server->getWriteConcern()->willReturn([
@@ -63,9 +68,6 @@ trait DocumentManagerTrait
         $server->selectDB('doctrine')->willReturn($mongoDb);
         $server->selectCollection('doctrine', 'FooBar')->willReturn(new \MongoCollection($mongoDb, 'FooBar'));
 
-        $schemaManager = $this->prophesize(SchemaManager::class);
-        $this->connection = new Connection($server->reveal());
-
         $this->configuration = new Configuration();
         $this->configuration->setHydratorDir(\sys_get_temp_dir());
         $this->configuration->setHydratorNamespace('__TMP__\\HydratorNamespace');
@@ -78,10 +80,15 @@ trait DocumentManagerTrait
             $this->configuration->setDefaultRepositoryClassName(DocumentRepository::class);
         }
 
-        $this->documentManager = DocumentManager::create($this->connection, $this->configuration);
+        if (class_exists(Connection::class)) {
+            $this->connection = new Connection($server->reveal());
+            $this->documentManager = DocumentManager::create($this->connection, $this->configuration);
+        } else {
+            $this->client->getTypeMap()->willReturn(['root' => 'array', 'document' => 'array']);
+            $this->documentManager = DocumentManager::create($this->client->reveal(), $this->configuration);
+        }
 
-        (function () use ($schemaManager): void {
-            $this->schemaManager = $schemaManager->reveal();
+        (function (): void {
             $this->metadataFactory = new FakeMetadataFactory();
         })->call($this->documentManager);
 
