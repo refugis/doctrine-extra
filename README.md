@@ -1,13 +1,14 @@
 Refugis - DoctrineExtra
 =======================
-[![Build Status](https://travis-ci.com/refugis/doctrine-extra.svg?branch=master)](https://travis-ci.com/refugis/doctrine-extra) 
+![Tests](https://github.com/refugis/doctrine-extra/workflows/Tests/badge.svg)
+[![codecov](https://codecov.io/gh/refugis/doctrine-extra/branch/master/graph/badge.svg?token=K89TGYQWDX)](https://codecov.io/gh/refugis/doctrine-extra)
 
 A set of Doctrine extensions.
 Originally written by [Fazland team](https://www.github.com/fazland/doctrine-extra).
 
 Requirements
 ------------
-- php ^7.4
+- php ^7.4|^8.0
 
 Installation
 ------------
