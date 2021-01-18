@@ -3,15 +3,11 @@
 namespace Refugis\DoctrineExtra\Tests\Mock\ODM\MongoDB;
 
 use Composer\InstalledVersions;
-use Doctrine\MongoDB\Connection;
 use Doctrine\ODM\MongoDB\Configuration;
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\SchemaManager;
 use MongoDB\Client;
 use MongoDB\Collection;
 use MongoDB\Database;
-use MongoDB\Model\BSONArray;
-use MongoDB\Model\BSONDocument;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Refugis\DoctrineExtra\ODM\MongoDB\DocumentRepository;
@@ -36,7 +32,6 @@ trait DocumentManagerTrait
      */
     private ObjectProphecy $collection;
 
-    private Connection $connection;
     private Configuration $configuration;
     private string $odmVersion;
 
@@ -46,15 +41,8 @@ trait DocumentManagerTrait
             return $this->documentManager;
         }
 
+        $this->client = $this->prophesize(Client::class);
         $this->odmVersion = InstalledVersions::getVersion('doctrine/mongodb-odm');
-        $server = $this->prophesize(\MongoClient::class);
-        $server->getReadPreference()->willReturn(['type' => \MongoClient::RP_PRIMARY]);
-        $server->getWriteConcern()->willReturn([
-            'w' => 1,
-            'wtimeout' => 5000,
-        ]);
-
-        $server->getClient()->willReturn($this->client = $this->prophesize(Client::class));
 
         $this->database = $this->prophesize(Database::class);
         $this->database->withOptions(Argument::any())->willReturn($this->database);
@@ -63,10 +51,6 @@ trait DocumentManagerTrait
         $this->collection = $this->prophesize(Collection::class);
         $this->database->selectCollection('FooBar', Argument::any())->willReturn($this->collection);
         $this->collection->withOptions(Argument::any())->willReturn($this->collection);
-
-        $mongoDb = new \MongoDB($server->reveal(), 'doctrine');
-        $server->selectDB('doctrine')->willReturn($mongoDb);
-        $server->selectCollection('doctrine', 'FooBar')->willReturn(new \MongoCollection($mongoDb, 'FooBar'));
 
         $this->configuration = new Configuration();
         $this->configuration->setHydratorDir(\sys_get_temp_dir());
@@ -80,13 +64,8 @@ trait DocumentManagerTrait
             $this->configuration->setDefaultRepositoryClassName(DocumentRepository::class);
         }
 
-        if (class_exists(Connection::class)) {
-            $this->connection = new Connection($server->reveal());
-            $this->documentManager = DocumentManager::create($this->connection, $this->configuration);
-        } else {
-            $this->client->getTypeMap()->willReturn(['root' => 'array', 'document' => 'array']);
-            $this->documentManager = DocumentManager::create($this->client->reveal(), $this->configuration);
-        }
+        $this->client->getTypeMap()->willReturn(['root' => 'array', 'document' => 'array']);
+        $this->documentManager = DocumentManager::create($this->client->reveal(), $this->configuration);
 
         (function (): void {
             $this->metadataFactory = new FakeMetadataFactory();

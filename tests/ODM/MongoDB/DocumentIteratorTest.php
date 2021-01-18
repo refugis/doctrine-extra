@@ -4,7 +4,6 @@ namespace Refugis\DoctrineExtra\Tests\ODM\MongoDB;
 
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Doctrine\ODM\MongoDB\Query\Builder;
-use MongoDB\Model\BSONDocument;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -54,23 +53,7 @@ class DocumentIteratorTest extends TestCase
 
     public function testCountShouldExecuteACountQuery(): void
     {
-        if (version_compare($this->odmVersion, '2.0.0', '>=')) {
-            $this->collection->count([], Argument::any())->willReturn(42);
-        } else {
-            $this->database->command(new BSONDocument([
-                'count' => 'FooBar',
-                'query' => new BSONDocument(),
-                'limit' => 0,
-                'skip' => 0,
-            ]), Argument::any())->willReturn(new \ArrayIterator([
-                [
-                    'n' => 42,
-                    'query' => (object)[],
-                    'ok' => true,
-                ],
-            ]));
-        }
-
+        $this->collection->count([], Argument::any())->willReturn(42);
         self::assertCount(42, $this->iterator);
     }
 
