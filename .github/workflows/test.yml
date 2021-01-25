@@ -12,8 +12,7 @@ jobs:
 
                 php_version:
                     - '7.4'
-                    # Currently disabled as proxy-manager, mongodb odm and phpcr odm for php8 are not released yet.
-                    # - '8.0'
+                    - '8.0'
 
         name: PHP ${{ matrix.php_version }}
         steps:
