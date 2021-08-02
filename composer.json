@@ -19,7 +19,7 @@
         "csfix": "vendor/bin/phpcbf --standard=Solido src/"
     },
     "require": {
-        "php": "^7.4|^8.0",
+        "php": "^7.4 || ^8.0",
         "ext-json": "*",
         "ext-pdo": "*"
     },
@@ -29,7 +29,6 @@
         "doctrine/mongodb-odm": "^2.0",
         "doctrine/orm": "^2.7",
         "doctrine/phpcr-odm": "^1.5",
-        "friendsofphp/php-cs-fixer": "^2.13",
         "giggsey/libphonenumber-for-php": "^8.10",
         "jackalope/jackalope-doctrine-dbal": "*",
         "moneyphp/money": "^3.2",
@@ -39,7 +38,7 @@
         "refugis/elastica-odm": "^2.0@dev",
         "roave/security-advisories": "dev-master",
         "solido/php-coding-standards": "dev-master",
-        "symfony/cache": "^4.2|^5.0"
+        "symfony/cache": "^4.2 || ^5.0"
     },
     "autoload": {
         "files": [ "compat/compat.php" ],
@@ -53,8 +52,8 @@
         }
     },
     "conflict": {
-        "doctrine/orm": ">=2.9",
-        "doctrine/dbal": "<2.10|>=4.0"
+        "doctrine/orm": "<2.9",
+        "doctrine/dbal": "<2.10 || >=4.0"
     },
     "config": {
         "sort-packages": true

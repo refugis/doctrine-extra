@@ -76,6 +76,7 @@ class ClassMetadata extends BaseClassMetadata
             $fieldMapping['originalField'] ??= $fieldMapping['fieldName'];
             $fieldMapping['fieldName'] = $property . '.' . $fieldMapping['fieldName'];
 
+            assert(isset($fieldMapping['columnName']));
             if (! empty($this->embeddedClasses[$property]['columnPrefix'])) {
                 $fieldMapping['columnName'] = $this->embeddedClasses[$property]['columnPrefix'] . $fieldMapping['columnName'];
             } elseif ($this->embeddedClasses[$property]['columnPrefix'] !== false) {

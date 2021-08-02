@@ -32,7 +32,7 @@ interface ObjectRepositoryInterface extends BaseRepository
      *
      * @throws NonUniqueResultExceptionInterface
      */
-    public function findOneByCached(array $criteria, ?array $orderBy = null, int $ttl = 28800);
+    public function findOneByCached(array $criteria, ?array $orderBy = null, int $ttl = 28800); // phpcs:ignore
 
     /**
      * Finds objects by a set of criteria and cache the result for next calls.
@@ -42,7 +42,7 @@ interface ObjectRepositoryInterface extends BaseRepository
      *
      * @return array<object> The objects
      */
-    public function findByCached(
+    public function findByCached( // phpcs:ignore
         array $criteria,
         ?array $orderBy = null,
         ?int $limit = null,
@@ -62,7 +62,7 @@ interface ObjectRepositoryInterface extends BaseRepository
      *
      * @throws NoResultExceptionInterface
      */
-    public function get($id, $lockMode = null, $lockVersion = null);
+    public function get($id, $lockMode = null, $lockVersion = null); // phpcs:ignore
 
     /**
      * Finds a single object by a set of criteria and cache the result for next calls.
@@ -75,7 +75,7 @@ interface ObjectRepositoryInterface extends BaseRepository
      * @throws NoResultExceptionInterface
      * @throws NonUniqueResultExceptionInterface
      */
-    public function getOneBy(array $criteria, ?array $orderBy = null);
+    public function getOneBy(array $criteria, ?array $orderBy = null); // phpcs:ignore
 
     /**
      * Finds a single object by a set of criteria and cache the result for next calls.
@@ -89,5 +89,5 @@ interface ObjectRepositoryInterface extends BaseRepository
      * @throws NoResultExceptionInterface
      * @throws NonUniqueResultExceptionInterface
      */
-    public function getOneByCached(array $criteria, ?array $orderBy = null, int $ttl = 28800);
+    public function getOneByCached(array $criteria, ?array $orderBy = null, int $ttl = 28800); // phpcs:ignore
 }

@@ -92,10 +92,10 @@ class PhpEnumType extends Type
     }
 
     /**
-     * @throws Exception
-     *
      * @phpstan-param string|class-string<Enum> $typeNameOrEnumClass
      * @phpstan-param class-string<Enum>|null $enumClass
+     *
+     * @throws Exception
      */
     public static function registerEnumType(string $typeNameOrEnumClass, ?string $enumClass = null): void
     {
@@ -128,7 +128,6 @@ class PhpEnumType extends Type
 
     /**
      * @param array<string|int, string> $types
-     *
      * @phpstan-param array<string|int, class-string<Enum>> $types
      */
     public static function registerEnumTypes(array $types): void
