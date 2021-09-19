@@ -33,6 +33,7 @@
         "jackalope/jackalope-doctrine-dbal": "*",
         "moneyphp/money": "^3.2",
         "myclabs/php-enum": "^1.6",
+        "nikic/php-parser": ">=4.10",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpunit/phpunit": "^9.0",
         "refugis/elastica-odm": "^2.0@dev",
