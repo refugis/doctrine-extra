@@ -10,6 +10,7 @@ use Doctrine\DBAL\DriverManager;
 use Doctrine\ODM\MongoDB as MongoDBODM;
 use Doctrine\ORM;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
+use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Refugis\DoctrineExtra\EventListener\Timestampable\TimestampUpdater;
@@ -58,8 +59,9 @@ class TimestampUpdaterTest extends TestCase
 
     /**
      * @group functional
+     * @dataProvider metadataImplProvider
      */
-    public function testListenerShouldWork(): void
+    public function testListenerShouldWork(MappingDriver $mappingDriver): void
     {
         $eventManager = new EventManager();
         $events = [
@@ -71,7 +73,7 @@ class TimestampUpdaterTest extends TestCase
 
         AnnotationRegistry::registerLoader('class_exists');
         $configuration = new ORM\Configuration();
-        $configuration->setMetadataDriverImpl(new ORM\Mapping\Driver\AnnotationDriver(new AnnotationReader()));
+        $configuration->setMetadataDriverImpl($mappingDriver);
         $configuration->setProxyDir(\sys_get_temp_dir());
         $configuration->setProxyNamespace('__TMP__\\ProxyNamespace\\');
 
@@ -111,5 +113,14 @@ SQL
         self::assertNotEquals($updatedAt, $foo->getUpdatedAt());
 
         Chronos::setTestNow();
+    }
+
+    public function metadataImplProvider(): iterable
+    {
+        yield [ new ORM\Mapping\Driver\AnnotationDriver(new AnnotationReader()) ];
+
+        if (PHP_VERSION_ID >= 80000) {
+            yield [new ORM\Mapping\Driver\AttributeDriver([])];
+        }
     }
 }

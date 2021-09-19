@@ -82,7 +82,7 @@ class EntityRepositoryTest extends TestCase
 
         $statement->setFetchMode(Argument::any())->willReturn();
         $statement
-            ->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT, 0)
+            ->fetch(PDO::FETCH_ASSOC, Argument::cetera())
             ->willReturn(
                 ['id_0' => '1'],
                 false
@@ -112,7 +112,7 @@ class EntityRepositoryTest extends TestCase
 
         $statement->setFetchMode(Argument::any())->willReturn();
         $statement
-            ->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT, 0)
+            ->fetch(PDO::FETCH_ASSOC, Argument::cetera())
             ->willReturn(
                 ['id_0' => '1'],
                 ['id_0' => '2'],
@@ -134,7 +134,7 @@ class EntityRepositoryTest extends TestCase
 
         $statement->setFetchMode(Argument::any())->willReturn();
         $statement
-            ->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT, 0)
+            ->fetch(PDO::FETCH_ASSOC, Argument::cetera())
             ->willReturn(
                 ['id_0' => '1'],
                 ['id_0' => '2'],
@@ -169,7 +169,7 @@ class EntityRepositoryTest extends TestCase
         $statement->bindValue(2, 3, PDO::PARAM_INT)->willReturn();
         $statement->execute()->willReturn(true);
         $statement
-            ->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT, 0)
+            ->fetch(PDO::FETCH_ASSOC, Argument::cetera())
             ->willReturn(
                 ['id_0' => '2'],
                 ['id_0' => '3'],
@@ -198,7 +198,7 @@ class EntityRepositoryTest extends TestCase
         $statement->bindValue(1, 1, PDO::PARAM_INT)->willReturn();
         $statement->execute()->willReturn(true);
         $statement
-            ->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT, 0)
+            ->fetch(PDO::FETCH_ASSOC, Argument::cetera())
             ->willReturn(
                 ['id_1' => '1'],
                 false
@@ -227,7 +227,7 @@ class EntityRepositoryTest extends TestCase
         $statement->bindValue(1, 1, PDO::PARAM_INT)->willReturn();
         $statement->execute()->willReturn(true);
         $statement
-            ->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT, 0)
+            ->fetch(PDO::FETCH_ASSOC, Argument::cetera())
             ->willReturn(
                 false
             )
@@ -250,7 +250,7 @@ class EntityRepositoryTest extends TestCase
         $statement->bindValue(1, 12, PDO::PARAM_INT)->willReturn();
         $statement->execute()->willReturn(true);
         $statement
-            ->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT, 0)
+            ->fetch(PDO::FETCH_ASSOC, Argument::cetera())
             ->willReturn(
                 ['id_1' => '12'],
                 false
@@ -279,7 +279,7 @@ class EntityRepositoryTest extends TestCase
         $statement->bindValue(1, 12, PDO::PARAM_INT)->willReturn();
         $statement->execute()->willReturn(true);
         $statement
-            ->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT, 0)
+            ->fetch(PDO::FETCH_ASSOC, Argument::cetera())
             ->willReturn(
                 false
             )
@@ -302,7 +302,7 @@ class EntityRepositoryTest extends TestCase
         $statement->bindValue(1, 12, PDO::PARAM_INT)->willReturn();
         $statement->execute()->willReturn(true);
         $statement
-            ->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT, 0)
+            ->fetch(PDO::FETCH_ASSOC, Argument::cetera())
             ->willReturn(
                 ['id_0' => '12'],
                 false

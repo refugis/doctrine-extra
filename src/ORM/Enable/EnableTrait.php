@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra\ORM\Enable;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Refugis\DoctrineExtra\Enable\EnableTrait as BaseTrait;
 
@@ -16,5 +17,6 @@ trait EnableTrait
      *
      * @ORM\Column(type="boolean")
      */
+    #[ORM\Column(type: Types::BOOLEAN)]
     private bool $enabled;
 }

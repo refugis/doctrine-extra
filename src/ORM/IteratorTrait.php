@@ -20,7 +20,6 @@ trait IteratorTrait
     use BaseIteratorTrait;
 
     private QueryBuilder $queryBuilder;
-
     private ?int $totalCount;
 
     public function count(): int
