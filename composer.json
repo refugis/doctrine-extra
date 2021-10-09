@@ -54,7 +54,7 @@
     },
     "conflict": {
         "doctrine/orm": "<2.9",
-        "doctrine/dbal": "<2.10 || >=4.0"
+        "doctrine/dbal": "<2.10 || >=3.0"
     },
     "config": {
         "sort-packages": true

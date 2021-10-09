@@ -1,5 +1,4 @@
 <?php
-// phpcs:ignoreFile
 
 declare(strict_types=1);
 
@@ -19,6 +18,7 @@ use PDO;
 use function array_merge;
 use function array_values;
 use function count;
+use function defined;
 use function in_array;
 use function is_int;
 use function reset;
@@ -74,7 +74,7 @@ class DummyStatement implements IteratorAggregate, Statement, Result
         return true;
     }
 
-    public function getIterator(): Iterator
+    public function getIterator(): ArrayIterator
     {
         $data = $this->fetchAll();
 
@@ -138,21 +138,21 @@ class DummyStatement implements IteratorAggregate, Statement, Result
             $fetchMode &= ~PDO::FETCH_GROUP;
         }
 
-        $unique_values = [];
+        $uniqueValues = [];
         $rows = [];
         while ($row = $this->fetch($fetchMode ?: PDO::FETCH_BOTH)) {
             if ($unique !== null) {
-                $unique_value = is_int($unique) ? array_values($row)[$unique] : $row[$unique];
-                if (in_array($unique_value, $unique_values, true)) {
+                $unq = is_int($unique) ? array_values($row)[$unique] : $row[$unique];
+                if (in_array($unq, $uniqueValues, true)) {
                     continue;
                 }
 
-                $unique_values[] = $unique_value;
+                $uniqueValues[] = $unq;
             }
 
             if ($group !== null) {
-                $group_value = is_int($group) ? array_values($row)[$group] : $row[$group];
-                $rows[$group_value][] = $row;
+                $groupValue = is_int($group) ? array_values($row)[$group] : $row[$group];
+                $rows[$groupValue][] = $row;
             } else {
                 $rows[] = $row;
             }
@@ -237,29 +237,44 @@ class DummyStatement implements IteratorAggregate, Statement, Result
         $this->data = [];
     }
 
-    public function bindValue($param, $value, $type = ParameterType::STRING)
+    /**
+     * {@inheritdoc}
+     */
+    public function bindValue($param, $value, $type = ParameterType::STRING): void
     {
         /* @phpstan-ignore-next-line */
         // TODO
     }
 
-    public function bindParam($column, &$variable, $type = ParameterType::STRING, $length = null)
+    /**
+     * {@inheritdoc}
+     */
+    public function bindParam($column, &$variable, $type = ParameterType::STRING, $length = null): void
     {
         /* @phpstan-ignore-next-line */
         // TODO
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function errorCode()
     {
         /* @phpstan-ignore-next-line */
         return null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function errorInfo()
     {
         return [];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function execute($params = null): bool
     {
         return true;
