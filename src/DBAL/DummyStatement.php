@@ -8,17 +8,11 @@ use ArrayIterator;
 use Doctrine\DBAL\Driver\FetchUtils;
 use Doctrine\DBAL\Driver\Result;
 use Doctrine\DBAL\Driver\Statement;
-use Doctrine\DBAL\FetchMode;
 use Doctrine\DBAL\ParameterType;
-use InvalidArgumentException;
 use IteratorAggregate;
-use PDO;
 
-use function array_merge;
 use function array_values;
 use function count;
-use function in_array;
-use function is_int;
 use function reset;
 
 /**
@@ -33,7 +27,6 @@ class DummyStatement implements IteratorAggregate, Statement, Result
     private array $data;
     private int $columnCount;
     private int $num;
-    private int $defaultFetchMode;
 
     /**
      * @param mixed[] $data
@@ -43,7 +36,6 @@ class DummyStatement implements IteratorAggregate, Statement, Result
         $this->data = $data;
         $this->columnCount = count($data[0] ?? []);
         $this->num = 0;
-        $this->defaultFetchMode = FetchMode::MIXED;
     }
 
     public function closeCursor(): bool
@@ -58,116 +50,11 @@ class DummyStatement implements IteratorAggregate, Statement, Result
         return $this->columnCount;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setFetchMode($fetchMode, $arg2 = null, $arg3 = null): bool
-    {
-        if ($arg2 !== null || $arg3 !== null) {
-            throw new InvalidArgumentException('Caching layer does not support 2nd/3rd argument to setFetchMode()');
-        }
-
-        $this->defaultFetchMode = $fetchMode;
-
-        return true;
-    }
-
     public function getIterator(): ArrayIterator
     {
-        $data = $this->fetchAll();
+        $data = $this->execute()->fetchAllAssociative();
 
         return new ArrayIterator($data);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function fetch($fetchMode = null, $cursorOrientation = PDO::FETCH_ORI_NEXT, $cursorOffset = 0)
-    {
-        $row = $this->doFetch();
-        if (! $row) {
-            return false;
-        }
-
-        if ($fetchMode === FetchMode::ASSOCIATIVE) {
-            return $row;
-        }
-
-        if ($fetchMode === FetchMode::NUMERIC) {
-            return array_values($row);
-        }
-
-        if ($fetchMode === null || $fetchMode === FetchMode::MIXED) {
-            return array_merge($row, array_values($row));
-        }
-
-        if ($fetchMode === FetchMode::COLUMN) {
-            return reset($row);
-        }
-
-        if ($fetchMode === PDO::FETCH_KEY_PAIR) {
-            if ($this->columnCount() !== 2) {
-                throw new InvalidArgumentException('Key pair fetch-style could only be used with a due column result');
-            }
-
-            [$key, $value] = array_values($row);
-
-            return [$key => $value];
-        }
-
-        throw new InvalidArgumentException('Invalid fetch-style "' . $fetchMode . '" given for fetching result.');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function fetchAll($fetchMode = null, $fetchArgument = null, $ctorArgs = null): array
-    {
-        $unique = null;
-        $group = null;
-
-        if ($fetchMode & PDO::FETCH_UNIQUE) {
-            $unique = $fetchArgument ?? 0;
-            $fetchMode &= ~PDO::FETCH_UNIQUE;
-        }
-
-        if ($fetchMode & PDO::FETCH_GROUP) {
-            $group = $fetchArgument ?? 0;
-            $fetchMode &= ~PDO::FETCH_GROUP;
-        }
-
-        $uniqueValues = [];
-        $rows = [];
-        while ($row = $this->fetch($fetchMode ?: PDO::FETCH_BOTH)) {
-            if ($unique !== null) {
-                $unq = is_int($unique) ? array_values($row)[$unique] : $row[$unique];
-                if (in_array($unq, $uniqueValues, true)) {
-                    continue;
-                }
-
-                $uniqueValues[] = $unq;
-            }
-
-            if ($group !== null) {
-                $groupValue = is_int($group) ? array_values($row)[$group] : $row[$group];
-                $rows[$groupValue][] = $row;
-            } else {
-                $rows[] = $row;
-            }
-        }
-
-        return $rows;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function fetchColumn($columnIndex = 0)
-    {
-        $row = $this->fetch(FetchMode::NUMERIC);
-
-        // TODO: verify that return false is the correct behavior
-        return $row[$columnIndex] ?? false;
     }
 
     /**
@@ -258,26 +145,9 @@ class DummyStatement implements IteratorAggregate, Statement, Result
     /**
      * {@inheritdoc}
      */
-    public function errorCode()
+    public function execute($params = null): Result
     {
-        /* @phpstan-ignore-next-line */
-        return null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function errorInfo()
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function execute($params = null): bool
-    {
-        return true;
+        return new DummyResult($this->data);
     }
 
     public function rowCount(): int

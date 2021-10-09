@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra\ORM;
 
-use Doctrine\DBAL\Driver\ResultStatement;
-use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\Query\Parser;
 use Doctrine\ORM\QueryBuilder;
@@ -13,7 +11,6 @@ use Refugis\DoctrineExtra\IteratorTrait as BaseIteratorTrait;
 
 use function assert;
 use function is_string;
-use function method_exists;
 
 trait IteratorTrait
 {
@@ -57,15 +54,9 @@ trait IteratorTrait
                 assert(is_string($sql));
 
                 $dbalQb->select('COUNT(*)')->from('(' . $sql . ') scrl_c_0');
-                $stmt = $dbalQb->execute();
+                $result = $dbalQb->executeQuery();
 
-                assert($stmt instanceof ResultStatement);
-
-                if (method_exists($stmt, 'fetchOne')) {
-                    return (int) $stmt->fetchOne();
-                }
-
-                return (int) $stmt->fetch(FetchMode::COLUMN);
+                return (int) $result->fetchOne();
             }
 
             $distinct = $queryBuilder->getDQLPart('distinct') ? 'DISTINCT ' : '';

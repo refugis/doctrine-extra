@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Refugis\DoctrineExtra\Tests\ORM;
+namespace Refugis\DoctrineExtra\Tests\DBAL;
 
-use Doctrine\DBAL\Cache\ArrayStatement;
 use Doctrine\DBAL\Query\QueryBuilder;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Refugis\DoctrineExtra\DBAL\DummyStatement;
 use Refugis\DoctrineExtra\DBAL\RowIterator;
 use Refugis\DoctrineExtra\Tests\Mock\ORM\EntityManagerTrait;
 
@@ -30,7 +30,7 @@ class RowIteratorTest extends TestCase
 
         $this->innerConnection
             ->query('SELECT a.id FROM foobar a')
-            ->willReturn(new ArrayStatement([
+            ->willReturn(new DummyStatement([
                 ['id' => '42'],
                 ['id' => '45'],
                 ['id' => '48'],
@@ -54,7 +54,7 @@ class RowIteratorTest extends TestCase
     {
         $this->innerConnection
             ->query('SELECT COUNT(*) AS sclr_0 FROM foobar a')
-            ->willReturn(new ArrayStatement([
+            ->willReturn(new DummyStatement([
                 ['sclr_0' => '42'],
             ]))
         ;
@@ -68,7 +68,7 @@ class RowIteratorTest extends TestCase
 
         $this->innerConnection
             ->query('SELECT a.id FROM foobar a OFFSET 1')
-            ->willReturn(new ArrayStatement([
+            ->willReturn(new DummyStatement([
                 ['id_0' => '42'],
                 ['id_0' => '45'],
                 ['id_0' => '48'],
@@ -76,7 +76,7 @@ class RowIteratorTest extends TestCase
 
         $this->innerConnection
             ->query('SELECT COUNT(*) AS sclr_0 FROM foobar a')
-            ->willReturn(new ArrayStatement([
+            ->willReturn(new DummyStatement([
                 ['sclr_0' => '42'],
             ]))
         ;

@@ -3,8 +3,8 @@
 namespace Refugis\DoctrineExtra\Tests\Mock\ODM\PhpCr;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\PDOConnection;
-use Doctrine\DBAL\Driver\PDOMySql\Driver;
+use Doctrine\DBAL\Driver\PDO\MySQL\Driver;
+use Doctrine\DBAL\Driver\ServerInfoAwareConnection;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\ODM\PHPCR\Configuration;
 use Doctrine\ODM\PHPCR\DocumentManager;
@@ -85,9 +85,9 @@ trait DocumentManagerTrait
     private ?DocumentManagerInterface $documentManager = null;
 
     /**
-     * @var PDOConnection|ObjectProphecy
+     * @var ServerInfoAwareConnection|ObjectProphecy
      */
-    private object $connection;
+    private ObjectProphecy $connection;
 
     public function getDocumentManager(): DocumentManagerInterface
     {
@@ -95,12 +95,13 @@ trait DocumentManagerTrait
             return $this->documentManager;
         }
 
-        $this->connection = $this->prophesize(PDOConnection::class);
-
+        $this->connection = $this->prophesize(ServerInfoAwareConnection::class);
         $connection = new Connection([
-            'pdo' => $this->connection->reveal(),
             'platform' => new MySqlPlatform(),
         ], new Driver());
+
+        (fn (ServerInfoAwareConnection $connection) => $this->_conn = $connection)
+            ->bindTo($connection, Connection::class)($this->connection->reveal());
 
         $this->connection->prepare('SELECT 1 FROM phpcr_workspaces WHERE name = ?')->willReturn(new DummyStatement([[1]]));
         $this->connection->query('SELECT DATABASE()')->willReturn(new DummyStatement([['test_db']]));

@@ -2,7 +2,6 @@
 
 namespace Refugis\DoctrineExtra\Tests\ORM;
 
-use Doctrine\DBAL\Cache\ArrayStatement;
 use Doctrine\DBAL\Driver\Statement;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\NonUniqueResultException;
@@ -12,6 +11,8 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use Refugis\DoctrineExtra\DBAL\DummyResult;
+use Refugis\DoctrineExtra\DBAL\DummyStatement;
 use Refugis\DoctrineExtra\ORM\EntityIterator;
 use Refugis\DoctrineExtra\ORM\EntityRepository;
 use Refugis\DoctrineExtra\Tests\Fixtures\Entity\FooBar;
@@ -54,7 +55,7 @@ class EntityRepositoryTest extends TestCase
     {
         $this->innerConnection
             ->query('SELECT t0_.id AS id_0 FROM TestEntity t0_')
-            ->willReturn(new ArrayStatement([]))
+            ->willReturn(new DummyStatement([]))
         ;
 
         self::assertInstanceOf(EntityIterator::class, $this->repository->all());
@@ -64,7 +65,7 @@ class EntityRepositoryTest extends TestCase
     {
         $this->innerConnection
             ->query('SELECT COUNT(t0_.id) AS sclr_0 FROM TestEntity t0_')
-            ->willReturn(new ArrayStatement([
+            ->willReturn(new DummyStatement([
                 ['sclr_0' => '42'],
             ]))
         ;
@@ -76,19 +77,9 @@ class EntityRepositoryTest extends TestCase
     {
         $this->innerConnection
             ->query('SELECT t0_.id AS id_0 FROM TestEntity t0_ LIMIT 1')
-            ->willReturn($statement = $this->prophesize(Statement::class))
+            ->willReturn(new DummyResult([['id_0' => '1']]))
             ->shouldBeCalledTimes(1)
         ;
-
-        $statement->setFetchMode(Argument::any())->willReturn();
-        $statement
-            ->fetch(PDO::FETCH_ASSOC, Argument::cetera())
-            ->willReturn(
-                ['id_0' => '1'],
-                false
-            )
-        ;
-        $statement->closeCursor()->willReturn();
 
         $obj1 = $this->repository->findOneByCached([]);
         $this->repository->findOneByCached([]);
@@ -106,20 +97,12 @@ class EntityRepositoryTest extends TestCase
 
         $this->innerConnection
             ->query('SELECT t0_.id AS id_0 FROM TestEntity t0_ LIMIT 1')
-            ->willReturn($statement = $this->prophesize(Statement::class))
-            ->shouldBeCalledTimes(1)
-        ;
-
-        $statement->setFetchMode(Argument::any())->willReturn();
-        $statement
-            ->fetch(PDO::FETCH_ASSOC, Argument::cetera())
-            ->willReturn(
+            ->willReturn(new DummyResult([
                 ['id_0' => '1'],
                 ['id_0' => '2'],
-                false
-            )
+            ]))
+            ->shouldBeCalledTimes(1)
         ;
-        $statement->closeCursor()->willReturn();
 
         $this->repository->findOneByCached([]);
     }
@@ -128,21 +111,13 @@ class EntityRepositoryTest extends TestCase
     {
         $this->innerConnection
             ->query('SELECT t0_.id AS id_0 FROM TestEntity t0_')
-            ->willReturn($statement = $this->prophesize(Statement::class))
-            ->shouldBeCalledTimes(1)
-        ;
-
-        $statement->setFetchMode(Argument::any())->willReturn();
-        $statement
-            ->fetch(PDO::FETCH_ASSOC, Argument::cetera())
-            ->willReturn(
+            ->willReturn(new DummyResult([
                 ['id_0' => '1'],
                 ['id_0' => '2'],
                 ['id_0' => '3'],
-                false
-            )
+            ]))
+            ->shouldBeCalledTimes(1)
         ;
-        $statement->closeCursor()->willReturn();
 
         $objs = $this->repository->findByCached([]);
         $this->repository->findByCached([]);
@@ -164,19 +139,12 @@ class EntityRepositoryTest extends TestCase
             ->shouldBeCalledTimes(1)
         ;
 
-        $statement->setFetchMode(Argument::any())->willReturn();
         $statement->bindValue(1, 2, PDO::PARAM_INT)->willReturn();
         $statement->bindValue(2, 3, PDO::PARAM_INT)->willReturn();
-        $statement->execute()->willReturn(true);
-        $statement
-            ->fetch(PDO::FETCH_ASSOC, Argument::cetera())
-            ->willReturn(
-                ['id_0' => '2'],
-                ['id_0' => '3'],
-                false
-            )
-        ;
-        $statement->closeCursor()->willReturn();
+        $statement->execute()->willReturn(new DummyResult([
+            ['id_0' => '2'],
+            ['id_0' => '3'],
+        ]));
 
         $objs = $this->repository->findByCached(['id' => [2, 3]], ['id' => 'asc'], 2, 1);
 
@@ -194,17 +162,8 @@ class EntityRepositoryTest extends TestCase
         ;
 
         /* @var Statement|ObjectProphecy $statement */
-        $statement->setFetchMode(Argument::any())->willReturn();
         $statement->bindValue(1, 1, PDO::PARAM_INT)->willReturn();
-        $statement->execute()->willReturn(true);
-        $statement
-            ->fetch(PDO::FETCH_ASSOC, Argument::cetera())
-            ->willReturn(
-                ['id_1' => '1'],
-                false
-            )
-        ;
-        $statement->closeCursor()->willReturn();
+        $statement->execute()->willReturn(new DummyResult([['id_1' => '1']]));
 
         $obj1 = $this->repository->get(1);
 
@@ -223,16 +182,8 @@ class EntityRepositoryTest extends TestCase
         ;
 
         /* @var Statement|ObjectProphecy $statement */
-        $statement->setFetchMode(Argument::any())->willReturn();
         $statement->bindValue(1, 1, PDO::PARAM_INT)->willReturn();
-        $statement->execute()->willReturn(true);
-        $statement
-            ->fetch(PDO::FETCH_ASSOC, Argument::cetera())
-            ->willReturn(
-                false
-            )
-        ;
-        $statement->closeCursor()->willReturn();
+        $statement->execute()->willReturn(new DummyResult([]));
 
         $this->repository->get(1);
     }
@@ -246,17 +197,8 @@ class EntityRepositoryTest extends TestCase
         ;
 
         /* @var Statement|ObjectProphecy $statement */
-        $statement->setFetchMode(Argument::any())->willReturn();
         $statement->bindValue(1, 12, PDO::PARAM_INT)->willReturn();
-        $statement->execute()->willReturn(true);
-        $statement
-            ->fetch(PDO::FETCH_ASSOC, Argument::cetera())
-            ->willReturn(
-                ['id_1' => '12'],
-                false
-            )
-        ;
-        $statement->closeCursor()->willReturn();
+        $statement->execute()->willReturn(new DummyResult([['id_1' => '12']]));
 
         $obj1 = $this->repository->getOneBy(['id' => 12]);
 
@@ -275,16 +217,8 @@ class EntityRepositoryTest extends TestCase
         ;
 
         /* @var Statement|ObjectProphecy $statement */
-        $statement->setFetchMode(Argument::any())->willReturn();
         $statement->bindValue(1, 12, PDO::PARAM_INT)->willReturn();
-        $statement->execute()->willReturn(true);
-        $statement
-            ->fetch(PDO::FETCH_ASSOC, Argument::cetera())
-            ->willReturn(
-                false
-            )
-        ;
-        $statement->closeCursor()->willReturn();
+        $statement->execute()->willReturn(new DummyResult([]));
 
         $this->repository->getOneBy(['id' => 12]);
     }
@@ -298,17 +232,8 @@ class EntityRepositoryTest extends TestCase
         ;
 
         /* @var Statement|ObjectProphecy $statement */
-        $statement->setFetchMode(Argument::any())->willReturn();
         $statement->bindValue(1, 12, PDO::PARAM_INT)->willReturn();
-        $statement->execute()->willReturn(true);
-        $statement
-            ->fetch(PDO::FETCH_ASSOC, Argument::cetera())
-            ->willReturn(
-                ['id_0' => '12'],
-                false
-            )
-        ;
-        $statement->closeCursor()->willReturn();
+        $statement->execute()->willReturn(new DummyResult([['id_0' => '12']]));
 
         $obj1 = $this->repository->getOneByCached(['id' => 12]);
         $this->repository->getOneByCached(['id' => 12]);

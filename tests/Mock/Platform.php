@@ -95,4 +95,9 @@ class Platform extends AbstractPlatform
     {
         return $fixed ? 'DUMMY_BINARY('.($length ?: 255).')' : 'DUMMY_VARBINARY('.($length ?: 255).')';
     }
+
+    public function getCurrentDatabaseExpression(): string
+    {
+        return 'DUMMY_DATABASE()';
+    }
 }

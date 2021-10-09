@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\QueryBuilder;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Refugis\DoctrineExtra\DBAL\DummyResult;
 use Refugis\DoctrineExtra\DBAL\DummyStatement;
 use Refugis\DoctrineExtra\ORM\EntityIterator;
 use Refugis\DoctrineExtra\Tests\Fixtures\Entity\FooBar;
@@ -226,7 +227,7 @@ class EntityIteratorTest extends TestCase
 
         $this->innerConnection
             ->query('SELECT t0_.id AS id_0 FROM TestEntity t0_')
-            ->willReturn($stmt = $this->prophesize(Statement::class))
+            ->willReturn(new DummyResult([]))
             ->shouldBeCalledOnce()
         ;
 

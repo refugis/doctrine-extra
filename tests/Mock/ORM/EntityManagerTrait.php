@@ -2,13 +2,12 @@
 
 namespace Refugis\DoctrineExtra\Tests\Mock\ORM;
 
-use Doctrine\Common\Cache\ArrayCache;
+use Doctrine\DBAL\Driver\PDO\MySQL\Driver;
+use Doctrine\DBAL\Driver\ServerInfoAwareConnection;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use Doctrine\Common\Proxy\AbstractProxyFactory;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Connection as DriverConnection;
-use Doctrine\DBAL\Driver\PDOConnection;
-use Doctrine\DBAL\Driver\PDOMySql\Driver;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,6 +15,8 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Refugis\DoctrineExtra\ORM\EntityRepository;
 use Refugis\DoctrineExtra\Tests\Mock\FakeMetadataFactory;
 use Refugis\DoctrineExtra\Tests\Mock\Platform;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\DoctrineProvider;
 
 trait EntityManagerTrait
 {
@@ -36,7 +37,7 @@ trait EntityManagerTrait
 
         $this->configuration = new Configuration();
 
-        $this->configuration->setResultCacheImpl(new ArrayCache());
+        $this->configuration->setResultCacheImpl(new DoctrineProvider(new ArrayAdapter()));
         $this->configuration->setClassMetadataFactoryName(FakeMetadataFactory::class);
         $this->configuration->setMetadataDriverImpl($this->prophesize(MappingDriver::class)->reveal());
         $this->configuration->setProxyDir(\sys_get_temp_dir());
@@ -44,12 +45,16 @@ trait EntityManagerTrait
         $this->configuration->setAutoGenerateProxyClasses(AbstractProxyFactory::AUTOGENERATE_ALWAYS);
         $this->configuration->setDefaultRepositoryClassName(EntityRepository::class);
 
-        $this->innerConnection = $this->prophesize(PDOConnection::class);
+        $this->innerConnection = $this->prophesize(ServerInfoAwareConnection::class);
 
         $this->connection = new Connection([
-            'pdo' => $this->innerConnection->reveal(),
+            'user' => 'user',
+            'name' => 'dbname',
             'platform' => new Platform(),
         ], new Driver(), $this->configuration);
+
+        (fn (ServerInfoAwareConnection $connection) => $this->_conn = $connection)
+            ->bindTo($this->connection, Connection::class)($this->innerConnection->reveal());
 
         $this->entityManager = EntityManager::create($this->connection, $this->configuration);
 

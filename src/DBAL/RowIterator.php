@@ -5,13 +5,8 @@ declare(strict_types=1);
 namespace Refugis\DoctrineExtra\DBAL;
 
 use ArrayIterator;
-use Doctrine\DBAL\Driver\ResultStatement;
-use Doctrine\DBAL\FetchMode;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Refugis\DoctrineExtra\ObjectIteratorInterface;
-
-use function assert;
-use function method_exists;
 
 class RowIterator implements ObjectIteratorInterface
 {
@@ -79,14 +74,8 @@ class RowIterator implements ObjectIteratorInterface
             return $this->internalIterator;
         }
 
-        $stmt = $this->queryBuilder->execute();
-        assert($stmt instanceof ResultStatement);
-
-        if (method_exists($stmt, 'fetchAllAssociative')) {
-            $iterator = new ArrayIterator($stmt->fetchAllAssociative());
-        } else {
-            $iterator = new ArrayIterator($stmt->fetchAll(FetchMode::ASSOCIATIVE));
-        }
+        $result = $this->queryBuilder->executeQuery();
+        $iterator = new ArrayIterator($result->fetchAllAssociative());
 
         $this->internalIterator = $iterator;
         $this->currentElement = $this->internalIterator->current();
