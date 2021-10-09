@@ -11,14 +11,12 @@ use Doctrine\DBAL\Driver\Statement;
 use Doctrine\DBAL\FetchMode;
 use Doctrine\DBAL\ParameterType;
 use InvalidArgumentException;
-use Iterator;
 use IteratorAggregate;
 use PDO;
 
 use function array_merge;
 use function array_values;
 use function count;
-use function defined;
 use function in_array;
 use function is_int;
 use function reset;
@@ -240,19 +238,21 @@ class DummyStatement implements IteratorAggregate, Statement, Result
     /**
      * {@inheritdoc}
      */
-    public function bindValue($param, $value, $type = ParameterType::STRING): void
+    public function bindValue($param, $value, $type = ParameterType::STRING): bool
     {
-        /* @phpstan-ignore-next-line */
         // TODO
+
+        return true;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function bindParam($column, &$variable, $type = ParameterType::STRING, $length = null): void
+    public function bindParam($column, &$variable, $type = ParameterType::STRING, $length = null): bool
     {
-        /* @phpstan-ignore-next-line */
         // TODO
+
+        return true;
     }
 
     /**
