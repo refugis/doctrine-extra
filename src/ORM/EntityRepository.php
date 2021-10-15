@@ -19,8 +19,9 @@ use function serialize;
 use function sha1;
 
 /**
- * @template T
+ * @template T of object
  * @extends BaseRepository<T>
+ * @implements ObjectRepositoryInterface<T>
  */
 class EntityRepository extends BaseRepository implements ObjectRepositoryInterface
 {

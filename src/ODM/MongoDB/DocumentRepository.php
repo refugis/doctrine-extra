@@ -14,6 +14,11 @@ use function is_array;
 use function is_object;
 use function iterator_to_array;
 
+/**
+ * @template T of object
+ * @extends BaseRepository<T>
+ * @implements ObjectRepositoryInterface<T>
+ */
 class DocumentRepository extends BaseRepository implements ObjectRepositoryInterface
 {
     public function all(): ObjectIteratorInterface
@@ -86,6 +91,7 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
         $query = $this->buildQueryBuilderForCriteria($criteria, $orderBy);
         $query->limit(1);
 
+        /** @var T | null $object */ // phpcs:ignore
         $object = $query->getQuery()->getSingleResult();
         if ($object === null) {
             throw new Exception\NoResultException();
@@ -105,6 +111,7 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
         $query->limit(1);
 //        $query->getQuery()->useResultCache(true, $ttl, '__'.get_called_class().'::'.__FUNCTION__.sha1(serialize(func_get_args())));
 
+        /** @var T | null $object */ // phpcs:ignore
         $object = $query->getQuery()->getSingleResult();
         if ($object === null) {
             throw new Exception\NoResultException();

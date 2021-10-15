@@ -19,6 +19,10 @@ use function iterator_to_array;
 use function Safe\sprintf;
 use function strtolower;
 
+/**
+ * @template T of object
+ * @implements ObjectRepositoryInterface<T>
+ */
 class DocumentRepository extends BaseRepository implements ObjectRepositoryInterface
 {
     public function all(): ObjectIteratorInterface
@@ -86,6 +90,7 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
      */
     public function get($id, $lockMode = null, $lockVersion = null): object
     {
+        /** @var T | null $document */ // phpcs:ignore
         $document = $this->find($id);
         if ($document === null) {
             throw new Exception\NoResultException();
@@ -102,8 +107,8 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
         $query = $this->buildQueryBuilderForCriteria($criteria, $orderBy);
         $query->setMaxResults(1);
 
+        /** @var T | null $object */ // phpcs:ignore
         $object = $query->getQuery()->getOneOrNullResult();
-
         if ($object === null) {
             throw new Exception\NoResultException();
         }
@@ -120,8 +125,8 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
         $query->setMaxResults(1);
 //        $query->getQuery()->useResultCache(true, $ttl, '__'.get_called_class().'::'.__FUNCTION__.sha1(serialize(func_get_args())));
 
+        /** @var T | null $object */ // phpcs:ignore
         $object = $query->getQuery()->getOneOrNullResult();
-
         if ($object === null) {
             throw new Exception\NoResultException();
         }
