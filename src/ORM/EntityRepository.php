@@ -18,6 +18,10 @@ use function method_exists;
 use function serialize;
 use function sha1;
 
+/**
+ * @template T
+ * @extends BaseRepository<T>
+ */
 class EntityRepository extends BaseRepository implements ObjectRepositoryInterface
 {
     public function all(): ObjectIteratorInterface
