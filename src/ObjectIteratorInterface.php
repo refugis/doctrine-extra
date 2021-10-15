@@ -7,6 +7,10 @@ namespace Refugis\DoctrineExtra;
 use Countable;
 use Iterator;
 
+/**
+ * @template T
+ * @extends Iterator<T>
+ */
 interface ObjectIteratorInterface extends Iterator, Countable
 {
     /**

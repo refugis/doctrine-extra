@@ -43,7 +43,7 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
     /**
      * {@inheritdoc}
      */
-    public function findOneByCached(array $criteria, ?array $orderBy = null, int $ttl = 28800)
+    public function findOneByCached(array $criteria, ?array $orderBy = null, int $ttl = 28800): ?object
     {
         $query = $this->buildQueryForFind($criteria, $orderBy);
         $query->setMaxResults(1);
@@ -71,7 +71,7 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
         ?int $limit = null,
         ?int $offset = null,
         int $ttl = 28800
-    ) {
+    ): iterable {
         $query = $this->buildQueryForFind($criteria, $orderBy);
         if ($limit !== null) {
             $query->setMaxResults($limit);
@@ -94,7 +94,7 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
     /**
      * {@inheritdoc}
      */
-    public function get($id, $lockMode = null, $lockVersion = null)
+    public function get($id, $lockMode = null, $lockVersion = null): object
     {
         $entity = $this->find($id, $lockMode, $lockVersion);
         if ($entity === null) {
@@ -107,7 +107,7 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
     /**
      * {@inheritdoc}
      */
-    public function getOneBy(array $criteria, ?array $orderBy = null)
+    public function getOneBy(array $criteria, ?array $orderBy = null): object
     {
         $entity = $this->findOneBy($criteria, $orderBy);
         if ($entity === null) {
@@ -120,7 +120,7 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
     /**
      * {@inheritdoc}
      */
-    public function getOneByCached(array $criteria, ?array $orderBy = null, int $ttl = 28800)
+    public function getOneByCached(array $criteria, ?array $orderBy = null, int $ttl = 28800): object
     {
         $query = $this->buildQueryForFind($criteria, $orderBy);
         $query->setMaxResults(1);
