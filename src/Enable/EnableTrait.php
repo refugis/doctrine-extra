@@ -6,6 +6,8 @@ namespace Refugis\DoctrineExtra\Enable;
 
 /**
  * Represents a common implementation of EnableInterface.
+ *
+ * @property bool $enabled
  */
 trait EnableTrait
 {
