@@ -11,6 +11,9 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Refugis\DoctrineExtra\ORM\Type\PhpEnumType;
 use Refugis\DoctrineExtra\Tests\Fixtures\Enum\ActionEnum;
 use Refugis\DoctrineExtra\Tests\Fixtures\Enum\FoobarEnum;
+use Refugis\DoctrineExtra\Tests\Fixtures\Enum\NativeEnum;
+use Refugis\DoctrineExtra\Tests\Fixtures\Enum\NativeIntEnum;
+use Refugis\DoctrineExtra\Tests\Fixtures\Enum\NativeStringEnum;
 
 class PhpEnumTypeTest extends TestCase
 {
@@ -223,5 +226,101 @@ class PhpEnumTypeTest extends TestCase
 
         $type = Type::getType($multipleEnumClass);
         $type->convertToDatabaseValue([ActionEnum::GET()], $platform->reveal());
+    }
+
+    /**
+     * @requires PHP >= 8.1
+     */
+    public function testShouldRegisterNativeEnumTypes(): void
+    {
+        PhpEnumType::registerEnumType(NativeEnum::class);
+        PhpEnumType::registerEnumType(NativeStringEnum::class);
+        PhpEnumType::registerEnumType(NativeIntEnum::class);
+
+        self::assertInstanceOf(PhpEnumType::class, Type::getType(NativeEnum::class));
+        self::assertInstanceOf(PhpEnumType::class, Type::getType(NativeStringEnum::class));
+        self::assertInstanceOf(PhpEnumType::class, Type::getType(NativeIntEnum::class));
+    }
+
+    /**
+     * @requires PHP >= 8.1
+     */
+    public function testShouldConvertNativeEnumToDatabaseAndBack(): void
+    {
+        PhpEnumType::registerEnumType(NativeEnum::class);
+        $platform = $this->prophesize(AbstractPlatform::class);
+
+        $value = NativeEnum::CASE_ONE;
+        $type = Type::getType(NativeEnum::class);
+
+        $dbValue = $type->convertToDatabaseValue($value, $platform->reveal());
+        self::assertEquals('CASE_ONE', $dbValue);
+        self::assertEquals($value, $type->convertToPHPValue($dbValue, $platform->reveal()));
+    }
+
+    /**
+     * @requires PHP >= 8.1
+     */
+    public function testShouldThrowTryingToConvertANativeEnumForANonexistentCase(): void
+    {
+        PhpEnumType::registerEnumType(NativeEnum::class);
+        $platform = $this->prophesize(AbstractPlatform::class);
+
+        $type = Type::getType(NativeEnum::class);
+
+        $this->expectException(ConversionException::class);
+        $type->convertToPHPValue('CASE_NOT', $platform->reveal());
+    }
+
+    /**
+     * @requires PHP >= 8.1
+     */
+    public function testShouldConvertNativeBackedEnumToDatabaseAndBack(): void
+    {
+        PhpEnumType::registerEnumType(NativeStringEnum::class);
+        PhpEnumType::registerEnumType(NativeIntEnum::class);
+        $platform = $this->prophesize(AbstractPlatform::class);
+
+        $value = NativeStringEnum::CASE_ONE;
+        $type = Type::getType(NativeStringEnum::class);
+
+        $dbValue = $type->convertToDatabaseValue($value, $platform->reveal());
+        self::assertEquals('one', $dbValue);
+        self::assertEquals($value, $type->convertToPHPValue($dbValue, $platform->reveal()));
+
+        $value = NativeIntEnum::CASE_TWO;
+        $type = Type::getType(NativeIntEnum::class);
+
+        $dbValue = $type->convertToDatabaseValue($value, $platform->reveal());
+        self::assertEquals(2, $dbValue);
+        self::assertEquals($value, $type->convertToPHPValue($dbValue, $platform->reveal()));
+    }
+
+    /**
+     * @requires PHP >= 8.1
+     */
+    public function testShouldThrowTryingToConvertAStringBackedNativeEnumForANonexistentCase(): void
+    {
+        PhpEnumType::registerEnumType(NativeStringEnum::class);
+        $platform = $this->prophesize(AbstractPlatform::class);
+
+        $type = Type::getType(NativeStringEnum::class);
+
+        $this->expectException(ConversionException::class);
+        $type->convertToPHPValue('not_a_case', $platform->reveal());
+    }
+
+    /**
+     * @requires PHP >= 8.1
+     */
+    public function testShouldThrowTryingToConvertAnIntBackedNativeEnumForANonexistentCase(): void
+    {
+        PhpEnumType::registerEnumType(NativeIntEnum::class);
+        $platform = $this->prophesize(AbstractPlatform::class);
+
+        $type = Type::getType(NativeIntEnum::class);
+
+        $this->expectException(ConversionException::class);
+        $type->convertToPHPValue(-1, $platform->reveal());
     }
 }

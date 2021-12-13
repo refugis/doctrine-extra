@@ -8,7 +8,6 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use PDO;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Refugis\DoctrineExtra\DBAL\DummyResult;
@@ -20,11 +19,15 @@ use Refugis\DoctrineExtra\Tests\Fixtures\Entity\TestEntity;
 use Refugis\DoctrineExtra\Tests\Mock\ORM\EntityManagerTrait;
 use Refugis\DoctrineExtra\Tests\Mock\ORM\Repository;
 
+use function get_class;
+use function str_replace;
+
 class EntityRepositoryTest extends TestCase
 {
     use EntityManagerTrait;
     use ProphecyTrait;
 
+    private const INVALID_CACHE_KEY_CHARS = ['{', '}', '(', ')', '/', '\\', '@', ':'];
     private EntityRepository $repository;
 
     /**
@@ -84,8 +87,14 @@ class EntityRepositoryTest extends TestCase
         $obj1 = $this->repository->findOneByCached([]);
         $this->repository->findOneByCached([]);
 
-        $cache = $this->configuration->getResultCacheImpl();
-        self::assertNotFalse($cache->fetch('__'.\get_class($this->repository).'::findOneByCachedf6e6f43434391be8b061460900c36046255187c8'));
+        $key = '__'.str_replace(self::INVALID_CACHE_KEY_CHARS, '', get_class($this->repository)).'findOneByCachedf6e6f43434391be8b061460900c36046255187c8';
+        if (method_exists($this->configuration, 'getResultCache')) {
+            $cache = $this->configuration->getResultCache();
+            self::assertTrue($cache->getItem($key)->isHit());
+        } else {
+            $cache = $this->configuration->getResultCacheImpl();
+            self::assertNotFalse($cache->fetch($key));
+        }
 
         self::assertInstanceOf(TestEntity::class, $obj1);
         self::assertEquals(1, $obj1->id);
@@ -122,8 +131,14 @@ class EntityRepositoryTest extends TestCase
         $objs = $this->repository->findByCached([]);
         $this->repository->findByCached([]);
 
-        $cache = $this->configuration->getResultCacheImpl();
-        self::assertNotFalse($cache->fetch('__'.\get_class($this->repository).'::findByCachedf6e6f43434391be8b061460900c36046255187c8'));
+        $key = '__'.str_replace(self::INVALID_CACHE_KEY_CHARS, '', get_class($this->repository)).'findByCachedf6e6f43434391be8b061460900c36046255187c8';
+        if (method_exists($this->configuration, 'getResultCache')) {
+            $cache = $this->configuration->getResultCache();
+            self::assertTrue($cache->getItem($key)->isHit());
+        } else {
+            $cache = $this->configuration->getResultCacheImpl();
+            self::assertNotFalse($cache->fetch($key));
+        }
 
         self::assertCount(3, $objs);
         self::assertEquals(1, $objs[0]->id);
@@ -238,8 +253,14 @@ class EntityRepositoryTest extends TestCase
         $obj1 = $this->repository->getOneByCached(['id' => 12]);
         $this->repository->getOneByCached(['id' => 12]);
 
-        $cache = $this->configuration->getResultCacheImpl();
-        self::assertNotFalse($cache->fetch('__'.\get_class($this->repository).'::getOneByCached48b7e8dc8f3d4c52abba542ba5f3d423da65cf5e'));
+        $key = '__'.str_replace(self::INVALID_CACHE_KEY_CHARS, '', get_class($this->repository)).'getOneByCached48b7e8dc8f3d4c52abba542ba5f3d423da65cf5e';
+        if (method_exists($this->configuration, 'getResultCache')) {
+            $cache = $this->configuration->getResultCache();
+            self::assertTrue($cache->getItem($key)->isHit());
+        } else {
+            $cache = $this->configuration->getResultCacheImpl();
+            self::assertNotFalse($cache->fetch($key));
+        }
 
         self::assertInstanceOf(TestEntity::class, $obj1);
         self::assertEquals(12, $obj1->id);
@@ -248,8 +269,8 @@ class EntityRepositoryTest extends TestCase
     public function testRepositoryIsInstanceOfEntityRepository(): void
     {
         $repositoryClasses = [
-            \get_class($this->entityManager->getRepository(TestEntity::class)),
-            \get_class($this->entityManager->getRepository(FooBar::class)),
+            get_class($this->entityManager->getRepository(TestEntity::class)),
+            get_class($this->entityManager->getRepository(FooBar::class)),
         ];
 
         foreach ($repositoryClasses as $class) {

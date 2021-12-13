@@ -4,27 +4,43 @@ declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra\ORM\Type;
 
+use BackedEnum;
+use Closure;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
+use IntBackedEnum;
 use InvalidArgumentException;
 use MyCLabs\Enum\Enum;
+use ReflectionEnum;
+use ReflectionException;
+use UnitEnum;
 
 use function array_map;
 use function assert;
+use function interface_exists;
+use function is_a;
 use function is_string;
 use function is_subclass_of;
 use function json_decode;
 use function json_encode;
+use function Safe\sprintf;
 
 use const JSON_THROW_ON_ERROR;
+use const PHP_VERSION_ID;
 
 class PhpEnumType extends Type
 {
+    private const TYPE_STRING = 0;
+    private const TYPE_INT = 1;
+
     protected string $name = 'enum';
     protected string $enumClass = Enum::class;
     protected bool $multiple = false;
+    private int $type = self::TYPE_STRING;
+    private Closure $toPhp;
+    private Closure $toDatabase;
 
     public function getName(): string
     {
@@ -34,13 +50,13 @@ class PhpEnumType extends Type
     /**
      * {@inheritdoc}
      */
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform): string
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         if ($this->multiple) {
             return $platform->getJsonTypeDeclarationSQL([]);
         }
 
-        return $platform->getVarcharTypeDeclarationSQL([]);
+        return $this->type === self::TYPE_STRING ? $platform->getVarcharTypeDeclarationSQL([]) : $platform->getIntegerTypeDeclarationSQL([]);
     }
 
     /**
@@ -52,43 +68,27 @@ class PhpEnumType extends Type
             return null;
         }
 
-        $valueToEnumConverter = function ($enumValue): Enum {
-            if (! $this->enumClass::isValid($enumValue)) {
-                throw ConversionException::conversionFailed($enumValue, $this->name);
-            }
-
-            return new $this->enumClass($enumValue);
-        };
-
         if (! $this->multiple) {
-            return $valueToEnumConverter($value);
+            return ($this->toPhp)($value);
         }
 
-        return array_map($valueToEnumConverter, json_decode($value, true, 512, JSON_THROW_ON_ERROR));
+        return array_map($this->toPhp, json_decode($value, true, 512, JSON_THROW_ON_ERROR));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
+    public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
         if ($value === null) {
             return null;
         }
 
-        $enumToValueConverter = function (Enum $enum): string {
-            if (! $enum instanceof $this->enumClass) {
-                throw ConversionException::conversionFailedInvalidType($enum, $this->name, [$this->enumClass]);
-            }
-
-            return (string) $enum;
-        };
-
         if (! $this->multiple) {
-            return $enumToValueConverter($value);
+            return ($this->toDatabase)($value);
         }
 
-        return json_encode(array_map($enumToValueConverter, $value), JSON_THROW_ON_ERROR);
+        return json_encode(array_map($this->toDatabase, $value), JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -102,9 +102,80 @@ class PhpEnumType extends Type
         $typeName = $typeNameOrEnumClass;
         $enumClass ??= $typeNameOrEnumClass;
 
-        if (! is_subclass_of($enumClass, Enum::class)) {
-            throw new InvalidArgumentException('Provided enum class "' . $enumClass . '" is not valid. Enums must extend "' . Enum::class . '"');
+        if (! is_subclass_of($enumClass, Enum::class) && ! (interface_exists(UnitEnum::class) && is_a($enumClass, UnitEnum::class, true))) {
+            $message = sprintf(
+                'Provided enum class "%s" is not valid. %sxtend %s class',
+                $enumClass,
+                PHP_VERSION_ID >= 80100 ? 'Use a native enum or e' : 'E',
+                Enum::class
+            );
+
+            throw new InvalidArgumentException($message);
         }
+
+        $enumType = self::TYPE_STRING;
+        // phpcs:disable Squiz.Scope.StaticThisUsage.Found
+        if (PHP_VERSION_ID >= 80100 && is_a($enumClass, UnitEnum::class, true)) {
+            if (is_a($enumClass, IntBackedEnum::class, true)) {
+                $enumType = self::TYPE_INT;
+            }
+
+            if (is_a($enumClass, BackedEnum::class, true)) {
+                $toPhp = function ($enumValue) use ($enumClass): BackedEnum {
+                    $val = $enumClass::tryFrom($enumValue);
+                    if ($val === null) {
+                        throw ConversionException::conversionFailed($enumValue, $this->name);
+                    }
+
+                    return $val;
+                };
+
+                $toDatabase = function (BackedEnum $enum) {
+                    if (! $enum instanceof $this->enumClass) {
+                        throw ConversionException::conversionFailedInvalidType($enum, $this->name, [$this->enumClass]);
+                    }
+
+                    return $enum->value;
+                };
+            } else {
+                $toPhp = function ($enumValue) use ($enumClass): UnitEnum {
+                    $reflection = new ReflectionEnum($enumClass);
+                    try {
+                        $case = $reflection->getCase($enumValue);
+                    } catch (ReflectionException $e) {
+                        throw ConversionException::conversionFailed($enumValue, $this->name, $e);
+                    }
+
+                    return $case->getValue();
+                };
+
+                $toDatabase = function (UnitEnum $enum): string {
+                    if (! $enum instanceof $this->enumClass) {
+                        throw ConversionException::conversionFailedInvalidType($enum, $this->name, [$this->enumClass]);
+                    }
+
+                    return $enum->name;
+                };
+            }
+        } else {
+            $toPhp = function ($enumValue): Enum {
+                if (! $this->enumClass::isValid($enumValue)) {
+                    throw ConversionException::conversionFailed($enumValue, $this->name);
+                }
+
+                return new $this->enumClass($enumValue);
+            };
+
+            $toDatabase = function (Enum $enum): string {
+                if (! $enum instanceof $this->enumClass) {
+                    throw ConversionException::conversionFailedInvalidType($enum, $this->name, [$this->enumClass]);
+                }
+
+                return (string) $enum;
+            };
+        }
+
+        // phpcs:enable Squiz.Scope.StaticThisUsage.Found
 
         // Register and customize the type
         self::addType($typeName, static::class);
@@ -114,6 +185,9 @@ class PhpEnumType extends Type
 
         $type->name = $typeName;
         $type->enumClass = $enumClass;
+        $type->type = $enumType;
+        $type->toPhp = $toPhp->bindTo($type, self::class);
+        $type->toDatabase = $toDatabase->bindTo($type, self::class);
 
         $multipleEnumType = 'array<' . $typeName . '>';
         self::addType($multipleEnumType, static::class);
@@ -123,6 +197,9 @@ class PhpEnumType extends Type
 
         $type->name = $multipleEnumType;
         $type->enumClass = $enumClass;
+        $type->type = $enumType;
+        $type->toPhp = $toPhp->bindTo($type, self::class);
+        $type->toDatabase = $toDatabase->bindTo($type, self::class);
         $type->multiple = true;
     }
 

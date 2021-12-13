@@ -7,6 +7,7 @@ namespace Refugis\DoctrineExtra\DBAL;
 use ArrayIterator;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Refugis\DoctrineExtra\ObjectIteratorInterface;
+use ReturnTypeWillChange;
 
 class RowIterator implements ObjectIteratorInterface
 {
@@ -51,6 +52,7 @@ class RowIterator implements ObjectIteratorInterface
      *
      * @return mixed
      */
+    #[ReturnTypeWillChange]
     public function current()
     {
         $this->getIterator();
