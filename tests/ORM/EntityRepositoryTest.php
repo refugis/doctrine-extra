@@ -88,13 +88,8 @@ class EntityRepositoryTest extends TestCase
         $this->repository->findOneByCached([]);
 
         $key = '__'.str_replace(self::INVALID_CACHE_KEY_CHARS, '', get_class($this->repository)).'findOneByCachedf6e6f43434391be8b061460900c36046255187c8';
-        if (method_exists($this->configuration, 'getResultCache')) {
-            $cache = $this->configuration->getResultCache();
-            self::assertTrue($cache->getItem($key)->isHit());
-        } else {
-            $cache = $this->configuration->getResultCacheImpl();
-            self::assertNotFalse($cache->fetch($key));
-        }
+        $cache = $this->configuration->getResultCache();
+        self::assertTrue($cache->getItem($key)->isHit());
 
         self::assertInstanceOf(TestEntity::class, $obj1);
         self::assertEquals(1, $obj1->id);
@@ -132,13 +127,8 @@ class EntityRepositoryTest extends TestCase
         $this->repository->findByCached([]);
 
         $key = '__'.str_replace(self::INVALID_CACHE_KEY_CHARS, '', get_class($this->repository)).'findByCachedf6e6f43434391be8b061460900c36046255187c8';
-        if (method_exists($this->configuration, 'getResultCache')) {
-            $cache = $this->configuration->getResultCache();
-            self::assertTrue($cache->getItem($key)->isHit());
-        } else {
-            $cache = $this->configuration->getResultCacheImpl();
-            self::assertNotFalse($cache->fetch($key));
-        }
+        $cache = $this->configuration->getResultCache();
+        self::assertTrue($cache->getItem($key)->isHit());
 
         self::assertCount(3, $objs);
         self::assertEquals(1, $objs[0]->id);
@@ -254,13 +244,8 @@ class EntityRepositoryTest extends TestCase
         $this->repository->getOneByCached(['id' => 12]);
 
         $key = '__'.str_replace(self::INVALID_CACHE_KEY_CHARS, '', get_class($this->repository)).'getOneByCached48b7e8dc8f3d4c52abba542ba5f3d423da65cf5e';
-        if (method_exists($this->configuration, 'getResultCache')) {
-            $cache = $this->configuration->getResultCache();
-            self::assertTrue($cache->getItem($key)->isHit());
-        } else {
-            $cache = $this->configuration->getResultCacheImpl();
-            self::assertNotFalse($cache->fetch($key));
-        }
+        $cache = $this->configuration->getResultCache();
+        self::assertTrue($cache->getItem($key)->isHit());
 
         self::assertInstanceOf(TestEntity::class, $obj1);
         self::assertEquals(12, $obj1->id);
