@@ -70,6 +70,11 @@ class ClassMetadata extends BaseClassMetadata
      */
     public function inlineEmbeddable($property, ClassMetadataInfo $embeddable): void
     {
+        $reflectionClass = $this->reflClass;
+
+        assert($reflectionClass !== null);
+        assert($embeddable->reflClass !== null);
+
         foreach ($embeddable->fieldMappings as $fieldMapping) {
             $fieldMapping['originalClass'] ??= $embeddable->name;
             $fieldMapping['declaredField'] = isset($fieldMapping['declaredField']) ? $property . '.' . $fieldMapping['declaredField'] : $property;
@@ -84,7 +89,7 @@ class ClassMetadata extends BaseClassMetadata
                     ->embeddedFieldToColumnName(
                         $property,
                         $fieldMapping['columnName'],
-                        $this->reflClass->name,
+                        $reflectionClass->name,
                         $embeddable->reflClass->name
                     );
             }
@@ -114,7 +119,7 @@ class ClassMetadata extends BaseClassMetadata
                         ->embeddedFieldToColumnName(
                             $property,
                             $column['name'],
-                            $this->reflClass->name,
+                            $reflectionClass->name,
                             $embeddable->reflClass->name
                         );
                 }
