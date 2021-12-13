@@ -124,15 +124,15 @@ class PhpEnumType extends Type
                 $toPhp = function ($enumValue) use ($enumClass): BackedEnum {
                     $val = $enumClass::tryFrom($enumValue);
                     if ($val === null) {
-                        throw ConversionException::conversionFailed($enumValue, $this->name);
+                        throw ConversionException::conversionFailed($enumValue, $this->name); /* @phpstan-ignore-line */
                     }
 
                     return $val;
                 };
 
                 $toDatabase = function (BackedEnum $enum) {
-                    if (! $enum instanceof $this->enumClass) {
-                        throw ConversionException::conversionFailedInvalidType($enum, $this->name, [$this->enumClass]);
+                    if (! $enum instanceof $this->enumClass) { /* @phpstan-ignore-line */
+                        throw ConversionException::conversionFailedInvalidType($enum, $this->name, [$this->enumClass]); /* @phpstan-ignore-line */
                     }
 
                     return $enum->value;
@@ -143,15 +143,15 @@ class PhpEnumType extends Type
                     try {
                         $case = $reflection->getCase($enumValue);
                     } catch (ReflectionException $e) {
-                        throw ConversionException::conversionFailed($enumValue, $this->name, $e);
+                        throw ConversionException::conversionFailed($enumValue, $this->name, $e); /* @phpstan-ignore-line */
                     }
 
                     return $case->getValue();
                 };
 
                 $toDatabase = function (UnitEnum $enum): string {
-                    if (! $enum instanceof $this->enumClass) {
-                        throw ConversionException::conversionFailedInvalidType($enum, $this->name, [$this->enumClass]);
+                    if (! $enum instanceof $this->enumClass) { /* @phpstan-ignore-line */
+                        throw ConversionException::conversionFailedInvalidType($enum, $this->name, [$this->enumClass]); /* @phpstan-ignore-line */
                     }
 
                     return $enum->name;
@@ -159,16 +159,16 @@ class PhpEnumType extends Type
             }
         } else {
             $toPhp = function ($enumValue): Enum {
-                if (! $this->enumClass::isValid($enumValue)) {
-                    throw ConversionException::conversionFailed($enumValue, $this->name);
+                if (! $this->enumClass::isValid($enumValue)) { /* @phpstan-ignore-line */
+                    throw ConversionException::conversionFailed($enumValue, $this->name); /* @phpstan-ignore-line */
                 }
 
-                return new $this->enumClass($enumValue);
+                return new $this->enumClass($enumValue); /* @phpstan-ignore-line */
             };
 
             $toDatabase = function (Enum $enum): string {
-                if (! $enum instanceof $this->enumClass) {
-                    throw ConversionException::conversionFailedInvalidType($enum, $this->name, [$this->enumClass]);
+                if (! $enum instanceof $this->enumClass) { /* @phpstan-ignore-line */
+                    throw ConversionException::conversionFailedInvalidType($enum, $this->name, [$this->enumClass]); /* @phpstan-ignore-line */
                 }
 
                 return (string) $enum;
@@ -186,7 +186,7 @@ class PhpEnumType extends Type
         $type->name = $typeName;
         $type->enumClass = $enumClass;
         $type->type = $enumType;
-        $type->toPhp = $toPhp->bindTo($type, self::class);
+        $type->toPhp = $toPhp->bindTo($type, self::class); /* @phpstan-ignore-line */
         $type->toDatabase = $toDatabase->bindTo($type, self::class);
 
         $multipleEnumType = 'array<' . $typeName . '>';
@@ -198,7 +198,7 @@ class PhpEnumType extends Type
         $type->name = $multipleEnumType;
         $type->enumClass = $enumClass;
         $type->type = $enumType;
-        $type->toPhp = $toPhp->bindTo($type, self::class);
+        $type->toPhp = $toPhp->bindTo($type, self::class); /* @phpstan-ignore-line */
         $type->toDatabase = $toDatabase->bindTo($type, self::class);
         $type->multiple = true;
     }

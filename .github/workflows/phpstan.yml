@@ -2,8 +2,8 @@ name: PHPStan
 
 on:
     push:
-    pull_request:
-        types: [opened]
+    pull_request_target:
+        types: [opened, synchronize]
 
 jobs:
     build:
@@ -18,7 +18,7 @@ jobs:
                 uses: shivammathur/setup-php@v2
                 with:
                     coverage: none
-                    php-version: "8.0"
+                    php-version: "8.1"
                     tools: cs2pr
 
             -   name: Install dependencies with composer
