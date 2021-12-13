@@ -17,6 +17,7 @@ use function is_array;
 use function method_exists;
 use function serialize;
 use function sha1;
+use function str_replace;
 
 /**
  * @template T of object
@@ -25,6 +26,8 @@ use function sha1;
  */
 class EntityRepository extends BaseRepository implements ObjectRepositoryInterface
 {
+    private const INVALID_CACHE_KEY_CHARS = ['{', '}', '(', ')', '/', '\\', '@', ':'];
+
     public function all(): ObjectIteratorInterface
     {
         return new EntityIterator($this->createQueryBuilder('a'));
@@ -49,7 +52,7 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
         $query = $this->buildQueryForFind($criteria, $orderBy);
         $query->setMaxResults(1);
 
-        $cacheKey = '__' . static::class . '::' . __FUNCTION__ . sha1(serialize(func_get_args()));
+        $cacheKey = str_replace(self::INVALID_CACHE_KEY_CHARS, '', '__' . static::class . '::' . __FUNCTION__ . sha1(serialize(func_get_args())));
         if (method_exists($query, 'enableResultCache')) {
             $query->enableResultCache($ttl, $cacheKey);
         } else {
@@ -82,7 +85,7 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
             $query->setFirstResult($offset);
         }
 
-        $cacheKey = '__' . static::class . '::' . __FUNCTION__ . sha1(serialize(func_get_args()));
+        $cacheKey = str_replace(self::INVALID_CACHE_KEY_CHARS, '', '__' . static::class . '::' . __FUNCTION__ . sha1(serialize(func_get_args())));
         if (method_exists($query, 'enableResultCache')) {
             $query->enableResultCache($ttl, $cacheKey);
         } else {
@@ -126,7 +129,7 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
         $query = $this->buildQueryForFind($criteria, $orderBy);
         $query->setMaxResults(1);
 
-        $cacheKey = '__' . static::class . '::' . __FUNCTION__ . sha1(serialize(func_get_args()));
+        $cacheKey = str_replace(self::INVALID_CACHE_KEY_CHARS, '', '__' . static::class . '::' . __FUNCTION__ . sha1(serialize(func_get_args())));
         if (method_exists($query, 'enableResultCache')) {
             $query->enableResultCache($ttl, $cacheKey);
         } else {

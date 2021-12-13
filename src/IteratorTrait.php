@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra;
 
+use ReturnTypeWillChange;
+
 use function call_user_func;
 
 trait IteratorTrait
@@ -49,6 +51,7 @@ trait IteratorTrait
      *
      * @return mixed
      */
+    #[ReturnTypeWillChange]
     public function current()
     {
         if (! $this->valid()) {
