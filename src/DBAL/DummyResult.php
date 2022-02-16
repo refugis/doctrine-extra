@@ -24,14 +24,14 @@ final class DummyResult implements Result
     /**
      * @param mixed[] $data
      */
-    public function __construct(array $data)
+    public function __construct(array $data, ?int $columnCount = null)
     {
         $this->data = $data;
         if (count($data) === 0) {
             return;
         }
 
-        $this->columnCount = count($data[0]);
+        $this->columnCount = $columnCount ?? count($data[0]);
     }
 
     /**
