@@ -9,6 +9,8 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use InvalidArgumentException;
 
+use function Safe\sprintf;
+
 /**
  * @property DateTimeImmutable|null $start
  * @property DateTimeImmutable|null $end
@@ -57,5 +59,14 @@ trait TimeSpanTrait
         }
 
         return $this->end === null || ! $reference->gte(Chronos::instance($this->end));
+    }
+
+    public function __toString(): string
+    {
+        return sprintf(
+            '%s-%s',
+            $this->start !== null ? $this->start->format(DateTimeInterface::ATOM) : '',
+            $this->end !== null ? $this->end->format(DateTimeInterface::ATOM) : ''
+        );
     }
 }
