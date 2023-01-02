@@ -63,6 +63,7 @@ trait IteratorTrait
             $queryBuilder->resetDQLPart('distinct');
 
             $em = $queryBuilder->getEntityManager();
+            /* @phpstan-ignore-next-line */
             $metadata = $em->getClassMetadata($queryBuilder->getRootEntities()[0]);
 
             if ($metadata->containsForeignIdentifier) {

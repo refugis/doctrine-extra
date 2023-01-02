@@ -81,6 +81,7 @@ class ClassMetadata extends BaseClassMetadata
             $fieldMapping['originalField'] ??= $fieldMapping['fieldName'];
             $fieldMapping['fieldName'] = $property . '.' . $fieldMapping['fieldName'];
 
+            /* @phpstan-ignore-next-line */
             assert(isset($fieldMapping['columnName']));
             if (! empty($this->embeddedClasses[$property]['columnPrefix'])) {
                 $fieldMapping['columnName'] = $this->embeddedClasses[$property]['columnPrefix'] . $fieldMapping['columnName'];
@@ -103,6 +104,7 @@ class ClassMetadata extends BaseClassMetadata
             }
 
             $assocMapping['originalClass'] ??= $embeddable->name;
+            /* @phpstan-ignore-next-line */
             $assocMapping['declaredField'] = isset($assocMapping['declaredField']) ? $property . '_' . $assocMapping['declaredField'] : $property;
             $assocMapping['originalField'] ??= $assocMapping['fieldName'];
             $assocMapping['fieldName'] = $property . '_' . $assocMapping['fieldName'];
@@ -111,6 +113,7 @@ class ClassMetadata extends BaseClassMetadata
             $assocMapping['joinColumnFieldNames'] = [];
             $assocMapping['targetToSourceKeyColumns'] = [];
 
+            /* @phpstan-ignore-next-line */
             foreach ($assocMapping['joinColumns'] as &$column) {
                 if (! empty($this->embeddedClasses[$property]['columnPrefix'])) {
                     $column['name'] = $this->embeddedClasses[$property]['columnPrefix'] . $column['name'];

@@ -84,6 +84,7 @@ class DocumentIterator implements ObjectIteratorInterface
         }
 
         assert($this->internalIterator instanceof Iterator);
+        /* @phpstan-ignore-next-line */
         $this->currentElement = $this->internalIterator->current();
 
         return $this->internalIterator;

@@ -116,6 +116,7 @@ class PhpEnumType extends Type
         $enumType = self::TYPE_STRING;
         // phpcs:disable Squiz.Scope.StaticThisUsage.Found
         if (PHP_VERSION_ID >= 80100 && is_a($enumClass, UnitEnum::class, true)) {
+            /* @phpstan-ignore-next-line */
             if (is_a($enumClass, IntBackedEnum::class, true)) {
                 $enumType = self::TYPE_INT;
             }
@@ -187,7 +188,7 @@ class PhpEnumType extends Type
         $type->enumClass = $enumClass;
         $type->type = $enumType;
         $type->toPhp = $toPhp->bindTo($type, self::class); /* @phpstan-ignore-line */
-        $type->toDatabase = $toDatabase->bindTo($type, self::class);
+        $type->toDatabase = $toDatabase->bindTo($type, self::class); /* @phpstan-ignore-line */
 
         $multipleEnumType = 'array<' . $typeName . '>';
         self::addType($multipleEnumType, static::class);
@@ -199,7 +200,7 @@ class PhpEnumType extends Type
         $type->enumClass = $enumClass;
         $type->type = $enumType;
         $type->toPhp = $toPhp->bindTo($type, self::class); /* @phpstan-ignore-line */
-        $type->toDatabase = $toDatabase->bindTo($type, self::class);
+        $type->toDatabase = $toDatabase->bindTo($type, self::class); /* @phpstan-ignore-line */
         $type->multiple = true;
     }
 
