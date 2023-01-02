@@ -44,7 +44,6 @@
         "symfony/cache": "^4.2 || ^5.0 || ^6.0"
     },
     "autoload": {
-        "files": [ "compat/compat.php" ],
         "psr-4": {
             "Refugis\\DoctrineExtra\\": "src/"
         }
