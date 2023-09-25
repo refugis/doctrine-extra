@@ -2,7 +2,6 @@
 
 namespace Refugis\DoctrineExtra\Tests\EventListener\Timestampable;
 
-use Cake\Chronos\Chronos;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\EventManager;
@@ -96,12 +95,11 @@ SQL
 
         $entityManager = ORM\EntityManager::create($connection, $configuration, $eventManager);
 
-        Chronos::setTestNow('2018-01-10T11:47:00');
         $foo = new FooTimestampable();
         $entityManager->persist($foo);
         $entityManager->flush();
 
-        Chronos::setTestNow('2018-01-10T11:48:00');
+        sleep(1);
 
         $createdAt = $foo->getCreatedAt();
         $updatedAt = $foo->getUpdatedAt();
@@ -111,8 +109,6 @@ SQL
 
         self::assertEquals($createdAt, $foo->getCreatedAt());
         self::assertNotEquals($updatedAt, $foo->getUpdatedAt());
-
-        Chronos::setTestNow();
     }
 
     public function metadataImplProvider(): iterable

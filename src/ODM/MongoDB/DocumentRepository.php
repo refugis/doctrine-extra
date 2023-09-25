@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra\ODM\MongoDB;
 
+use Doctrine\ODM\MongoDB\LockMode;
 use Doctrine\ODM\MongoDB\Query\Builder;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository as BaseRepository;
 use Refugis\DoctrineExtra\ObjectIteratorInterface;
@@ -41,7 +42,7 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
     /**
      * {@inheritdoc}
      */
-    public function findOneByCached(array $criteria, ?array $orderBy = null, int $ttl = 28800): ?object
+    public function findOneByCached(array $criteria, array|null $orderBy = null, int $ttl = 28800): object|null
     {
         $query = $this->buildQueryBuilderForCriteria($criteria, $orderBy);
         $query->limit(1);
@@ -58,10 +59,10 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
      */
     public function findByCached(
         array $criteria,
-        ?array $orderBy = null,
-        ?int $limit = null,
-        ?int $offset = null,
-        int $ttl = 28800
+        array|null $orderBy = null,
+        int|null $limit = null,
+        int|null $offset = null,
+        int $ttl = 28800,
     ): array {
         $query = $this->buildQueryBuilderForCriteria($criteria, $orderBy);
         // This is commented due to the missing cache part in doctrine/mongo-odm
@@ -70,12 +71,9 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
         return iterator_to_array($query->getQuery()->getIterator());
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function get($id, $lockMode = 0, $lockVersion = null): object
+    public function get(mixed $id, int|null $lockMode = null, int|null $lockVersion = null): object
     {
-        $document = $this->find($id, $lockMode, $lockVersion);
+        $document = $this->find($id, $lockMode ?? LockMode::NONE, $lockVersion);
         if ($document === null) {
             throw new Exception\NoResultException();
         }
@@ -86,7 +84,7 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
     /**
      * {@inheritdoc}
      */
-    public function getOneBy(array $criteria, ?array $orderBy = null): object
+    public function getOneBy(array $criteria, array|null $orderBy = null): object
     {
         $query = $this->buildQueryBuilderForCriteria($criteria, $orderBy);
         $query->limit(1);
@@ -105,7 +103,7 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
     /**
      * {@inheritdoc}
      */
-    public function getOneByCached(array $criteria, ?array $orderBy = null, int $ttl = 28800): object
+    public function getOneByCached(array $criteria, array|null $orderBy = null, int $ttl = 28800): object
     {
         $query = $this->buildQueryBuilderForCriteria($criteria, $orderBy);
         $query->limit(1);
@@ -128,7 +126,7 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
      * @param array<string, mixed> $criteria
      * @param array<string, string>|null $orderBy
      */
-    private function buildQueryBuilderForCriteria(array $criteria, ?array $orderBy = null): Builder
+    private function buildQueryBuilderForCriteria(array $criteria, array|null $orderBy = null): Builder
     {
         $qb = $this->createQueryBuilder();
 

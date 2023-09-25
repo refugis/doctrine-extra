@@ -27,7 +27,7 @@ class EntityIterator implements ObjectIteratorInterface
 
     /** @var Iterator<(false|array<object>|object|null)> */
     private Iterator $internalIterator;
-    private ?string $resultCache;
+    private string|null $resultCache;
     private int $cacheLifetime;
 
     public function __construct(QueryBuilder $queryBuilder)
@@ -96,7 +96,7 @@ class EntityIterator implements ObjectIteratorInterface
      *
      * @return EntityIterator
      */
-    public function useResultCache(bool $enable, string $cacheId, ?int $lifetime): self
+    public function useResultCache(bool $enable, string $cacheId, int|null $lifetime): self
     {
         if (! $enable) {
             $this->resultCache = null;
@@ -146,10 +146,7 @@ class EntityIterator implements ObjectIteratorInterface
         return $this->internalIterator;
     }
 
-    /**
-     * @return mixed|null
-     */
-    private function getCurrentElement()
+    private function getCurrentElement(): mixed
     {
         assert($this->internalIterator !== null);
 

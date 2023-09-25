@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra\TimeSpan;
 
-use Cake\Chronos\Chronos;
 use DateTimeImmutable;
 use DateTimeInterface;
 use InvalidArgumentException;
@@ -20,7 +19,7 @@ trait TimeSpanTrait
     /**
      * Gets the period start time, if set.
      */
-    public function getStart(): ?DateTimeImmutable
+    public function getStart(): DateTimeImmutable|null
     {
         return $this->start;
     }
@@ -28,7 +27,7 @@ trait TimeSpanTrait
     /**
      * Gets the period end time, if set.
      */
-    public function getEnd(): ?DateTimeImmutable
+    public function getEnd(): DateTimeImmutable|null
     {
         return $this->end;
     }
@@ -36,7 +35,7 @@ trait TimeSpanTrait
     /**
      * Updates the time span.
      */
-    public function update(?DateTimeImmutable $start, ?DateTimeImmutable $end): void
+    public function update(DateTimeImmutable|null $start, DateTimeImmutable|null $end): void
     {
         if ($start !== null && $end !== null && $start > $end) {
             throw new InvalidArgumentException('Start cannot be greater than end');
@@ -52,21 +51,21 @@ trait TimeSpanTrait
      */
     public function contains(DateTimeInterface $reference): bool
     {
-        $reference = Chronos::instance($reference);
+        $reference = DateTimeImmutable::createFromInterface($reference);
 
-        if ($this->start !== null && $reference->lt(Chronos::instance($this->start))) {
+        if ($this->start !== null && $reference < $this->start) {
             return false;
         }
 
-        return $this->end === null || ! $reference->gte(Chronos::instance($this->end));
+        return $this->end === null || $reference < $this->end;
     }
 
     public function __toString(): string
     {
         return sprintf(
             '%s-%s',
-            $this->start !== null ? $this->start->format(DateTimeInterface::ATOM) : '',
-            $this->end !== null ? $this->end->format(DateTimeInterface::ATOM) : ''
+            $this->start?->format(DateTimeInterface::ATOM) ?? '',
+            $this->end?->format(DateTimeInterface::ATOM) ?? '',
         );
     }
 }

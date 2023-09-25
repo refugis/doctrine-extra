@@ -41,10 +41,12 @@ class ClassMetadata extends BaseClassMetadata
         foreach ($this->embeddedClasses as $property => $embeddedClass) {
             if (isset($embeddedClass['declaredField'])) {
                 $class = $this->embeddedClasses[$embeddedClass['declaredField']]['class'] ?? null;
+                assert(isset($class, $embeddedClass['originalField']));
+
                 $parentProperty = $parentReflectionFields[$embeddedClass['declaredField']] ?? null;
                 $childProperty = $reflectionService->getAccessibleProperty($class, $embeddedClass['originalField']);
+                assert(isset($parentProperty, $childProperty));
 
-                assert(isset($class, $parentProperty, $childProperty));
                 $parentReflectionFields[$property] = new ReflectionEmbeddedProperty($parentProperty, $childProperty, $class);
 
                 continue;
@@ -91,7 +93,7 @@ class ClassMetadata extends BaseClassMetadata
                         $property,
                         $fieldMapping['columnName'],
                         $reflectionClass->name,
-                        $embeddable->reflClass->name
+                        $embeddable->reflClass->name,
                     );
             }
 
@@ -123,7 +125,7 @@ class ClassMetadata extends BaseClassMetadata
                             $property,
                             $column['name'],
                             $reflectionClass->name,
-                            $embeddable->reflClass->name
+                            $embeddable->reflClass->name,
                         );
                 }
             }

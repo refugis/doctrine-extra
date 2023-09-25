@@ -19,20 +19,16 @@ trait IteratorTrait
 
     /**
      * The current element from the underlying iterator.
-     *
-     * @var mixed
      */
-    private $currentElement;
+    private mixed $currentElement;
 
     /**
      * The current element, which results by the application
      * of the apply function.
-     *
-     * @var mixed
      */
-    private $current;
+    private mixed $current;
 
-    public function apply(?callable $callable = null): ObjectIteratorInterface
+    public function apply(callable|null $callable = null): ObjectIteratorInterface
     {
         if ($callable === null) {
             $callable = static function ($val) {

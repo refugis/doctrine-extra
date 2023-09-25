@@ -11,7 +11,7 @@ class NonUniqueResultException extends MongoDBException implements NonUniqueResu
 {
     private const DEFAULT_MESSAGE = 'More than one result was found for query although one document or none was expected.';
 
-    public function __construct(?string $message = null)
+    public function __construct(string|null $message = null)
     {
         parent::__construct($message ?? self::DEFAULT_MESSAGE);
     }

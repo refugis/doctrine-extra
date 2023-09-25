@@ -24,7 +24,7 @@ class MoneyCurrencyType extends Type
     /**
      * {@inheritdoc}
      */
-    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): string|null
     {
         if ($value === null) {
             return null;
@@ -40,7 +40,7 @@ class MoneyCurrencyType extends Type
     /**
      * {@inheritdoc}
      */
-    public function convertToPHPValue($value, AbstractPlatform $platform): ?Currency
+    public function convertToPHPValue($value, AbstractPlatform $platform): Currency|null
     {
         if ($value === null) {
             return null;

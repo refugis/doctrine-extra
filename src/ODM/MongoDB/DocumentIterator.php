@@ -21,7 +21,7 @@ class DocumentIterator implements ObjectIteratorInterface
     /** @var Iterator<object> */
     private Iterator $internalIterator;
     private Builder $queryBuilder;
-    private ?int $totalCount;
+    private int|null $totalCount;
 
     public function __construct(Builder $queryBuilder)
     {
@@ -71,9 +71,7 @@ class DocumentIterator implements ObjectIteratorInterface
         $this->currentElement = $this->internalIterator->current();
     }
 
-    /**
-     * @return Iterator<object>
-     */
+    /** @return Iterator<object> */
     private function getIterator(): Iterator
     {
         if (isset($this->internalIterator)) {

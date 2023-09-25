@@ -75,7 +75,7 @@ class DocumentIterator implements ObjectIteratorInterface
         try {
             /* @phpstan-ignore-next-line */
             $this->internalIterator = $query->iterate();
-        } catch (QueryException $e) {
+        } catch (QueryException) {
             $result = $query->getResult();
 
             /* @phpstan-ignore-next-line */

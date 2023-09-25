@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra\ODM\PhpCr\Timestampable;
 
-use Cake\Chronos\MutableDateTime;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -39,7 +38,7 @@ trait TimestampableTrait
 
     public function updateTimestamp(): TimestampableInterface
     {
-        $this->updatedAt = MutableDateTime::now();
+        $this->updatedAt = new DateTime();
 
         return $this;
     }

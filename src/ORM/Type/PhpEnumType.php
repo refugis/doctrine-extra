@@ -97,7 +97,7 @@ class PhpEnumType extends Type
      *
      * @throws Exception
      */
-    public static function registerEnumType(string $typeNameOrEnumClass, ?string $enumClass = null): void
+    public static function registerEnumType(string $typeNameOrEnumClass, string|null $enumClass = null): void
     {
         $typeName = $typeNameOrEnumClass;
         $enumClass ??= $typeNameOrEnumClass;
@@ -107,7 +107,7 @@ class PhpEnumType extends Type
                 'Provided enum class "%s" is not valid. %sxtend %s class',
                 $enumClass,
                 PHP_VERSION_ID >= 80100 ? 'Use a native enum or e' : 'E',
-                Enum::class
+                Enum::class,
             );
 
             throw new InvalidArgumentException($message);

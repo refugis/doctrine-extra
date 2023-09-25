@@ -11,22 +11,15 @@ use function array_values;
 use function count;
 use function reset;
 
-/**
- * @internal The class is internal to the caching layer implementation.
- */
+/** @internal The class is internal to the caching layer implementation. */
 final class DummyResult implements Result
 {
-    /** @var mixed[] */
-    private array $data;
     private int $columnCount = 0;
     private int $num = 0;
 
-    /**
-     * @param mixed[] $data
-     */
-    public function __construct(array $data, ?int $columnCount = null)
+    /** @param mixed[] $data */
+    public function __construct(private array $data, int|null $columnCount = null)
     {
-        $this->data = $data;
         if (count($data) === 0) {
             return;
         }
@@ -109,10 +102,7 @@ final class DummyResult implements Result
         $this->data = [];
     }
 
-    /**
-     * @return false|mixed
-     */
-    private function fetch()
+    private function fetch(): mixed
     {
         if (! isset($this->data[$this->num])) {
             return false;

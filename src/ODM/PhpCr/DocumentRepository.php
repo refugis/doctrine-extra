@@ -45,10 +45,7 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
         return count(iterator_to_array($result->getRows(), false));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function find($id): ?object
+    public function find(mixed $id): object|null
     {
         return parent::find($id);
     }
@@ -56,7 +53,7 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
     /**
      * {@inheritdoc}
      */
-    public function findOneByCached(array $criteria, ?array $orderBy = null, int $ttl = 28800): ?object
+    public function findOneByCached(array $criteria, array|null $orderBy = null, int $ttl = 28800): object|null
     {
         $query = $this->buildQueryBuilderForCriteria($criteria, $orderBy);
         $query->setMaxResults(1);
@@ -72,10 +69,10 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
      */
     public function findByCached(
         array $criteria,
-        ?array $orderBy = null,
-        ?int $limit = null,
-        ?int $offset = null,
-        int $ttl = 28800
+        array|null $orderBy = null,
+        int|null $limit = null,
+        int|null $offset = null,
+        int $ttl = 28800,
     ): iterable {
         $query = $this->buildQueryBuilderForCriteria($criteria, $orderBy);
 
@@ -85,10 +82,7 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
         return $query->getQuery()->getResult();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function get($id, $lockMode = null, $lockVersion = null): object
+    public function get(mixed $id, int|null $lockMode = null, int|null $lockVersion = null): object
     {
         /** @var T | null $document */ // phpcs:ignore
         $document = $this->find($id);
@@ -102,7 +96,7 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
     /**
      * {@inheritdoc}
      */
-    public function getOneBy(array $criteria, ?array $orderBy = null): object
+    public function getOneBy(array $criteria, array|null $orderBy = null): object
     {
         $query = $this->buildQueryBuilderForCriteria($criteria, $orderBy);
         $query->setMaxResults(1);
@@ -119,7 +113,7 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
     /**
      * {@inheritdoc}
      */
-    public function getOneByCached(array $criteria, ?array $orderBy = null, int $ttl = 28800): object
+    public function getOneByCached(array $criteria, array|null $orderBy = null, int $ttl = 28800): object
     {
         $query = $this->buildQueryBuilderForCriteria($criteria, $orderBy);
         $query->setMaxResults(1);
@@ -140,7 +134,7 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
      * @param array<string, mixed> $criteria
      * @param array<string, string> $orderBy
      */
-    private function buildQueryBuilderForCriteria(array $criteria, ?array $orderBy = null): QueryBuilder
+    private function buildQueryBuilderForCriteria(array $criteria, array|null $orderBy = null): QueryBuilder
     {
         $qb = $this->createQueryBuilder('a');
         if (count($criteria) === 0) {

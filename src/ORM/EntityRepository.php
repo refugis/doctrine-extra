@@ -47,7 +47,7 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
     /**
      * {@inheritdoc}
      */
-    public function findOneByCached(array $criteria, ?array $orderBy = null, int $ttl = 28800): ?object
+    public function findOneByCached(array $criteria, array|null $orderBy = null, int $ttl = 28800): object|null
     {
         $query = $this->buildQueryForFind($criteria, $orderBy);
         $query->setMaxResults(1);
@@ -71,10 +71,10 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
      */
     public function findByCached(
         array $criteria,
-        ?array $orderBy = null,
-        ?int $limit = null,
-        ?int $offset = null,
-        int $ttl = 28800
+        array|null $orderBy = null,
+        int|null $limit = null,
+        int|null $offset = null,
+        int $ttl = 28800,
     ): iterable {
         $query = $this->buildQueryForFind($criteria, $orderBy);
         if ($limit !== null) {
@@ -95,10 +95,7 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
         return $query->getResult();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function get($id, $lockMode = null, $lockVersion = null): object
+    public function get(mixed $id, int|null $lockMode = null, int|null $lockVersion = null): object
     {
         $entity = $this->find($id, $lockMode, $lockVersion);
         if ($entity === null) {
@@ -111,7 +108,7 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
     /**
      * {@inheritdoc}
      */
-    public function getOneBy(array $criteria, ?array $orderBy = null): object
+    public function getOneBy(array $criteria, array|null $orderBy = null): object
     {
         $entity = $this->findOneBy($criteria, $orderBy);
         if ($entity === null) {
@@ -124,7 +121,7 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
     /**
      * {@inheritdoc}
      */
-    public function getOneByCached(array $criteria, ?array $orderBy = null, int $ttl = 28800): object
+    public function getOneByCached(array $criteria, array|null $orderBy = null, int $ttl = 28800): object
     {
         $query = $this->buildQueryForFind($criteria, $orderBy);
         $query->setMaxResults(1);
@@ -140,7 +137,7 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
             return $query->getSingleResult();
         } catch (NonUniqueResultException $e) { /* @phpstan-ignore-line */
             throw new Exception\NonUniqueResultException($e->getMessage());
-        } catch (NoResultException $e) { /* @phpstan-ignore-line */
+        } catch (NoResultException) {
             throw new Exception\NoResultException();
         }
     }
@@ -151,7 +148,7 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
      * @param array<string, mixed> $criteria
      * @param array<string, string>|null $orderBy
      */
-    private function buildQueryForFind(array $criteria, ?array $orderBy = null): Query
+    private function buildQueryForFind(array $criteria, array|null $orderBy = null): Query
     {
         return $this->buildQueryBuilderForCriteria($criteria, $orderBy)->getQuery();
     }
@@ -162,7 +159,7 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
      * @param array<string, mixed> $criteria
      * @param array<string, string>|null $orderBy
      */
-    private function buildQueryBuilderForCriteria(array $criteria, ?array $orderBy = null): QueryBuilder
+    private function buildQueryBuilderForCriteria(array $criteria, array|null $orderBy = null): QueryBuilder
     {
         $qb = $this->createQueryBuilder('a');
         $and = $qb->expr()->andX();

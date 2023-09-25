@@ -27,7 +27,7 @@ class PhoneNumberType extends Type
     /**
      * {@inheritdoc}
      */
-    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): string|null
     {
         if ($value === null) {
             return null;
@@ -43,7 +43,7 @@ class PhoneNumberType extends Type
     /**
      * {@inheritdoc}
      */
-    public function convertToPHPValue($value, AbstractPlatform $platform): ?PhoneNumber
+    public function convertToPHPValue($value, AbstractPlatform $platform): PhoneNumber|null
     {
         if ($value === null || $value instanceof PhoneNumber) {
             return $value;

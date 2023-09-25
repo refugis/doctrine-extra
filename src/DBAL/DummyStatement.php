@@ -23,17 +23,12 @@ use function reset;
  */
 class DummyStatement implements IteratorAggregate, Statement, Result
 {
-    /** @var mixed[] */
-    private array $data;
     private int $columnCount;
     private int $num;
 
-    /**
-     * @param mixed[] $data
-     */
-    public function __construct(array $data, ?int $columnCount = null)
+    /** @param mixed[] $data */
+    public function __construct(private array $data, int|null $columnCount = null)
     {
-        $this->data = $data;
         $this->columnCount = $columnCount ?? count($data[0] ?? []);
         $this->num = 0;
     }
@@ -155,10 +150,7 @@ class DummyStatement implements IteratorAggregate, Statement, Result
         return count($this->data);
     }
 
-    /**
-     * @return mixed|false
-     */
-    private function doFetch()
+    private function doFetch(): mixed
     {
         if (! isset($this->data[$this->num])) {
             return false;

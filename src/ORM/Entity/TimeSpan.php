@@ -22,9 +22,9 @@ class TimeSpan
 
     /** @ORM\Column(type="datetimetz_immutable", nullable=true) */
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: true)]
-    private ?DateTimeImmutable $start; // phpcs:ignore SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedProperty
+    private DateTimeImmutable|null $start; // phpcs:ignore SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedProperty
 
     /** @ORM\Column(type="datetimetz_immutable", nullable=true) */
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: true)]
-    private ?DateTimeImmutable $end; // phpcs:ignore SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedProperty
+    private DateTimeImmutable|null $end; // phpcs:ignore SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedProperty
 }

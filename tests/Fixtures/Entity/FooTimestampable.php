@@ -2,7 +2,6 @@
 
 namespace Refugis\DoctrineExtra\Tests\Fixtures\Entity;
 
-use Cake\Chronos\Chronos;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Refugis\DoctrineExtra\ORM\Timestampable\TimestampableTrait;
@@ -34,7 +33,7 @@ class FooTimestampable implements TimestampableInterface
     public function __construct()
     {
         $this->id = self::ID;
-        $this->createdAt = Chronos::now();
+        $this->createdAt = new \DateTimeImmutable();
         $this->updateTimestamp();
     }
 

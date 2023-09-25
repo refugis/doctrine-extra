@@ -8,16 +8,14 @@ use DateTimeImmutable;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Refugis\DoctrineExtra\TimeSpan\TimeSpanTrait;
 
-/**
- * @ODM\EmbeddedDocument()
- */
+/** @ODM\EmbeddedDocument() */
 class TimeSpan
 {
     use TimeSpanTrait;
 
     /** @ODM\Field(type="date") */
-    private ?DateTimeImmutable $start; // phpcs:ignore SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedProperty
+    private DateTimeImmutable|null $start; // phpcs:ignore SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedProperty
 
     /** @ODM\Field(type="date") */
-    private ?DateTimeImmutable $end; // phpcs:ignore SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedProperty
+    private DateTimeImmutable|null $end; // phpcs:ignore SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedProperty
 }

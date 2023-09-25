@@ -18,5 +18,5 @@ interface ObjectIteratorInterface extends Iterator, Countable
      *
      * @return $this
      */
-    public function apply(?callable $callable = null): self;
+    public function apply(callable|null $callable = null): self;
 }

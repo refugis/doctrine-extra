@@ -66,10 +66,15 @@ trait DocumentManagerTrait
 
         $this->client->getTypeMap()->willReturn(['root' => 'array', 'document' => 'array']);
         $this->documentManager = DocumentManager::create($this->client->reveal(), $this->configuration);
+        $factory = new FakeMetadataFactory();
 
-        (function (): void {
-            $this->metadataFactory = new FakeMetadataFactory();
+        (function () use ($factory): void {
+            $this->metadataFactory = $factory;
         })->call($this->documentManager);
+
+        (function () use ($factory): void {
+            $this->metadataFactory = $factory;
+        })->call($this->documentManager->getSchemaManager());
 
         return $this->documentManager;
     }

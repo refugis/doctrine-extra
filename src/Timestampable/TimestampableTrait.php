@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra\Timestampable;
 
-use Cake\Chronos\Chronos;
+use DateTimeImmutable;
 use DateTimeInterface;
 
 /**
@@ -25,7 +25,7 @@ trait TimestampableTrait
 
     public function updateTimestamp(): TimestampableInterface
     {
-        $this->updatedAt = Chronos::now();
+        $this->updatedAt = new DateTimeImmutable();
 
         return $this;
     }
