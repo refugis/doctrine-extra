@@ -8,7 +8,7 @@ Originally written by [Fazland team](https://www.github.com/fazland/doctrine-ext
 
 Requirements
 ------------
-- php ^7.4|^8.0
+- php ^8.1
 
 Installation
 ------------
