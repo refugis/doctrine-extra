@@ -4,6 +4,7 @@ namespace Refugis\DoctrineExtra\Tests\Mock\ODM\PhpCr;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\PDO\MySQL\Driver;
+use Doctrine\DBAL\Driver\Connection as DriverConnection;
 use Doctrine\DBAL\Driver\ServerInfoAwareConnection;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\ODM\PHPCR\Configuration;
@@ -95,12 +96,14 @@ trait DocumentManagerTrait
             return $this->documentManager;
         }
 
-        $this->connection = $this->prophesize(ServerInfoAwareConnection::class);
+        $this->connection = class_exists(ServerInfoAwareConnection::class) ?
+            $this->prophesize(ServerInfoAwareConnection::class) :
+            $this->prophesize(DriverConnection::class);
         $connection = new Connection([
             'platform' => new MySqlPlatform(),
         ], new Driver());
 
-        (fn (ServerInfoAwareConnection $connection) => $this->_conn = $connection)
+        (fn (DriverConnection $connection) => $this->_conn = $connection)
             ->bindTo($connection, Connection::class)($this->connection->reveal());
 
         $this->connection->prepare('SELECT 1 FROM phpcr_workspaces WHERE name = ?')->willReturn(new DummyStatement([[1]]));

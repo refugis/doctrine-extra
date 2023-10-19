@@ -9,7 +9,6 @@ use Generator;
 use InvalidArgumentException;
 use Iterator;
 use Refugis\DoctrineExtra\ObjectIteratorInterface;
-use ReturnTypeWillChange;
 
 use function assert;
 use function count;
@@ -71,13 +70,7 @@ class EntityIterator implements ObjectIteratorInterface
         return $this->getIterator()->valid();
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return mixed
-     */
-    #[ReturnTypeWillChange]
-    public function current()
+    public function current(): mixed
     {
         $this->getIterator();
 

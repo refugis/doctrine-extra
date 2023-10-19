@@ -18,7 +18,7 @@ use function class_exists;
 class ClassMetadata extends BaseClassMetadata
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function wakeupReflection($reflectionService): void
     {
@@ -68,7 +68,7 @@ class ClassMetadata extends BaseClassMetadata
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function inlineEmbeddable($property, ClassMetadataInfo $embeddable): void
     {

@@ -37,7 +37,12 @@ trait EntityManagerTrait
 
         $this->configuration = new Configuration();
 
-        $this->configuration->setResultCacheImpl(new DoctrineProvider(new ArrayAdapter()));
+        if (method_exists($this->configuration, 'setResultCache')) {
+            $this->configuration->setResultCache(new ArrayAdapter());
+        } else {
+            $this->configuration->setResultCacheImpl(new DoctrineProvider(new ArrayAdapter()));
+        }
+
         $this->configuration->setClassMetadataFactoryName(FakeMetadataFactory::class);
         $this->configuration->setMetadataDriverImpl($this->prophesize(MappingDriver::class)->reveal());
         $this->configuration->setProxyDir(\sys_get_temp_dir());
@@ -45,7 +50,9 @@ trait EntityManagerTrait
         $this->configuration->setAutoGenerateProxyClasses(AbstractProxyFactory::AUTOGENERATE_ALWAYS);
         $this->configuration->setDefaultRepositoryClassName(EntityRepository::class);
 
-        $this->innerConnection = $this->prophesize(ServerInfoAwareConnection::class);
+        $this->innerConnection = class_exists(ServerInfoAwareConnection::class) ?
+            $this->prophesize(ServerInfoAwareConnection::class) :
+            $this->prophesize(DriverConnection::class);
 
         $this->connection = new Connection([
             'user' => 'user',
@@ -53,10 +60,14 @@ trait EntityManagerTrait
             'platform' => new Platform(),
         ], new Driver(), $this->configuration);
 
-        (fn (ServerInfoAwareConnection $connection) => $this->_conn = $connection)
+        (fn (DriverConnection $connection) => $this->_conn = $connection)
             ->bindTo($this->connection, Connection::class)($this->innerConnection->reveal());
 
-        $this->entityManager = EntityManager::create($this->connection, $this->configuration);
+        if (!method_exists(EntityManager::class, 'create')) {
+            $this->entityManager = new EntityManager($this->connection, $this->configuration);
+        } else {
+            $this->entityManager = EntityManager::create($this->connection, $this->configuration);
+        }
 
         return $this->entityManager;
     }

@@ -14,7 +14,7 @@ class MoneyCurrencyType extends Type
     public const NAME = 'money_currency';
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform): string
     {
@@ -22,7 +22,7 @@ class MoneyCurrencyType extends Type
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform): string|null
     {
@@ -38,7 +38,7 @@ class MoneyCurrencyType extends Type
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function convertToPHPValue($value, AbstractPlatform $platform): Currency|null
     {

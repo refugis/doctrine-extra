@@ -7,6 +7,7 @@ namespace Refugis\DoctrineExtra\ORM;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\Query\Parser;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ObjectManager;
 use Refugis\DoctrineExtra\IteratorTrait as BaseIteratorTrait;
 
 use function assert;
@@ -76,5 +77,10 @@ trait IteratorTrait
         }
 
         return $this->totalCount;
+    }
+
+    public function getObjectManager(): ObjectManager
+    {
+        return $this->queryBuilder->getEntityManager();
     }
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra;
 
-use ReturnTypeWillChange;
+use Doctrine\Persistence\ObjectManager;
 
 use function call_user_func;
 
@@ -43,12 +43,11 @@ trait IteratorTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @return mixed
      */
-    #[ReturnTypeWillChange]
-    public function current()
+    public function current(): mixed
     {
         if (! $this->valid()) {
             return null;
@@ -65,4 +64,9 @@ trait IteratorTrait
      * Checks if current position is valid.
      */
     abstract public function valid(): bool;
+
+    /**
+     * Retrieve the object manager for the current iterator.
+     */
+    abstract public function getObjectManager(): ObjectManager;
 }

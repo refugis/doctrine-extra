@@ -34,7 +34,7 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function count(array $criteria = []): int
     {
@@ -45,7 +45,7 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function findOneByCached(array $criteria, array|null $orderBy = null, int $ttl = 28800): object|null
     {
@@ -67,7 +67,7 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function findByCached(
         array $criteria,
@@ -106,7 +106,7 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getOneBy(array $criteria, array|null $orderBy = null): object
     {
@@ -119,7 +119,7 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getOneByCached(array $criteria, array|null $orderBy = null, int $ttl = 28800): object
     {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Refugis\DoctrineExtra\ODM\MongoDB;
 
 use Doctrine\ODM\MongoDB\Query\Builder;
+use Doctrine\Persistence\ObjectManager;
 use Iterator;
 use Refugis\DoctrineExtra\IteratorTrait;
 use Refugis\DoctrineExtra\ObjectIteratorInterface;
@@ -85,5 +86,12 @@ class DocumentIterator implements ObjectIteratorInterface
         $this->currentElement = $this->internalIterator->current();
 
         return $this->internalIterator;
+    }
+
+    public function getObjectManager(): ObjectManager
+    {
+        $queryBuilder = clone $this->queryBuilder;
+
+        return $queryBuilder->getQuery()->getDocumentManager();
     }
 }

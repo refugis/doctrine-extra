@@ -20,7 +20,7 @@ class ClassMetadataFactory extends Base
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function newClassMetadataInstance($className): ClassMetadataInterface
     {

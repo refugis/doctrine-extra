@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Refugis\DoctrineExtra\DBAL;
 
 use ArrayIterator;
+use BadMethodCallException;
 use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\Persistence\ObjectManager;
 use Refugis\DoctrineExtra\ObjectIteratorInterface;
-use ReturnTypeWillChange;
 
 class RowIterator implements ObjectIteratorInterface
 {
@@ -48,12 +49,11 @@ class RowIterator implements ObjectIteratorInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @return mixed
      */
-    #[ReturnTypeWillChange]
-    public function current()
+    public function current(): mixed
     {
         $this->getIterator();
 
@@ -83,5 +83,10 @@ class RowIterator implements ObjectIteratorInterface
         $this->currentElement = $this->internalIterator->current();
 
         return $this->internalIterator;
+    }
+
+    public function getObjectManager(): ObjectManager
+    {
+        throw new BadMethodCallException('Cannot retrieve the object manager from a DBAL iterator');
     }
 }

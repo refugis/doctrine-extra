@@ -28,7 +28,7 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function count(array $criteria = []): int
     {
@@ -40,7 +40,7 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function findOneByCached(array $criteria, array|null $orderBy = null, int $ttl = 28800): object|null
     {
@@ -55,7 +55,7 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function findByCached(
         array $criteria,
@@ -82,7 +82,7 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getOneBy(array $criteria, array|null $orderBy = null): object
     {
@@ -101,7 +101,7 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getOneByCached(array $criteria, array|null $orderBy = null, int $ttl = 28800): object
     {

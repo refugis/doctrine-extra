@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Refugis\DoctrineExtra;
 
 use Countable;
+use Doctrine\Persistence\ObjectManager;
 use Iterator;
 
 /**
@@ -19,4 +20,9 @@ interface ObjectIteratorInterface extends Iterator, Countable
      * @return $this
      */
     public function apply(callable|null $callable = null): self;
+
+    /**
+     * Retrieve the object manager for the current iterator.
+     */
+    public function getObjectManager(): ObjectManager;
 }

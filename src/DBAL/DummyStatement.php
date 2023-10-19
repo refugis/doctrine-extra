@@ -53,7 +53,7 @@ class DummyStatement implements IteratorAggregate, Statement, Result
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function fetchNumeric()
     {
@@ -67,7 +67,7 @@ class DummyStatement implements IteratorAggregate, Statement, Result
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function fetchAssociative()
     {
@@ -75,7 +75,7 @@ class DummyStatement implements IteratorAggregate, Statement, Result
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function fetchOne()
     {
@@ -89,7 +89,7 @@ class DummyStatement implements IteratorAggregate, Statement, Result
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function fetchAllNumeric(): array
     {
@@ -97,7 +97,7 @@ class DummyStatement implements IteratorAggregate, Statement, Result
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function fetchAllAssociative(): array
     {
@@ -105,7 +105,7 @@ class DummyStatement implements IteratorAggregate, Statement, Result
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function fetchFirstColumn(): array
     {
@@ -118,7 +118,7 @@ class DummyStatement implements IteratorAggregate, Statement, Result
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function bindValue($param, $value, $type = ParameterType::STRING): bool
     {
@@ -128,7 +128,7 @@ class DummyStatement implements IteratorAggregate, Statement, Result
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function bindParam($column, &$variable, $type = ParameterType::STRING, $length = null): bool
     {
@@ -138,7 +138,7 @@ class DummyStatement implements IteratorAggregate, Statement, Result
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function execute($params = null): Result
     {

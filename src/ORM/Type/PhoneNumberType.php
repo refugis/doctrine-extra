@@ -17,7 +17,7 @@ class PhoneNumberType extends Type
     public const NAME = 'phone_number';
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform): string
     {
@@ -25,7 +25,7 @@ class PhoneNumberType extends Type
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform): string|null
     {
@@ -41,7 +41,7 @@ class PhoneNumberType extends Type
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function convertToPHPValue($value, AbstractPlatform $platform): PhoneNumber|null
     {

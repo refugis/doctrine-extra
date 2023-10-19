@@ -6,6 +6,7 @@ namespace Refugis\DoctrineExtra\ODM\PhpCr;
 
 use Doctrine\ODM\PHPCR\Query\Builder\QueryBuilder;
 use Doctrine\ODM\PHPCR\Query\Query;
+use Doctrine\Persistence\ObjectManager;
 use PHPCR\Query\QueryResultInterface;
 use Refugis\DoctrineExtra\IteratorTrait as BaseIteratorTrait;
 
@@ -37,5 +38,15 @@ trait IteratorTrait
         }
 
         return $this->totalCount;
+    }
+
+    public function getObjectManager(): ObjectManager
+    {
+        $queryBuilder = clone $this->queryBuilder;
+
+        return (function (): ObjectManager {
+            /* @phpstan-ignore-next-line */
+            return $this->dm;
+        })->bindTo($queryBuilder->getQuery(), Query::class)();
     }
 }

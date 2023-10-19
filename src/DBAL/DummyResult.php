@@ -28,7 +28,7 @@ final class DummyResult implements Result
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function fetchNumeric()
     {
@@ -42,7 +42,7 @@ final class DummyResult implements Result
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function fetchAssociative()
     {
@@ -50,7 +50,7 @@ final class DummyResult implements Result
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function fetchOne()
     {
@@ -64,7 +64,7 @@ final class DummyResult implements Result
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function fetchAllNumeric(): array
     {
@@ -72,7 +72,7 @@ final class DummyResult implements Result
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function fetchAllAssociative(): array
     {
@@ -80,7 +80,7 @@ final class DummyResult implements Result
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function fetchFirstColumn(): array
     {
