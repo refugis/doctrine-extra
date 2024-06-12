@@ -28,7 +28,7 @@ trait IteratorTrait
             /* @phpstan-ignore-next-line */
             $queryBuilder->setMaxResults(null);
             /* @phpstan-ignore-next-line */
-            $queryBuilder->setFirstResult(null);
+            $queryBuilder->setFirstResult(0);
 
             $result = $queryBuilder->getQuery()->getResult(Query::HYDRATE_PHPCR);
 
