@@ -6,11 +6,16 @@ namespace Refugis\DoctrineExtra\ORM\Type;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
+use Doctrine\DBAL\Types\Exception\InvalidType;
+use Doctrine\DBAL\Types\Exception\ValueNotConvertible;
 use Doctrine\DBAL\Types\Type;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumber;
 use libphonenumber\PhoneNumberFormat;
 use libphonenumber\PhoneNumberUtil;
+
+use function class_exists;
+use function method_exists;
 
 class PhoneNumberType extends Type
 {
@@ -19,8 +24,13 @@ class PhoneNumberType extends Type
     /**
      * {@inheritDoc}
      */
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform): string
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
+        if (method_exists($platform, 'getStringTypeDeclarationSQL')) {
+            return $platform->getStringTypeDeclarationSQL($column);
+        }
+
+        /** @phpstan-ignore-next-line */
         return $platform->getVarcharTypeDeclarationSQL(['length' => 36]);
     }
 
@@ -34,6 +44,11 @@ class PhoneNumberType extends Type
         }
 
         if (! $value instanceof PhoneNumber) {
+            if (class_exists(InvalidType::class)) {
+                throw InvalidType::new($value, self::NAME, [PhoneNumber::class]);
+            }
+
+            /** @phpstan-ignore-next-line */
             throw ConversionException::conversionFailedInvalidType($value, self::NAME, [PhoneNumber::class]);
         }
 
@@ -54,6 +69,11 @@ class PhoneNumberType extends Type
         try {
             return $util->parse($value, PhoneNumberUtil::UNKNOWN_REGION);
         } catch (NumberParseException $e) {
+            if (class_exists(ValueNotConvertible::class)) {
+                throw ValueNotConvertible::new($value, self::NAME, previous: $e);
+            }
+
+            /** @phpstan-ignore-next-line */
             throw ConversionException::conversionFailed($value, self::NAME, $e);
         }
     }

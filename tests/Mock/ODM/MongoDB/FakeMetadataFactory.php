@@ -1,18 +1,21 @@
-<?php declare(strict_types=1);
+<?php
 
-namespace Refugis\DoctrineExtra\Tests\Mock;
+declare(strict_types=1);
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadata as ORMClassMetadata;
-use Doctrine\Persistence\Mapping\ClassMetadata;
-use Doctrine\Persistence\Mapping\ClassMetadataFactory;
+namespace Refugis\DoctrineExtra\Tests\Mock\ODM\MongoDB;
+
+use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
+use Doctrine\ODM\MongoDB\Mapping\ClassMetadataFactoryInterface as MongoDBMetadataFactory;
 use Doctrine\Persistence\Mapping\MappingException;
-use Doctrine\Persistence\Mapping\RuntimeReflectionService;
+use Doctrine\Persistence\Mapping\ProxyClassNameResolver;
+use Psr\Cache\CacheItemPoolInterface;
 
-class FakeMetadataFactory implements ClassMetadataFactory
+/**
+ * @method ClassMetadata[] getLoadedMetadata()
+ */
+class FakeMetadataFactory implements MongoDBMetadataFactory
 {
     private array $metadata;
-    private RuntimeReflectionService $reflectionService;
 
     /**
      * {@inheritdoc}
@@ -20,22 +23,13 @@ class FakeMetadataFactory implements ClassMetadataFactory
     public function __construct()
     {
         $this->metadata = [];
-        $this->reflectionService = new RuntimeReflectionService();
     }
 
-    public function setEntityManager(EntityManagerInterface $entityManager): void
+    public function setDocumentManager($dm): void
     {
     }
 
-    public function setDocumentManager($documentManager): void
-    {
-    }
-
-    public function setConfiguration(): void
-    {
-    }
-
-    public function setCacheDriver(): void
+    public function setConfiguration(mixed $config): void
     {
     }
 
@@ -73,11 +67,6 @@ class FakeMetadataFactory implements ClassMetadataFactory
     public function setMetadataFor($className, $class): void
     {
         $this->metadata[$className] = $class;
-
-        if ($class instanceof ORMClassMetadata) {
-            $class->initializeReflection($this->reflectionService);
-            $class->wakeupReflection($this->reflectionService);
-        }
     }
 
     /**
@@ -86,5 +75,13 @@ class FakeMetadataFactory implements ClassMetadataFactory
     public function isTransient($className): bool
     {
         return false;
+    }
+
+    public function setCache(CacheItemPoolInterface $cache): void
+    {
+    }
+
+    public function setProxyClassNameResolver(ProxyClassNameResolver $resolver): void
+    {
     }
 }

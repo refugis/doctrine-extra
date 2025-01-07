@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra\ORM;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository as BaseRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -33,15 +34,12 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
         return new EntityIterator($this->createQueryBuilder('a'));
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function count(array $criteria = []): int
+    public function count(array|Criteria $criteria = []): int
     {
-        return (int) $this->buildQueryBuilderForCriteria($criteria)
-            ->select('COUNT(a)')
-            ->getQuery()
-            ->getSingleScalarResult();
+        return $this->getEntityManager()
+            ->getUnitOfWork()
+            ->getEntityPersister($this->getEntityName())
+            ->count($criteria);
     }
 
     /**
@@ -56,7 +54,7 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
         if (method_exists($query, 'enableResultCache')) {
             $query->enableResultCache($ttl, $cacheKey);
         } else {
-            $query->useResultCache(true, $ttl, $cacheKey);
+            $query->useResultCache(true, $ttl, $cacheKey); /** @phpstan-ignore-line */
         }
 
         try {
@@ -89,7 +87,7 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
         if (method_exists($query, 'enableResultCache')) {
             $query->enableResultCache($ttl, $cacheKey);
         } else {
-            $query->useResultCache(true, $ttl, $cacheKey);
+            $query->useResultCache(true, $ttl, $cacheKey); /** @phpstan-ignore-line */
         }
 
         return $query->getResult();
@@ -130,7 +128,7 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
         if (method_exists($query, 'enableResultCache')) {
             $query->enableResultCache($ttl, $cacheKey);
         } else {
-            $query->useResultCache(true, $ttl, $cacheKey);
+            $query->useResultCache(true, $ttl, $cacheKey); /** @phpstan-ignore-line */
         }
 
         try {

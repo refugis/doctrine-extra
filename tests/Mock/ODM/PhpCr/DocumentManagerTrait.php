@@ -17,7 +17,6 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Refugis\DoctrineExtra\DBAL\DummyStatement;
 use Refugis\DoctrineExtra\ODM\PhpCr\DocumentRepository;
-use Refugis\DoctrineExtra\Tests\Mock\FakeMetadataFactory;
 
 function nodeTypesQuery($connection)
 {
@@ -101,6 +100,7 @@ trait DocumentManagerTrait
             $this->prophesize(DriverConnection::class);
         $connection = new Connection([
             'platform' => new MySqlPlatform(),
+            'serverVersion' => '5.7.10',
         ], new Driver());
 
         (fn (DriverConnection $connection) => $this->_conn = $connection)

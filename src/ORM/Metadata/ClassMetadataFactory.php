@@ -6,24 +6,20 @@ namespace Refugis\DoctrineExtra\ORM\Metadata;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadataFactory as Base;
-use Doctrine\Persistence\Mapping\ClassMetadata as ClassMetadataInterface;
 
 class ClassMetadataFactory extends Base
 {
-    private EntityManagerInterface $entityManager;
+    private EntityManagerInterface $em;
 
-    public function setEntityManager(EntityManagerInterface $entityManager): void
+    public function setEntityManager(EntityManagerInterface $em): void
     {
-        $this->entityManager = $entityManager;
+        $this->em = $em;
 
-        parent::setEntityManager($entityManager);
+        parent::setEntityManager($em);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function newClassMetadataInstance($className): ClassMetadataInterface
+    protected function newClassMetadataInstance(string $className): ClassMetadata
     {
-        return new ClassMetadata($className, $this->entityManager->getConfiguration()->getNamingStrategy());
+        return new ClassMetadata($className, $this->em->getConfiguration()->getNamingStrategy());
     }
 }

@@ -6,8 +6,12 @@ namespace Refugis\DoctrineExtra\ORM\Type;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
+use Doctrine\DBAL\Types\Exception\InvalidType;
 use Doctrine\DBAL\Types\Type;
 use Money\Currency;
+
+use function class_exists;
+use function method_exists;
 
 class MoneyCurrencyType extends Type
 {
@@ -16,9 +20,14 @@ class MoneyCurrencyType extends Type
     /**
      * {@inheritDoc}
      */
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform): string
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getVarcharTypeDeclarationSQL($fieldDeclaration);
+        if (method_exists($platform, 'getStringTypeDeclarationSQL')) {
+            return $platform->getStringTypeDeclarationSQL($column);
+        }
+
+        /** @phpstan-ignore-next-line */
+        return $platform->getVarcharTypeDeclarationSQL($column);
     }
 
     /**
@@ -31,6 +40,11 @@ class MoneyCurrencyType extends Type
         }
 
         if (! $value instanceof Currency) {
+            if (class_exists(InvalidType::class)) {
+                throw InvalidType::new($value, self::NAME, ['ISO currency string']);
+            }
+
+            /** @phpstan-ignore-next-line */
             throw ConversionException::conversionFailedInvalidType($value, self::NAME, ['ISO currency string']);
         }
 

@@ -39,7 +39,6 @@ class DocumentRepository extends BaseRepository implements ObjectRepositoryInter
              ->getQuery()
              ->getResult(Query::HYDRATE_PHPCR);
 
-        /* @phpstan-ignore-next-line */
         assert($result instanceof QueryResultInterface);
 
         return count(iterator_to_array($result->getRows(), false));

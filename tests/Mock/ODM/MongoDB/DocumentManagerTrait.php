@@ -11,7 +11,6 @@ use MongoDB\Database;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Refugis\DoctrineExtra\ODM\MongoDB\DocumentRepository;
-use Refugis\DoctrineExtra\Tests\Mock\FakeMetadataFactory;
 
 trait DocumentManagerTrait
 {

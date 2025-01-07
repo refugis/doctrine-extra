@@ -9,6 +9,8 @@ use Closure;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
+use Doctrine\DBAL\Types\Exception\InvalidType;
+use Doctrine\DBAL\Types\Exception\ValueNotConvertible;
 use Doctrine\DBAL\Types\Type;
 use IntBackedEnum;
 use InvalidArgumentException;
@@ -19,13 +21,15 @@ use UnitEnum;
 
 use function array_map;
 use function assert;
+use function class_exists;
 use function interface_exists;
 use function is_a;
 use function is_string;
 use function is_subclass_of;
 use function json_decode;
 use function json_encode;
-use function Safe\sprintf;
+use function method_exists;
+use function sprintf;
 
 use const JSON_THROW_ON_ERROR;
 use const PHP_VERSION_ID;
@@ -56,13 +60,17 @@ class PhpEnumType extends Type
             return $platform->getJsonTypeDeclarationSQL([]);
         }
 
-        return $this->type === self::TYPE_STRING ? $platform->getVarcharTypeDeclarationSQL([]) : $platform->getIntegerTypeDeclarationSQL([]);
+        if ($this->type === self::TYPE_STRING) {
+            return method_exists($platform, 'getStringTypeDeclarationSQL') ?
+                $platform->getStringTypeDeclarationSQL([]) :
+                /** @phpstan-ignore-next-line */
+                $platform->getVarcharTypeDeclarationSQL([]);
+        }
+
+        return $platform->getIntegerTypeDeclarationSQL([]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): mixed
     {
         if ($value === null || $value === '') {
             return null;
@@ -75,10 +83,7 @@ class PhpEnumType extends Type
         return array_map($this->toPhp, json_decode($value, true, 512, JSON_THROW_ON_ERROR));
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): mixed
     {
         if ($value === null) {
             return null;
@@ -125,7 +130,13 @@ class PhpEnumType extends Type
                 $toPhp = function ($enumValue) use ($enumClass): BackedEnum {
                     $val = $enumClass::tryFrom($enumValue);
                     if ($val === null) {
-                        throw ConversionException::conversionFailed($enumValue, $this->name); /* @phpstan-ignore-line */
+                        if (class_exists(ValueNotConvertible::class)) {
+                            /** @phpstan-ignore-next-line */
+                            throw ValueNotConvertible::new($enumValue, $this->name);
+                        }
+
+                        /** @phpstan-ignore-next-line */
+                        throw ConversionException::conversionFailed($enumValue, $this->name);
                     }
 
                     return $val;
@@ -133,7 +144,13 @@ class PhpEnumType extends Type
 
                 $toDatabase = function (BackedEnum $enum) {
                     if (! $enum instanceof $this->enumClass) { /* @phpstan-ignore-line */
-                        throw ConversionException::conversionFailedInvalidType($enum, $this->name, [$this->enumClass]); /* @phpstan-ignore-line */
+                        if (class_exists(InvalidType::class)) {
+                            /** @phpstan-ignore-next-line */
+                            throw InvalidType::new($enum, $this->name, [$this->enumClass]);
+                        }
+
+                        /** @phpstan-ignore-next-line */
+                        throw ConversionException::conversionFailedInvalidType($enum, $this->name, [$this->enumClass]);
                     }
 
                     return $enum->value;
@@ -144,7 +161,13 @@ class PhpEnumType extends Type
                     try {
                         $case = $reflection->getCase($enumValue);
                     } catch (ReflectionException $e) {
-                        throw ConversionException::conversionFailed($enumValue, $this->name, $e); /* @phpstan-ignore-line */
+                        if (class_exists(ValueNotConvertible::class)) {
+                            /** @phpstan-ignore-next-line */
+                            throw ValueNotConvertible::new($enumValue, $this->name, previous: $e);
+                        }
+
+                        /** @phpstan-ignore-next-line */
+                        throw ConversionException::conversionFailed($enumValue, $this->name, $e);
                     }
 
                     return $case->getValue();
@@ -152,7 +175,13 @@ class PhpEnumType extends Type
 
                 $toDatabase = function (UnitEnum $enum): string {
                     if (! $enum instanceof $this->enumClass) { /* @phpstan-ignore-line */
-                        throw ConversionException::conversionFailedInvalidType($enum, $this->name, [$this->enumClass]); /* @phpstan-ignore-line */
+                        if (class_exists(InvalidType::class)) {
+                            /** @phpstan-ignore-next-line */
+                            throw InvalidType::new($enum, $this->name, [$this->enumClass]);
+                        }
+
+                        /** @phpstan-ignore-next-line */
+                        throw ConversionException::conversionFailedInvalidType($enum, $this->name, [$this->enumClass]);
                     }
 
                     return $enum->name;
@@ -161,7 +190,13 @@ class PhpEnumType extends Type
         } else {
             $toPhp = function ($enumValue): Enum {
                 if (! $this->enumClass::isValid($enumValue)) { /* @phpstan-ignore-line */
-                    throw ConversionException::conversionFailed($enumValue, $this->name); /* @phpstan-ignore-line */
+                    if (class_exists(ValueNotConvertible::class)) {
+                        /** @phpstan-ignore-next-line */
+                        throw ValueNotConvertible::new($enumValue, $this->name);
+                    }
+
+                    /** @phpstan-ignore-next-line */
+                    throw ConversionException::conversionFailed($enumValue, $this->name);
                 }
 
                 return new $this->enumClass($enumValue); /* @phpstan-ignore-line */
@@ -169,7 +204,13 @@ class PhpEnumType extends Type
 
             $toDatabase = function (Enum $enum): string {
                 if (! $enum instanceof $this->enumClass) { /* @phpstan-ignore-line */
-                    throw ConversionException::conversionFailedInvalidType($enum, $this->name, [$this->enumClass]); /* @phpstan-ignore-line */
+                    if (class_exists(InvalidType::class)) {
+                        /** @phpstan-ignore-next-line */
+                        throw InvalidType::new($enum, $this->name, [$this->enumClass]);
+                    }
+
+                    /** @phpstan-ignore-next-line */
+                    throw ConversionException::conversionFailedInvalidType($enum, $this->name, [$this->enumClass]);
                 }
 
                 return (string) $enum;
@@ -187,8 +228,8 @@ class PhpEnumType extends Type
         $type->name = $typeName;
         $type->enumClass = $enumClass;
         $type->type = $enumType;
-        $type->toPhp = $toPhp->bindTo($type, self::class); /* @phpstan-ignore-line */
-        $type->toDatabase = $toDatabase->bindTo($type, self::class); /* @phpstan-ignore-line */
+        $type->toPhp = $toPhp->bindTo($type, self::class);
+        $type->toDatabase = $toDatabase->bindTo($type, self::class);
 
         $multipleEnumType = 'array<' . $typeName . '>';
         self::addType($multipleEnumType, static::class);
@@ -199,8 +240,8 @@ class PhpEnumType extends Type
         $type->name = $multipleEnumType;
         $type->enumClass = $enumClass;
         $type->type = $enumType;
-        $type->toPhp = $toPhp->bindTo($type, self::class); /* @phpstan-ignore-line */
-        $type->toDatabase = $toDatabase->bindTo($type, self::class); /* @phpstan-ignore-line */
+        $type->toPhp = $toPhp->bindTo($type, self::class);
+        $type->toDatabase = $toDatabase->bindTo($type, self::class);
         $type->multiple = true;
     }
 
@@ -216,10 +257,7 @@ class PhpEnumType extends Type
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function requiresSQLCommentHint(AbstractPlatform $platform)
+    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
     {
         return true;
     }

@@ -7,60 +7,31 @@ namespace Refugis\DoctrineExtra\DBAL;
 use Doctrine\DBAL\Driver\FetchUtils;
 use Doctrine\DBAL\Driver\Result;
 
-use function array_values;
+use function array_keys;
 use function count;
-use function reset;
 
 /** @internal The class is internal to the caching layer implementation. */
 final class DummyResult implements Result
 {
+    use DummyResultCompatTrait;
+
     private int $columnCount = 0;
+    /** @var string[] */
+    private array $columnNames = [];
     private int $num = 0;
 
-    /** @param mixed[] $data */
-    public function __construct(private array $data, int|null $columnCount = null)
+    /**
+     * @param mixed[] $data
+     * @param string[]|null $columnNames
+     */
+    public function __construct(private array $data, int|null $columnCount = null, array|null $columnNames = null)
     {
         if (count($data) === 0) {
             return;
         }
 
         $this->columnCount = $columnCount ?? count($data[0]);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function fetchNumeric()
-    {
-        $row = $this->fetch();
-
-        if ($row === false) {
-            return false;
-        }
-
-        return array_values($row);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function fetchAssociative()
-    {
-        return $this->fetch();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function fetchOne()
-    {
-        $row = $this->fetch();
-
-        if ($row === false) {
-            return false;
-        }
-
-        return reset($row);
+        $this->columnNames = $columnNames ?? array_keys($data[0]); /** @phpstan-ignore-line */
     }
 
     /**
@@ -97,12 +68,17 @@ final class DummyResult implements Result
         return $this->columnCount;
     }
 
+    public function getColumnName(int $index): string
+    {
+        return $this->columnNames[$index] ?? '';
+    }
+
     public function free(): void
     {
         $this->data = [];
     }
 
-    private function fetch(): mixed
+    private function doFetch(): mixed
     {
         if (! isset($this->data[$this->num])) {
             return false;

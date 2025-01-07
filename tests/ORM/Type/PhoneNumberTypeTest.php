@@ -54,7 +54,12 @@ class PhoneNumberTypeTest extends TestCase
     public function testSQLDeclarationShouldBeCorrect(): void
     {
         $platform = $this->prophesize(AbstractPlatform::class);
-        $platform->getVarcharTypeDeclarationSQL(Argument::type('array'))->willReturn('VARCHAR(36)');
+
+        if (method_exists(AbstractPlatform::class, 'getStringTypeDeclarationSQL')) {
+            $platform->getStringTypeDeclarationSQL(Argument::type('array'))->willReturn('VARCHAR(36)');
+        } else {
+            $platform->getVarcharTypeDeclarationSQL(Argument::type('array'))->willReturn('VARCHAR(36)');
+        }
 
         $type = Type::getType(PhoneNumberType::NAME);
 

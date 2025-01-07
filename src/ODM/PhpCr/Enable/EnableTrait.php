@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Refugis\DoctrineExtra\ODM\PhpCr\Enable;
 
 use Doctrine\ODM\PHPCR\Mapping\Annotations as ODM;
+use Doctrine\ODM\PHPCR\Mapping\Attributes as PHPCRAttributes;
 use Refugis\DoctrineExtra\Enable\EnableTrait as BaseTrait;
 
 trait EnableTrait
@@ -16,5 +17,6 @@ trait EnableTrait
      *
      * @ODM\Field(type="boolean")
      */
+    #[PHPCRAttributes\Field(type: 'boolean')]
     private bool $enabled;
 }

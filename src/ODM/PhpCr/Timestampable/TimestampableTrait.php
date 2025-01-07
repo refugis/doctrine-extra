@@ -8,6 +8,7 @@ use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ODM\PHPCR\Mapping\Annotations as ODM;
+use Doctrine\ODM\PHPCR\Mapping\Attributes as PHPCRAttributes;
 use Refugis\DoctrineExtra\Timestampable\TimestampableInterface;
 use Refugis\DoctrineExtra\Timestampable\TimestampableTrait as BaseTrait;
 
@@ -21,9 +22,11 @@ trait TimestampableTrait
     use BaseTrait;
 
     /** @ODM\Field(type="date") */
+    #[PHPCRAttributes\Field(type: 'date')]
     private DateTime $createdAt;
 
     /** @ODM\Field(type="date") */
+    #[PHPCRAttributes\Field(type: 'date')]
     private DateTime $updatedAt;
 
     public function getCreatedAt(): DateTimeInterface

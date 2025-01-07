@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra\Tests\Mock\ORM;
 
@@ -13,7 +15,6 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Prophecy\Prophecy\ObjectProphecy;
 use Refugis\DoctrineExtra\ORM\EntityRepository;
-use Refugis\DoctrineExtra\Tests\Mock\FakeMetadataFactory;
 use Refugis\DoctrineExtra\Tests\Mock\Platform;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\DoctrineProvider;
@@ -58,6 +59,7 @@ trait EntityManagerTrait
             'user' => 'user',
             'name' => 'dbname',
             'platform' => new Platform(),
+            'serverVersion' => '8.1.0',
         ], new Driver(), $this->configuration);
 
         (fn (DriverConnection $connection) => $this->_conn = $connection)

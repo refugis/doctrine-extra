@@ -2,12 +2,14 @@
 
 namespace Refugis\DoctrineExtra\Tests\ORM;
 
+use Composer\InstalledVersions;
 use Doctrine\DBAL\Driver\Statement;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use PDO;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Refugis\DoctrineExtra\DBAL\DummyResult;
@@ -67,7 +69,7 @@ class EntityRepositoryTest extends TestCase
     public function testCountWillReturnRowCount(): void
     {
         $this->innerConnection
-            ->query('SELECT COUNT(t0_.id) AS sclr_0 FROM TestEntity t0_')
+            ->query('SELECT COUNT(*) FROM TestEntity t0')
             ->willReturn(new DummyStatement([
                 ['sclr_0' => '42'],
             ]))
@@ -144,8 +146,10 @@ class EntityRepositoryTest extends TestCase
             ->shouldBeCalledTimes(1)
         ;
 
-        $statement->bindValue(1, 2, PDO::PARAM_INT)->willReturn();
-        $statement->bindValue(2, 3, PDO::PARAM_INT)->willReturn();
+        $statement->bindValue(1, 2, Argument::any())
+            ->will(version_compare(InstalledVersions::getVersion('doctrine/dbal'), '4.0.0', '>=') ? static function () {} : static fn () => true);
+        $statement->bindValue(2, 3, Argument::any())
+            ->will(version_compare(InstalledVersions::getVersion('doctrine/dbal'), '4.0.0', '>=') ? static function () {} : static fn () => true);
         $statement->execute()->willReturn(new DummyResult([
             ['id_0' => '2'],
             ['id_0' => '3'],
@@ -167,7 +171,8 @@ class EntityRepositoryTest extends TestCase
         ;
 
         /* @var Statement|ObjectProphecy $statement */
-        $statement->bindValue(1, 1, PDO::PARAM_INT)->willReturn();
+        $statement->bindValue(1, 1, Argument::any())
+            ->will(version_compare(InstalledVersions::getVersion('doctrine/dbal'), '4.0.0', '>=') ? static function () {} : static fn () => true);
         $statement->execute()->willReturn(new DummyResult([['id_1' => '1']]));
 
         $obj1 = $this->repository->get(1);
@@ -187,7 +192,8 @@ class EntityRepositoryTest extends TestCase
         ;
 
         /* @var Statement|ObjectProphecy $statement */
-        $statement->bindValue(1, 1, PDO::PARAM_INT)->willReturn();
+        $statement->bindValue(1, 1, Argument::any())
+            ->will(version_compare(InstalledVersions::getVersion('doctrine/dbal'), '4.0.0', '>=') ? static function () {} : static fn () => true);
         $statement->execute()->willReturn(new DummyResult([]));
 
         $this->repository->get(1);
@@ -202,7 +208,8 @@ class EntityRepositoryTest extends TestCase
         ;
 
         /* @var Statement|ObjectProphecy $statement */
-        $statement->bindValue(1, 12, PDO::PARAM_INT)->willReturn();
+        $statement->bindValue(1, 12, Argument::any())
+            ->will(version_compare(InstalledVersions::getVersion('doctrine/dbal'), '4.0.0', '>=') ? static function () {} : static fn () => true);
         $statement->execute()->willReturn(new DummyResult([['id_1' => '12']]));
 
         $obj1 = $this->repository->getOneBy(['id' => 12]);
@@ -222,7 +229,8 @@ class EntityRepositoryTest extends TestCase
         ;
 
         /* @var Statement|ObjectProphecy $statement */
-        $statement->bindValue(1, 12, PDO::PARAM_INT)->willReturn();
+        $statement->bindValue(1, 12, Argument::any())
+            ->will(version_compare(InstalledVersions::getVersion('doctrine/dbal'), '4.0.0', '>=') ? static function () {} : static fn () => true);
         $statement->execute()->willReturn(new DummyResult([]));
 
         $this->repository->getOneBy(['id' => 12]);
@@ -237,7 +245,8 @@ class EntityRepositoryTest extends TestCase
         ;
 
         /* @var Statement|ObjectProphecy $statement */
-        $statement->bindValue(1, 12, PDO::PARAM_INT)->willReturn();
+        $statement->bindValue(1, 12, Argument::any())
+            ->will(version_compare(InstalledVersions::getVersion('doctrine/dbal'), '4.0.0', '>=') ? static function () {} : static fn () => true);
         $statement->execute()->willReturn(new DummyResult([['id_0' => '12']]));
 
         $obj1 = $this->repository->getOneByCached(['id' => 12]);

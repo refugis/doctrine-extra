@@ -15,8 +15,14 @@ jobs:
                 php_version:
                     - '8.1'
                     - '8.2'
+                    - '8.3'
+                    - '8.4'
 
-        name: PHP ${{ matrix.php_version }}
+                dbal_version:
+                    - 3.0
+                    - 4.0
+
+        name: PHP ${{ matrix.php_version }} - DBAL ${{ matrix.dbal_version }}
         steps:
             - uses: actions/checkout@v2
 
@@ -28,6 +34,7 @@ jobs:
                   extensions: :opcache, mongodb
 
             - run: composer remove --no-update --dev roave/security-advisories solido/php-coding-standards
+            - run: composer require --no-update doctrine/dbal:^${{ matrix.dbal_version }}
             - run: composer update --with-all-dependencies ${{ matrix.composer_flags }}
 
             - run: vendor/bin/phpunit --coverage-clover coverage.xml

@@ -7,7 +7,6 @@ namespace Refugis\DoctrineExtra\ODM\PhpCr;
 use ArrayIterator;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\PHPCR\Query\Builder\QueryBuilder;
-use Doctrine\ODM\PHPCR\Query\QueryException;
 use Iterator;
 use Refugis\DoctrineExtra\ObjectIteratorInterface;
 
@@ -71,20 +70,12 @@ class DocumentIterator implements ObjectIteratorInterface
         }
 
         $query = $this->queryBuilder->getQuery();
+        $result = $query->getResult();
 
-        try {
-            /* @phpstan-ignore-next-line */
-            $this->internalIterator = $query->iterate();
-        } catch (QueryException) {
-            $result = $query->getResult();
-
-            /* @phpstan-ignore-next-line */
-            assert($result instanceof ArrayCollection);
-            $this->internalIterator = new ArrayIterator(array_values($result->toArray()));
-        }
+        assert($result instanceof ArrayCollection);
+        $this->internalIterator = new ArrayIterator(array_values($result->toArray()));
 
         assert($this->internalIterator instanceof Iterator);
-        /* @phpstan-ignore-next-line */
         $this->currentElement = $this->internalIterator->current();
 
         return $this->internalIterator;

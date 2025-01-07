@@ -119,14 +119,11 @@ class EntityIterator implements ObjectIteratorInterface
             if (method_exists($query, 'enableResultCache')) {
                 $query->enableResultCache($this->cacheLifetime, $this->resultCache);
             } else {
-                $query->useResultCache(true, $this->cacheLifetime, $this->resultCache);
+                $query->useResultCache(true, $this->cacheLifetime, $this->resultCache); /** @phpstan-ignore-line */
             }
-
-            $iterator = $query->iterate();
-        } else {
-            $iterator = method_exists($query, 'toIterable') ? $query->toIterable() : $query->iterate();
         }
 
+        $iterator = method_exists($query, 'toIterable') ? $query->toIterable() : $query->iterate(); /** @phpstan-ignore-line */
         if (! $iterator instanceof Iterator) {
             $iterator = (static function (iterable $iterable): Generator {
                 yield from $iterable;
@@ -145,7 +142,7 @@ class EntityIterator implements ObjectIteratorInterface
 
         $current = $this->internalIterator->current();
         if ($current === null) {
-            return $current;
+            return null;
         }
 
         if (is_array($current)) {

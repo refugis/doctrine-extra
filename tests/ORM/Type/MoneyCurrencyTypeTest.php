@@ -53,7 +53,11 @@ class MoneyCurrencyTypeTest extends TestCase
     public function testSQLDeclarationShouldBeCorrect(): void
     {
         $platform = $this->prophesize(AbstractPlatform::class);
-        $platform->getVarcharTypeDeclarationSQL(Argument::type('array'))->willReturn('VARCHAR(255)');
+        if (method_exists(AbstractPlatform::class, 'getStringTypeDeclarationSQL')) {
+            $platform->getStringTypeDeclarationSQL(Argument::type('array'))->willReturn('VARCHAR(255)');
+        } else {
+            $platform->getVarcharTypeDeclarationSQL(Argument::type('array'))->willReturn('VARCHAR(255)');
+        }
 
         $type = Type::getType(MoneyCurrencyType::NAME);
 

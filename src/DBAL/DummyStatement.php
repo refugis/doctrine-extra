@@ -8,12 +8,9 @@ use ArrayIterator;
 use Doctrine\DBAL\Driver\FetchUtils;
 use Doctrine\DBAL\Driver\Result;
 use Doctrine\DBAL\Driver\Statement;
-use Doctrine\DBAL\ParameterType;
 use IteratorAggregate;
 
-use function array_values;
 use function count;
-use function reset;
 
 /**
  * Dummy statement serves a static result statement
@@ -23,6 +20,8 @@ use function reset;
  */
 class DummyStatement implements IteratorAggregate, Statement, Result
 {
+    use DummyStatementCompatTrait;
+
     private int $columnCount;
     private int $num;
 
@@ -55,42 +54,6 @@ class DummyStatement implements IteratorAggregate, Statement, Result
     /**
      * {@inheritDoc}
      */
-    public function fetchNumeric()
-    {
-        $row = $this->doFetch();
-
-        if ($row === false) {
-            return false;
-        }
-
-        return array_values($row);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function fetchAssociative()
-    {
-        return $this->doFetch();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function fetchOne()
-    {
-        $row = $this->doFetch();
-
-        if ($row === false) {
-            return false;
-        }
-
-        return reset($row);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function fetchAllNumeric(): array
     {
         return FetchUtils::fetchAllNumeric($this);
@@ -117,30 +80,7 @@ class DummyStatement implements IteratorAggregate, Statement, Result
         $this->data = [];
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function bindValue($param, $value, $type = ParameterType::STRING): bool
-    {
-        // TODO
-
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function bindParam($column, &$variable, $type = ParameterType::STRING, $length = null): bool
-    {
-        // TODO
-
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function execute($params = null): Result
+    public function execute(mixed $params = null): Result
     {
         return new DummyResult($this->data);
     }

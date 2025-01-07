@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra\ODM\PhpCr;
 
+use Countable;
 use Doctrine\ODM\PHPCR\Query\Builder\QueryBuilder;
 use Doctrine\ODM\PHPCR\Query\Query;
 use Doctrine\Persistence\ObjectManager;
@@ -34,7 +35,11 @@ trait IteratorTrait
 
             /* @phpstan-ignore-next-line */
             assert($result instanceof QueryResultInterface);
-            $this->totalCount = count($result->getRows());
+
+            $rows = $result->getRows();
+            assert($rows instanceof Countable);
+
+            $this->totalCount = count($rows);
         }
 
         return $this->totalCount;

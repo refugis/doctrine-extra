@@ -70,7 +70,10 @@ class TimestampUpdaterTest extends TestCase
         ];
         $eventManager->addEventListener($events, new TimestampUpdater());
 
-        AnnotationRegistry::registerLoader('class_exists');
+        if (class_exists(AnnotationRegistry::class)) {
+            AnnotationRegistry::registerLoader('class_exists');
+        }
+
         $configuration = new ORM\Configuration();
         $configuration->setMetadataDriverImpl($mappingDriver);
         $configuration->setProxyDir(\sys_get_temp_dir());
@@ -93,7 +96,7 @@ CREATE TABLE foo_timestampable (
 SQL
         );
 
-        $entityManager = ORM\EntityManager::create($connection, $configuration, $eventManager);
+        $entityManager = new ORM\EntityManager($connection, $configuration, $eventManager);
 
         $foo = new FooTimestampable();
         $entityManager->persist($foo);
@@ -113,7 +116,9 @@ SQL
 
     public function metadataImplProvider(): iterable
     {
-        yield [ new ORM\Mapping\Driver\AnnotationDriver(new AnnotationReader()) ];
+        if (class_exists(ORM\Mapping\Driver\AnnotationDriver::class)) {
+            yield [new ORM\Mapping\Driver\AnnotationDriver(new AnnotationReader())];
+        }
 
         if (PHP_VERSION_ID >= 80000) {
             yield [new ORM\Mapping\Driver\AttributeDriver([])];

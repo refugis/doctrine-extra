@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Refugis\DoctrineExtra\ORM;
 
+use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\Query\Parser;
 use Doctrine\ORM\QueryBuilder;
@@ -12,6 +15,8 @@ use Refugis\DoctrineExtra\IteratorTrait as BaseIteratorTrait;
 
 use function assert;
 use function is_string;
+use function ksort;
+use function method_exists;
 
 trait IteratorTrait
 {
@@ -35,10 +40,14 @@ trait IteratorTrait
             if (! empty($groupBy)) {
                 $dbalQb = $queryBuilder->getEntityManager()->getConnection()->createQueryBuilder();
 
-                $parser = new Parser($queryBuilder->getQuery());
+                $query = $queryBuilder->getQuery();
+                $parser = new Parser($query);
                 $parserResult = $parser->parse();
 
                 $parameters = $queryBuilder->getParameters();
+                $params = [];
+                /** @var array<array-key, ArrayParameterType|ParameterType|Type|string> $paramTypes */
+                $paramTypes = [];
                 foreach ($parserResult->getParameterMappings() as $name => $mapping) {
                     $parameter = $parameters->filter(static fn (Parameter $parameter) => $parameter->getName() === $name)->first();
                     if ($parameter === false) {
@@ -47,11 +56,23 @@ trait IteratorTrait
 
                     assert($parameter instanceof Parameter);
                     foreach ($mapping as $position) {
-                        $dbalQb->setParameter($position, $parameter->getValue(), $parameter->getType());
+                        $params[(string) $position] = $parameter->getValue();
+                        $paramTypes[(string) $position] = $parameter->getType();
                     }
                 }
 
-                $sql = $parserResult->getSqlExecutor()->getSqlStatements();
+                ksort($params);
+                ksort($paramTypes);
+
+                $dbalQb->setParameters($params, $paramTypes);
+
+                if (method_exists($parserResult, 'prepareSqlExecutor')) {
+                    $sqlExecutor = $parserResult->prepareSqlExecutor($query);
+                } else {
+                    $sqlExecutor = $parserResult->getSqlExecutor();
+                }
+
+                $sql = $sqlExecutor->getSqlStatements();
                 assert(is_string($sql));
 
                 $dbalQb->select('COUNT(*)')->from('(' . $sql . ') scrl_c_0');

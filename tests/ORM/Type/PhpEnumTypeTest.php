@@ -36,8 +36,15 @@ class PhpEnumTypeTest extends TestCase
             $multipleActionEnum = "array<$fooEnum>";
 
             foreach ([$fooEnum, $multipleFooEnum, $actionEnum, $multipleActionEnum] as $enumClass) {
-                if (Type::hasType($enumClass)) {
-                    Type::overrideType($enumClass, null);
+                $refl = new \ReflectionClass(Type::class);
+                if ($refl->hasProperty('typeRegistry')) {
+                    $property = $refl->getProperty('typeRegistry');
+                    $property->setAccessible(true);
+                    $property->setValue(null, null);
+                } else {
+                    if (Type::hasType($enumClass)) {
+                        Type::overrideType($enumClass, null);
+                    }
                 }
             }
 
@@ -90,7 +97,12 @@ class PhpEnumTypeTest extends TestCase
     public function testSQLDeclarationShouldBeCorrect(): void
     {
         $platform = $this->prophesize(AbstractPlatform::class);
-        $platform->getVarcharTypeDeclarationSQL(Argument::type('array'))->willReturn('VARCHAR(255)');
+        if (method_exists(AbstractPlatform::class, 'getStringTypeDeclarationSQL')) {
+            $platform->getStringTypeDeclarationSQL(Argument::type('array'))->willReturn('VARCHAR(255)');
+        } else {
+            $platform->getVarcharTypeDeclarationSQL(Argument::type('array'))->willReturn('VARCHAR(255)');
+        }
+
         $platform->getJsonTypeDeclarationSQL(Argument::type('array'))->willReturn('JSON');
 
         $enumClass = FoobarEnum::class;
