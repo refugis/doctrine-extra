@@ -13,7 +13,6 @@ use Refugis\DoctrineExtra\ObjectIteratorInterface;
 use function assert;
 use function count;
 use function is_array;
-use function method_exists;
 
 /**
  * This class allows iterating a query iterator for a single entity query.
@@ -116,14 +115,10 @@ class EntityIterator implements ObjectIteratorInterface
 
         $query = $this->queryBuilder->getQuery();
         if ($this->resultCache !== null) {
-            if (method_exists($query, 'enableResultCache')) {
-                $query->enableResultCache($this->cacheLifetime, $this->resultCache);
-            } else {
-                $query->useResultCache(true, $this->cacheLifetime, $this->resultCache); /** @phpstan-ignore-line */
-            }
+            $query->enableResultCache($this->cacheLifetime, $this->resultCache);
         }
 
-        $iterator = method_exists($query, 'toIterable') ? $query->toIterable() : $query->iterate(); /** @phpstan-ignore-line */
+        $iterator = $query->toIterable();
         if (! $iterator instanceof Iterator) {
             $iterator = (static function (iterable $iterable): Generator {
                 yield from $iterable;

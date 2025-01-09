@@ -16,7 +16,6 @@ use Refugis\DoctrineExtra\IteratorTrait as BaseIteratorTrait;
 use function assert;
 use function is_string;
 use function ksort;
-use function method_exists;
 
 trait IteratorTrait
 {
@@ -65,12 +64,7 @@ trait IteratorTrait
                 ksort($paramTypes);
 
                 $dbalQb->setParameters($params, $paramTypes);
-
-                if (method_exists($parserResult, 'prepareSqlExecutor')) {
-                    $sqlExecutor = $parserResult->prepareSqlExecutor($query);
-                } else {
-                    $sqlExecutor = $parserResult->getSqlExecutor();
-                }
+                $sqlExecutor = $parserResult->prepareSqlExecutor($query);
 
                 $sql = $sqlExecutor->getSqlStatements();
                 assert(is_string($sql));

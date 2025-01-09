@@ -15,7 +15,6 @@ use Refugis\DoctrineExtra\ObjectRepositoryInterface;
 
 use function func_get_args;
 use function is_array;
-use function method_exists;
 use function serialize;
 use function sha1;
 use function str_replace;
@@ -51,11 +50,7 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
         $query->setMaxResults(1);
 
         $cacheKey = str_replace(self::INVALID_CACHE_KEY_CHARS, '', '__' . static::class . '::' . __FUNCTION__ . sha1(serialize(func_get_args())));
-        if (method_exists($query, 'enableResultCache')) {
-            $query->enableResultCache($ttl, $cacheKey);
-        } else {
-            $query->useResultCache(true, $ttl, $cacheKey); /** @phpstan-ignore-line */
-        }
+        $query->enableResultCache($ttl, $cacheKey);
 
         try {
             return $query->getOneOrNullResult();
@@ -84,11 +79,7 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
         }
 
         $cacheKey = str_replace(self::INVALID_CACHE_KEY_CHARS, '', '__' . static::class . '::' . __FUNCTION__ . sha1(serialize(func_get_args())));
-        if (method_exists($query, 'enableResultCache')) {
-            $query->enableResultCache($ttl, $cacheKey);
-        } else {
-            $query->useResultCache(true, $ttl, $cacheKey); /** @phpstan-ignore-line */
-        }
+        $query->enableResultCache($ttl, $cacheKey);
 
         return $query->getResult();
     }
@@ -125,11 +116,7 @@ class EntityRepository extends BaseRepository implements ObjectRepositoryInterfa
         $query->setMaxResults(1);
 
         $cacheKey = str_replace(self::INVALID_CACHE_KEY_CHARS, '', '__' . static::class . '::' . __FUNCTION__ . sha1(serialize(func_get_args())));
-        if (method_exists($query, 'enableResultCache')) {
-            $query->enableResultCache($ttl, $cacheKey);
-        } else {
-            $query->useResultCache(true, $ttl, $cacheKey); /** @phpstan-ignore-line */
-        }
+        $query->enableResultCache($ttl, $cacheKey);
 
         try {
             return $query->getSingleResult();
